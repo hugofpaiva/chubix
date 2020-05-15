@@ -31,10 +31,10 @@ expr :
 ;
 
 opdim: 
-    <assoc=right> expr '^' expr               #DimPower
-    | expr op=('*'|'/') expr                  #DimMultDiv
-    | expr op=('+'|'-') expr                  #DimSumMin
-    | op=('+'|'-')? '(' expr ')'              #DimUnn
+    <assoc=right> opdim '^' opdim               #DimPower
+    | opdim op=('*'|'/') opdim                  #DimMultDiv
+    | opdim op=('+'|'-') opdim                  #DimSumMin
+    | op=('+'|'-')? '(' opdim ')'              #DimUnn
     | op=('+'|'-')? SYMB                      #DimSymb
 ;
 
@@ -46,4 +46,5 @@ DOUBLE: [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n';
 ERROR: .;
+
 
