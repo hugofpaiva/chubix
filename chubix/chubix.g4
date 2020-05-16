@@ -1,34 +1,54 @@
 grammar chubix;
 
-main: statList EOF;
+@parser::members{
+    int insideLoop = 0;
+}
+main: instList EOF;
 
-statList: (stat? ';')*;
+instList: (instruction? ';')*;
 
-stat: print
-    | assignment
-    | conditional
-    ;
+instruction:  print 
+            | assignment
+            | conditional
+            | forLoop
+            | breakLoop
+            | continueLoop
+            | whileLoop
+            ;
 
 print: 'print' '('expr')';
 
-assignment: (ID '=')* expr;
+assignment: ID '=' expr ('['ID']')?;  
 
-conditional: 'if' '(' expr ')' trueSL=statList ('else' falseSL=statList)? 'end';
-//
-for : 'for' '(' ID '=' ';'  ')' statList 'end'
+conditional: 'if' '(' expr ')' '{' trueSL=instList '}' ('else' falseSL=elseCond)?;
 
-//              
-while : 'while'
+elseCond: conditional
+        | '{' instList '}'
+        ;
 
+forLoop : 'for' '(' var=assignment ';' varBreak= expr ';' varCond=expr ')' '{' {insideLoop++;} instList {insideLoop--;} '}';
 
-expr:
+whileLoop : 'while' '(' expr ')' '{' {insideLoop++;} condSL=instList {insideLoop--;} '}';
+
+breakLoop: {insideLoop > 0}? 'break';
+
+continueLoop: {insideLoop > 0}? 'continue';
+              
+type returns[Type res]:
+	  'Integer'			#intType
+	| 'Double'			#doubleType
+	| 'Boolean'			#boolType
+	| 'String'			#strType
+	;
+
+expr returns[Type exprType, String varName]:
       sign=('+'|'-') expr                           #signExpr
     | <assoc=right> expr '^' expr                   #powExpr
     | expr op=('*' | '/' | '%' | '//') expr         #multDivRestExpr
     | expr op=('+' | '-') expr                      #addSubExpr
-    | expr op=('==' | '!=' | '<' | '>') expr        #comparisonExpr
+    | expr op=('==' | '!=' | '<' | '>') expr        #conditionalExpr
     | '(' expr ')'                                  #parenExpr
-    | REAL                                          #realExpr
+    | DOUBLE                                       #doubleExpr
     | INTEGER                                       #integerExpr
     | BOOLEAN                                       #booleanExpr
     | ID                                            #idExpr
@@ -36,8 +56,9 @@ expr:
 
 BOOLEAN: 'true' | 'false';
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-REAL: [0-9]+ '.' [0-9]*;
+DOUBLE: [0-9]+ '.' [0-9]*;
 INTEGER: [0-9]+;
+STRING: '"' .*? '"';
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n';
 ERROR: .;
