@@ -4,7 +4,8 @@ public abstract class Symbol {
     protected Value value;
     protected boolean valueDefined;
     protected String varName;
-    
+    //private String unit = "";
+
     public Symbol(String name, Type type) {
         assert name != null;
         assert type != null;
@@ -50,5 +51,4 @@ public abstract class Symbol {
 
         return value;
     }
-
 }
