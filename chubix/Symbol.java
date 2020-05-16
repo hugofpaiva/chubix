@@ -1,9 +1,9 @@
-public abstract class Symbol {
-    protected final String name;
-    protected final Type type;
-    protected Value value;
-    protected boolean valueDefined;
-    protected String varName;
+public class Symbol {
+    private final String name;
+    private final Type type;
+    private Value value;
+    private boolean valueDefined;
+    private String varName;
     //private String unit = "";
 
     public Symbol(String name, Type type) {
