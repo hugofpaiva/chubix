@@ -16,7 +16,7 @@ instruction:  print
             | whileLoop
             ;
 
-print: 'print' '('expr')';
+print: 'print' '(' (expr|STRING)? ')';
 
 assignment: ID '=' expr ('['ID']')?;  
 
@@ -33,23 +33,24 @@ whileLoop : 'while' '(' expr ')' '{' {insideLoop++;} condSL=instList {insideLoop
 breakLoop: {insideLoop > 0}? 'break';
 
 continueLoop: {insideLoop > 0}? 'continue';
-              
-type returns[Type res]:
+           
+type ://returns[Type res]:
 	  'Integer'			#intType
 	| 'Double'			#doubleType
 	| 'Boolean'			#boolType
 	| 'String'			#strType
 	;
 
-expr returns[Type exprType, String varName]:
+expr: //returns[Type exprType, String varName]:
       sign=('+'|'-') expr                           #signExpr
     | <assoc=right> expr '^' expr                   #powExpr
     | expr op=('*' | '/' | '%' | '//') expr         #multDivRestExpr
     | expr op=('+' | '-') expr                      #addSubExpr
     | expr op=('==' | '!=' | '<' | '>') expr        #conditionalExpr
     | '(' expr ')'                                  #parenExpr
-    | DOUBLE                                       #doubleExpr
-    | INTEGER                                       #integerExpr
+    | ID op=('++' | '--')                           #doubleSumMin
+    | DOUBLE ('['ID']')?                            #doubleExpr
+    | INTEGER ('['ID']')?                           #integerExpr
     | BOOLEAN                                       #booleanExpr
     | ID                                            #idExpr
     ;
@@ -60,5 +61,5 @@ DOUBLE: [0-9]+ '.' [0-9]*;
 INTEGER: [0-9]+;
 STRING: '"' .*? '"';
 WS: [ \t\r\n]+ -> skip;
-LINE_COMMENT: '#' .*? '\n';
+LINE_COMMENT: '#' .*? '\n' -> skip;
 ERROR: .;
