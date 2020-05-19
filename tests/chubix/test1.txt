@@ -1,8 +1,7 @@
 a = 10[m];
 b= 20;
 
-
-
+dim velocity(dist/time)
 
 while( a < 20){
     a = a +1;
@@ -15,4 +14,4 @@ for (a=2;a<2;a--){
 };
 
 
-#asDADADAD
+

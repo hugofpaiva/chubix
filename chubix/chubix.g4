@@ -1,7 +1,8 @@
 grammar chubix;
 
 @parser::members{
-    int insideLoop = 0;
+  int insideLoop = 0;
+  public static final SymbolTable map = new SymbolTable();
 }
 main: instList EOF;
 
