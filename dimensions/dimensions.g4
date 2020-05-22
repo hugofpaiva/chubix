@@ -18,9 +18,9 @@ stat: dim
     | unit
     ;
 
-dim : 'dim' ID '(' opdim ')'  ;
+dim : 'dim' ID '(' opdim ':' (opdim|type) ')' ;
 
-unit : 'unit' ID '('  ID  ':' expr ')' ;
+unit : 'unit' ID '('  opdim  ':' expr ')' ;
 
 expr :  
     <assoc=right> expr '^' expr               #ExprPower
@@ -28,24 +28,28 @@ expr :
     | expr op=('+'|'-') expr                  #ExprSumMin
     | op=('+'|'-')? '(' expr ')'              #ExprUnn
     | op=('+'|'-')? ID                        #ExprID
-    | op=('+'|'-')? INT                       #ExprInt
+    | op=('+'|'-')? INTEGER                   #ExprInt
     | op=('+'|'-')? DOUBLE                    #ExprDouble
 ;
 
 opdim: 
-    <assoc=right> opdim '^' opdim               #DimPower
-    | opdim op=('*'|'/') opdim                  #DimMultDiv
-    | opdim op=('+'|'-') opdim                  #DimSumMin
-    | op=('+'|'-')? '(' opdim ')'               #DimUnn
-    | op=('+'|'-')? ID                          #DimID
+    <assoc=right> opdim '^' (opdim| op=('+'|'-')? INTEGER | op=('+'|'-')? DOUBLE )      #DimPower
+    | opdim op=('*'|'/') opdim                                                          #DimMultDiv
+    | opdim op=('+'|'-') opdim                                                          #DimSumMin
+    | op=('+'|'-')? '(' opdim ')'                                                       #DimUnn
+    | op=('+'|'-')? ID                                                                  #DimID
 ;
 
+type ://returns[Type res]:
+	  'Integer'			#intType
+	| 'Double'			#doubleType
+    ;
 
 ID: [a-zA-Z][a-zA-Z_0-9]*;
-INT : [0-9]+;
+INTEGER : [0-9]+;
 DOUBLE: [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
-LINE_COMMENT: '#' .*? '\n';
+LINE_COMMENT: '#' .*? '\n' -> skip;
 ERROR: .;
 
 

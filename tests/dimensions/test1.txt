@@ -1,37 +1,28 @@
-dim distancia(m: Double);
+dim Distance(m: Double);
 
-dim time(s: Integer);
+dim Time(s: Integer);
+unit Time(h: 3600s);
 
-dim velocity(T: distancia/time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
+dim Velocity(m/s: distancia/time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
+unit Velocity(mach: 200*m/s);
 
-unit velocity(mach: 200*T)
+dim Acceleration(m/(s^2) : distance/time^2 ); # ou   velocity^-2  
 
-dim acceleration(Y : distance/time^2 ) # ou   velocity^-2  
+dim Mass(kg: Double);
+dim Force(N: Mass*Acceleration);
 
-dim force(N: mass*acceleration)
+dim Potential(V: Double);
+unit Potential(MV: 10^6*V);
 
+dim Resistence(O: Double);
 
+dim Current(A: Double);
 
-########## Linguagem Compilada#############
-# Determinar distanca percorrida por uma massa em t segundos
-# Pedir ao user:
-#     velocidade inicial
-#     Força
-#     Segundo
-#     Massa 
-#   
-# Resultado: distancia percorrida
+dim Energy(J: Mass/(Distance^2)*Time^-2);
 
+dim Power(W: Energy/Time);
+unit Power(KW: W*10^3);
 
-#Time t = input("Insira o tempo") [s];
-Time t = 16 [s];
-Mass m = 1 [kg];
-Force f = 20 [N];
-Velocity v0 = 0 [m/s];
+dim Price(euro : Double);
 
-Accelaration a = f / m;
-
-Distance res = v0 * t + (a*t^2)/2;
-
-print("Distancia percorrida: "+res);
-
+dim PricePerPowerTime(euro/W*s :Price/Power*Time);
