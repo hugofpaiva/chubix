@@ -1,7 +1,7 @@
 dim Distance(m: Double);
 
 dim Time(s: Integer);
-unit Time(h: 3600s);
+unit Time(h: 3600*s);
 
 dim Velocity(m/s: distancia/time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
 unit Velocity(mach: 200*m/s);
