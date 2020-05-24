@@ -1,6 +1,4 @@
-
-
-########## Linguagem Compilada#############
+########## Linguagem Compilada ##########
 
 ###Exemplo 1
 # Determinar distanca percorrida por uma massa de 5kg em t segundos
@@ -11,6 +9,8 @@
 #     Massa 
 #   
 # Resultado: distancia percorrida
+
+#Resolução:
 
 
 Mass m = 5 [kg];
@@ -37,6 +37,8 @@ print(res);
 #
 # Resultado: Nova Resistencia
 
+#Resolução:
+
 Potential U =  input("Insira a tensão de corrente em volts") [V];
 Resistence R = input("Insira a intensidade da força, em Newton") [O];
 
@@ -51,7 +53,6 @@ while(taxa>=1/32){
     print(res);
     taxa = taxa / 2;
 };
-
 
 
 ###Exemplo 3
@@ -84,8 +85,10 @@ print(E);
 # 
 # Resultado: Preço
 
+# Resolução:
+
 PricePerPowerTime p = input("Preço por kWh: ") [euros/(kW*h)];
-[
+
 Price p_mensal = p * E;
 
 if (p_mensal > 30) {
@@ -101,6 +104,8 @@ if (p_mensal > 30) {
 # forças de atrito.
 #   Ec = 0.5*m*v^2
 # Pedir ao user a massa do corpo
+
+#Resolução:
 
 
 Mass m = input("Insira a massa do objeto em kg") [kg] ;
@@ -120,3 +125,53 @@ for (Integer i = 0; i<=60; i=i+10){
     print(ec); 
 };
 
+###Exemplo 5
+#  Uma corrente de 5,0 A atravessa um fio durante 4,0 min. 
+#  Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
+
+#Resolução:
+
+#a)
+
+Current i = 5 [A];
+Time t = 4*60 [s];
+#Visto que a Intensidade = carga / intervalo de tempo
+Charge c = 5*4*60 [C];
+print(c);
+
+#b)
+
+#Número de eletrões = carga / |carga por eletrão|
+Double numero_eletroes = c / +(1,602*10^-19) [C];
+
+
+
+###Exemplo 6
+#  Calcular e avaliar o valor de IMC do utilizador
+
+function IMC getIMC(Mass m, Distance height){
+    IMC imc = m/height^2;
+    return imc;
+};
+
+function void evalIMC(IMC imc){
+    if (imc<16) {
+        print("You are severely underweight.");
+    } else if (imc<=19,9) {
+        print("You are underweight.");
+    } else if (imc<=24,9) {
+        print("You have a healthy weight.");
+    }else if (imc<=29,9) {
+        print("You are overweight.");
+    }else if (imc<=39,9) {
+        print("You are obese.");
+    }else if (imc>40) {
+        print("You are morbidly obese.");
+    };
+};
+
+Mass m = input("Insert your weight in kg: ") [kg];
+Distance height = input("Insert your height in meters: ") [m];
+
+IMC imc = getIMC(m,height);
+evalIMC(imc);

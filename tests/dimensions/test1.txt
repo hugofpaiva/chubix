@@ -26,3 +26,5 @@ unit Power(KW: W*10^3);
 dim Price(euro : Double);
 
 dim PricePerPowerTime(euro/W*s :Price/Power*Time);
+
+dim Charge(C: Double);

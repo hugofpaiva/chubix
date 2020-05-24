@@ -21,22 +21,22 @@ public class dimensionsParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, ID=12, SYMB=13, INT=14, DOUBLE=15, WS=16, LINE_COMMENT=17, 
-		ERROR=18;
+		T__9=10, T__10=11, T__11=12, T__12=13, ID=14, INTEGER=15, DOUBLE=16, WS=17, 
+		LINE_COMMENT=18, ERROR=19;
 	public static final int
 		RULE_main = 0, RULE_statList = 1, RULE_stat = 2, RULE_dim = 3, RULE_unit = 4, 
-		RULE_expr = 5, RULE_opdim = 6;
+		RULE_expr = 5, RULE_opdim = 6, RULE_type = 7;
 	public static final String[] ruleNames = {
-		"main", "statList", "stat", "dim", "unit", "expr", "opdim"
+		"main", "statList", "stat", "dim", "unit", "expr", "opdim", "type"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
-		null, "';'", "'dim'", "'('", "')'", "'unit'", "':'", "'^'", "'*'", "'/'", 
-		"'+'", "'-'"
+		null, "';'", "'dim'", "'('", "':'", "')'", "'unit'", "'^'", "'*'", "'/'", 
+		"'+'", "'-'", "'Integer'", "'Double'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, null, null, null, null, null, null, null, null, null, null, 
-		"ID", "SYMB", "INT", "DOUBLE", "WS", "LINE_COMMENT", "ERROR"
+		null, null, "ID", "INTEGER", "DOUBLE", "WS", "LINE_COMMENT", "ERROR"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -83,9 +83,6 @@ public class dimensionsParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-
-	static protected Map<String,Symbol> symbolTable = new HashMap<>();
-
 	public dimensionsParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
@@ -107,9 +104,9 @@ public class dimensionsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(14);
+			setState(16);
 			statList();
-			setState(15);
+			setState(17);
 			match(EOF);
 			}
 		}
@@ -144,27 +141,27 @@ public class dimensionsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(23);
+			setState(25);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__4))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__5))) != 0)) {
 				{
 				{
-				setState(18);
+				setState(20);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==T__1 || _la==T__4) {
+				if (_la==T__1 || _la==T__5) {
 					{
-					setState(17);
+					setState(19);
 					stat();
 					}
 				}
 
-				setState(20);
+				setState(22);
 				match(T__0);
 				}
 				}
-				setState(25);
+				setState(27);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -198,20 +195,20 @@ public class dimensionsParser extends Parser {
 		StatContext _localctx = new StatContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_stat);
 		try {
-			setState(28);
+			setState(30);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(26);
+				setState(28);
 				dim();
 				}
 				break;
-			case T__4:
+			case T__5:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(27);
+				setState(29);
 				unit();
 				}
 				break;
@@ -232,8 +229,14 @@ public class dimensionsParser extends Parser {
 
 	public static class DimContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(dimensionsParser.ID, 0); }
-		public OpdimContext opdim() {
-			return getRuleContext(OpdimContext.class,0);
+		public List<OpdimContext> opdim() {
+			return getRuleContexts(OpdimContext.class);
+		}
+		public OpdimContext opdim(int i) {
+			return getRuleContext(OpdimContext.class,i);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
 		}
 		public DimContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -247,16 +250,40 @@ public class dimensionsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(30);
-			match(T__1);
-			setState(31);
-			match(ID);
 			setState(32);
-			match(T__2);
+			match(T__1);
 			setState(33);
-			opdim(0);
+			match(ID);
 			setState(34);
+			match(T__2);
+			setState(35);
+			opdim(0);
+			setState(36);
 			match(T__3);
+			setState(39);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__2:
+			case T__9:
+			case T__10:
+			case ID:
+				{
+				setState(37);
+				opdim(0);
+				}
+				break;
+			case T__11:
+			case T__12:
+				{
+				setState(38);
+				type();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+			setState(41);
+			match(T__4);
 			}
 		}
 		catch (RecognitionException re) {
@@ -272,7 +299,9 @@ public class dimensionsParser extends Parser {
 
 	public static class UnitContext extends ParserRuleContext {
 		public TerminalNode ID() { return getToken(dimensionsParser.ID, 0); }
-		public TerminalNode SYMB() { return getToken(dimensionsParser.SYMB, 0); }
+		public OpdimContext opdim() {
+			return getRuleContext(OpdimContext.class,0);
+		}
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -288,20 +317,20 @@ public class dimensionsParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(36);
-			match(T__4);
-			setState(37);
-			match(ID);
-			setState(38);
-			match(T__2);
-			setState(39);
-			match(SYMB);
-			setState(40);
+			setState(43);
 			match(T__5);
-			setState(41);
-			expr(0);
-			setState(42);
+			setState(44);
+			match(ID);
+			setState(45);
+			match(T__2);
+			setState(46);
+			opdim(0);
+			setState(47);
 			match(T__3);
+			setState(48);
+			expr(0);
+			setState(49);
+			match(T__4);
 			}
 		}
 		catch (RecognitionException re) {
@@ -350,13 +379,8 @@ public class dimensionsParser extends Parser {
 	}
 	public static class ExprIntContext extends ExprContext {
 		public Token op;
-		public TerminalNode INT() { return getToken(dimensionsParser.INT, 0); }
+		public TerminalNode INTEGER() { return getToken(dimensionsParser.INTEGER, 0); }
 		public ExprIntContext(ExprContext ctx) { copyFrom(ctx); }
-	}
-	public static class ExprSymbContext extends ExprContext {
-		public Token op;
-		public TerminalNode SYMB() { return getToken(dimensionsParser.SYMB, 0); }
-		public ExprSymbContext(ExprContext ctx) { copyFrom(ctx); }
 	}
 	public static class ExprMultDivContext extends ExprContext {
 		public Token op;
@@ -377,6 +401,11 @@ public class dimensionsParser extends Parser {
 		}
 		public ExprPowerContext(ExprContext ctx) { copyFrom(ctx); }
 	}
+	public static class ExprIDContext extends ExprContext {
+		public Token op;
+		public TerminalNode ID() { return getToken(dimensionsParser.ID, 0); }
+		public ExprIDContext(ExprContext ctx) { copyFrom(ctx); }
+	}
 
 	public final ExprContext expr() throws RecognitionException {
 		return expr(0);
@@ -394,21 +423,21 @@ public class dimensionsParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(64);
+			setState(71);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 			case 1:
 				{
 				_localctx = new ExprUnnContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(46);
+				setState(53);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(45);
+					setState(52);
 					((ExprUnnContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
@@ -422,29 +451,29 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(48);
+				setState(55);
 				match(T__2);
-				setState(49);
+				setState(56);
 				expr(0);
-				setState(50);
-				match(T__3);
+				setState(57);
+				match(T__4);
 				}
 				break;
 			case 2:
 				{
-				_localctx = new ExprSymbContext(_localctx);
+				_localctx = new ExprIDContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(53);
+				setState(60);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(52);
-					((ExprSymbContext)_localctx).op = _input.LT(1);
+					setState(59);
+					((ExprIDContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
-						((ExprSymbContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						((ExprIDContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -454,8 +483,8 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(55);
-				match(SYMB);
+				setState(62);
+				match(ID);
 				}
 				break;
 			case 3:
@@ -463,12 +492,12 @@ public class dimensionsParser extends Parser {
 				_localctx = new ExprIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(57);
+				setState(64);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(56);
+					setState(63);
 					((ExprIntContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
@@ -482,8 +511,8 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(59);
-				match(INT);
+				setState(66);
+				match(INTEGER);
 				}
 				break;
 			case 4:
@@ -491,12 +520,12 @@ public class dimensionsParser extends Parser {
 				_localctx = new ExprDoubleContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(61);
+				setState(68);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(60);
+					setState(67);
 					((ExprDoubleContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
@@ -510,32 +539,32 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(63);
+				setState(70);
 				match(DOUBLE);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(77);
+			setState(84);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(75);
+					setState(82);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,9,_ctx) ) {
 					case 1:
 						{
 						_localctx = new ExprPowerContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(66);
+						setState(73);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-						setState(67);
+						setState(74);
 						match(T__6);
-						setState(68);
+						setState(75);
 						expr(7);
 						}
 						break;
@@ -543,9 +572,9 @@ public class dimensionsParser extends Parser {
 						{
 						_localctx = new ExprMultDivContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(69);
+						setState(76);
 						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-						setState(70);
+						setState(77);
 						((ExprMultDivContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==T__7 || _la==T__8) ) {
@@ -556,7 +585,7 @@ public class dimensionsParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(71);
+						setState(78);
 						expr(7);
 						}
 						break;
@@ -564,9 +593,9 @@ public class dimensionsParser extends Parser {
 						{
 						_localctx = new ExprSumMinContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(72);
+						setState(79);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(73);
+						setState(80);
 						((ExprSumMinContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==T__9 || _la==T__10) ) {
@@ -577,16 +606,16 @@ public class dimensionsParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(74);
+						setState(81);
 						expr(6);
 						}
 						break;
 					}
 					} 
 				}
-				setState(79);
+				setState(86);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,10,_ctx);
 			}
 			}
 		}
@@ -613,12 +642,15 @@ public class dimensionsParser extends Parser {
 		}
 	}
 	public static class DimPowerContext extends OpdimContext {
+		public Token op;
 		public List<OpdimContext> opdim() {
 			return getRuleContexts(OpdimContext.class);
 		}
 		public OpdimContext opdim(int i) {
 			return getRuleContext(OpdimContext.class,i);
 		}
+		public TerminalNode INTEGER() { return getToken(dimensionsParser.INTEGER, 0); }
+		public TerminalNode DOUBLE() { return getToken(dimensionsParser.DOUBLE, 0); }
 		public DimPowerContext(OpdimContext ctx) { copyFrom(ctx); }
 	}
 	public static class DimUnnContext extends OpdimContext {
@@ -648,10 +680,10 @@ public class dimensionsParser extends Parser {
 		}
 		public DimMultDivContext(OpdimContext ctx) { copyFrom(ctx); }
 	}
-	public static class DimSymbContext extends OpdimContext {
+	public static class DimIDContext extends OpdimContext {
 		public Token op;
-		public TerminalNode SYMB() { return getToken(dimensionsParser.SYMB, 0); }
-		public DimSymbContext(OpdimContext ctx) { copyFrom(ctx); }
+		public TerminalNode ID() { return getToken(dimensionsParser.ID, 0); }
+		public DimIDContext(OpdimContext ctx) { copyFrom(ctx); }
 	}
 
 	public final OpdimContext opdim() throws RecognitionException {
@@ -670,21 +702,21 @@ public class dimensionsParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(92);
+			setState(99);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,12,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
 			case 1:
 				{
 				_localctx = new DimUnnContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(82);
+				setState(89);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(81);
+					setState(88);
 					((DimUnnContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
@@ -698,29 +730,29 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(84);
+				setState(91);
 				match(T__2);
-				setState(85);
+				setState(92);
 				opdim(0);
-				setState(86);
-				match(T__3);
+				setState(93);
+				match(T__4);
 				}
 				break;
 			case 2:
 				{
-				_localctx = new DimSymbContext(_localctx);
+				_localctx = new DimIDContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(89);
+				setState(96);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==T__9 || _la==T__10) {
 					{
-					setState(88);
-					((DimSymbContext)_localctx).op = _input.LT(1);
+					setState(95);
+					((DimIDContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
 					if ( !(_la==T__9 || _la==T__10) ) {
-						((DimSymbContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						((DimIDContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
 						if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
@@ -730,42 +762,30 @@ public class dimensionsParser extends Parser {
 					}
 				}
 
-				setState(91);
-				match(SYMB);
+				setState(98);
+				match(ID);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(105);
+			setState(122);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(103);
+					setState(120);
 					_errHandler.sync(this);
-					switch ( getInterpreter().adaptivePredict(_input,13,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 					case 1:
-						{
-						_localctx = new DimPowerContext(new OpdimContext(_parentctx, _parentState));
-						pushNewRecursionContext(_localctx, _startState, RULE_opdim);
-						setState(94);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(95);
-						match(T__6);
-						setState(96);
-						opdim(5);
-						}
-						break;
-					case 2:
 						{
 						_localctx = new DimMultDivContext(new OpdimContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_opdim);
-						setState(97);
+						setState(101);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(98);
+						setState(102);
 						((DimMultDivContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==T__7 || _la==T__8) ) {
@@ -776,17 +796,17 @@ public class dimensionsParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(99);
+						setState(103);
 						opdim(5);
 						}
 						break;
-					case 3:
+					case 2:
 						{
 						_localctx = new DimSumMinContext(new OpdimContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_opdim);
-						setState(100);
+						setState(104);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(101);
+						setState(105);
 						((DimSumMinContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==T__9 || _la==T__10) ) {
@@ -797,16 +817,86 @@ public class dimensionsParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(102);
+						setState(106);
 						opdim(4);
+						}
+						break;
+					case 3:
+						{
+						_localctx = new DimPowerContext(new OpdimContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_opdim);
+						setState(107);
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						setState(108);
+						match(T__6);
+						setState(118);
+						_errHandler.sync(this);
+						switch ( getInterpreter().adaptivePredict(_input,16,_ctx) ) {
+						case 1:
+							{
+							setState(109);
+							opdim(0);
+							}
+							break;
+						case 2:
+							{
+							setState(111);
+							_errHandler.sync(this);
+							_la = _input.LA(1);
+							if (_la==T__9 || _la==T__10) {
+								{
+								setState(110);
+								((DimPowerContext)_localctx).op = _input.LT(1);
+								_la = _input.LA(1);
+								if ( !(_la==T__9 || _la==T__10) ) {
+									((DimPowerContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+								}
+								else {
+									if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+									_errHandler.reportMatch(this);
+									consume();
+								}
+								}
+							}
+
+							setState(113);
+							match(INTEGER);
+							}
+							break;
+						case 3:
+							{
+							setState(115);
+							_errHandler.sync(this);
+							_la = _input.LA(1);
+							if (_la==T__9 || _la==T__10) {
+								{
+								setState(114);
+								((DimPowerContext)_localctx).op = _input.LT(1);
+								_la = _input.LA(1);
+								if ( !(_la==T__9 || _la==T__10) ) {
+									((DimPowerContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+								}
+								else {
+									if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+									_errHandler.reportMatch(this);
+									consume();
+								}
+								}
+							}
+
+							setState(117);
+							match(DOUBLE);
+							}
+							break;
+						}
 						}
 						break;
 					}
 					} 
 				}
-				setState(107);
+				setState(124);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,14,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,18,_ctx);
 			}
 			}
 		}
@@ -817,6 +907,62 @@ public class dimensionsParser extends Parser {
 		}
 		finally {
 			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class TypeContext extends ParserRuleContext {
+		public TypeContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_type; }
+	 
+		public TypeContext() { }
+		public void copyFrom(TypeContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class DoubleTypeContext extends TypeContext {
+		public DoubleTypeContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+	public static class IntTypeContext extends TypeContext {
+		public IntTypeContext(TypeContext ctx) { copyFrom(ctx); }
+	}
+
+	public final TypeContext type() throws RecognitionException {
+		TypeContext _localctx = new TypeContext(_ctx, getState());
+		enterRule(_localctx, 14, RULE_type);
+		try {
+			setState(127);
+			_errHandler.sync(this);
+			switch (_input.LA(1)) {
+			case T__11:
+				_localctx = new IntTypeContext(_localctx);
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(125);
+				match(T__11);
+				}
+				break;
+			case T__12:
+				_localctx = new DoubleTypeContext(_localctx);
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(126);
+				match(T__12);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
 		}
 		return _localctx;
 	}
@@ -844,45 +990,50 @@ public class dimensionsParser extends Parser {
 	private boolean opdim_sempred(OpdimContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 3:
-			return precpred(_ctx, 5);
-		case 4:
 			return precpred(_ctx, 4);
-		case 5:
+		case 4:
 			return precpred(_ctx, 3);
+		case 5:
+			return precpred(_ctx, 5);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24o\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\3\2\3\2\3\2\3\3\5\3\25\n\3"+
-		"\3\3\7\3\30\n\3\f\3\16\3\33\13\3\3\4\3\4\5\4\37\n\4\3\5\3\5\3\5\3\5\3"+
-		"\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\5\7\61\n\7\3\7\3\7\3\7"+
-		"\3\7\3\7\5\78\n\7\3\7\3\7\5\7<\n\7\3\7\3\7\5\7@\n\7\3\7\5\7C\n\7\3\7\3"+
-		"\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7N\n\7\f\7\16\7Q\13\7\3\b\3\b\5\bU\n"+
-		"\b\3\b\3\b\3\b\3\b\3\b\5\b\\\n\b\3\b\5\b_\n\b\3\b\3\b\3\b\3\b\3\b\3\b"+
-		"\3\b\3\b\3\b\7\bj\n\b\f\b\16\bm\13\b\3\b\2\4\f\16\t\2\4\6\b\n\f\16\2\4"+
-		"\3\2\f\r\3\2\n\13\2z\2\20\3\2\2\2\4\31\3\2\2\2\6\36\3\2\2\2\b \3\2\2\2"+
-		"\n&\3\2\2\2\fB\3\2\2\2\16^\3\2\2\2\20\21\5\4\3\2\21\22\7\2\2\3\22\3\3"+
-		"\2\2\2\23\25\5\6\4\2\24\23\3\2\2\2\24\25\3\2\2\2\25\26\3\2\2\2\26\30\7"+
-		"\3\2\2\27\24\3\2\2\2\30\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\5\3"+
-		"\2\2\2\33\31\3\2\2\2\34\37\5\b\5\2\35\37\5\n\6\2\36\34\3\2\2\2\36\35\3"+
-		"\2\2\2\37\7\3\2\2\2 !\7\4\2\2!\"\7\16\2\2\"#\7\5\2\2#$\5\16\b\2$%\7\6"+
-		"\2\2%\t\3\2\2\2&\'\7\7\2\2\'(\7\16\2\2()\7\5\2\2)*\7\17\2\2*+\7\b\2\2"+
-		"+,\5\f\7\2,-\7\6\2\2-\13\3\2\2\2.\60\b\7\1\2/\61\t\2\2\2\60/\3\2\2\2\60"+
-		"\61\3\2\2\2\61\62\3\2\2\2\62\63\7\5\2\2\63\64\5\f\7\2\64\65\7\6\2\2\65"+
-		"C\3\2\2\2\668\t\2\2\2\67\66\3\2\2\2\678\3\2\2\289\3\2\2\29C\7\17\2\2:"+
-		"<\t\2\2\2;:\3\2\2\2;<\3\2\2\2<=\3\2\2\2=C\7\20\2\2>@\t\2\2\2?>\3\2\2\2"+
-		"?@\3\2\2\2@A\3\2\2\2AC\7\21\2\2B.\3\2\2\2B\67\3\2\2\2B;\3\2\2\2B?\3\2"+
-		"\2\2CO\3\2\2\2DE\f\t\2\2EF\7\t\2\2FN\5\f\7\tGH\f\b\2\2HI\t\3\2\2IN\5\f"+
-		"\7\tJK\f\7\2\2KL\t\2\2\2LN\5\f\7\bMD\3\2\2\2MG\3\2\2\2MJ\3\2\2\2NQ\3\2"+
-		"\2\2OM\3\2\2\2OP\3\2\2\2P\r\3\2\2\2QO\3\2\2\2RT\b\b\1\2SU\t\2\2\2TS\3"+
-		"\2\2\2TU\3\2\2\2UV\3\2\2\2VW\7\5\2\2WX\5\16\b\2XY\7\6\2\2Y_\3\2\2\2Z\\"+
-		"\t\2\2\2[Z\3\2\2\2[\\\3\2\2\2\\]\3\2\2\2]_\7\17\2\2^R\3\2\2\2^[\3\2\2"+
-		"\2_k\3\2\2\2`a\f\7\2\2ab\7\t\2\2bj\5\16\b\7cd\f\6\2\2de\t\3\2\2ej\5\16"+
-		"\b\7fg\f\5\2\2gh\t\2\2\2hj\5\16\b\6i`\3\2\2\2ic\3\2\2\2if\3\2\2\2jm\3"+
-		"\2\2\2ki\3\2\2\2kl\3\2\2\2l\17\3\2\2\2mk\3\2\2\2\21\24\31\36\60\67;?B"+
-		"MOT[^ik";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\25\u0084\4\2\t\2"+
+		"\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\2\3"+
+		"\3\5\3\27\n\3\3\3\7\3\32\n\3\f\3\16\3\35\13\3\3\4\3\4\5\4!\n\4\3\5\3\5"+
+		"\3\5\3\5\3\5\3\5\3\5\5\5*\n\5\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\3\7\3\7\5\78\n\7\3\7\3\7\3\7\3\7\3\7\5\7?\n\7\3\7\3\7\5\7C\n\7\3\7\3"+
+		"\7\5\7G\n\7\3\7\5\7J\n\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\7\7U\n\7"+
+		"\f\7\16\7X\13\7\3\b\3\b\5\b\\\n\b\3\b\3\b\3\b\3\b\3\b\5\bc\n\b\3\b\5\b"+
+		"f\n\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\5\br\n\b\3\b\3\b\5\bv\n"+
+		"\b\3\b\5\by\n\b\7\b{\n\b\f\b\16\b~\13\b\3\t\3\t\5\t\u0082\n\t\3\t\2\4"+
+		"\f\16\n\2\4\6\b\n\f\16\20\2\4\3\2\f\r\3\2\n\13\2\u0094\2\22\3\2\2\2\4"+
+		"\33\3\2\2\2\6 \3\2\2\2\b\"\3\2\2\2\n-\3\2\2\2\fI\3\2\2\2\16e\3\2\2\2\20"+
+		"\u0081\3\2\2\2\22\23\5\4\3\2\23\24\7\2\2\3\24\3\3\2\2\2\25\27\5\6\4\2"+
+		"\26\25\3\2\2\2\26\27\3\2\2\2\27\30\3\2\2\2\30\32\7\3\2\2\31\26\3\2\2\2"+
+		"\32\35\3\2\2\2\33\31\3\2\2\2\33\34\3\2\2\2\34\5\3\2\2\2\35\33\3\2\2\2"+
+		"\36!\5\b\5\2\37!\5\n\6\2 \36\3\2\2\2 \37\3\2\2\2!\7\3\2\2\2\"#\7\4\2\2"+
+		"#$\7\20\2\2$%\7\5\2\2%&\5\16\b\2&)\7\6\2\2\'*\5\16\b\2(*\5\20\t\2)\'\3"+
+		"\2\2\2)(\3\2\2\2*+\3\2\2\2+,\7\7\2\2,\t\3\2\2\2-.\7\b\2\2./\7\20\2\2/"+
+		"\60\7\5\2\2\60\61\5\16\b\2\61\62\7\6\2\2\62\63\5\f\7\2\63\64\7\7\2\2\64"+
+		"\13\3\2\2\2\65\67\b\7\1\2\668\t\2\2\2\67\66\3\2\2\2\678\3\2\2\289\3\2"+
+		"\2\29:\7\5\2\2:;\5\f\7\2;<\7\7\2\2<J\3\2\2\2=?\t\2\2\2>=\3\2\2\2>?\3\2"+
+		"\2\2?@\3\2\2\2@J\7\20\2\2AC\t\2\2\2BA\3\2\2\2BC\3\2\2\2CD\3\2\2\2DJ\7"+
+		"\21\2\2EG\t\2\2\2FE\3\2\2\2FG\3\2\2\2GH\3\2\2\2HJ\7\22\2\2I\65\3\2\2\2"+
+		"I>\3\2\2\2IB\3\2\2\2IF\3\2\2\2JV\3\2\2\2KL\f\t\2\2LM\7\t\2\2MU\5\f\7\t"+
+		"NO\f\b\2\2OP\t\3\2\2PU\5\f\7\tQR\f\7\2\2RS\t\2\2\2SU\5\f\7\bTK\3\2\2\2"+
+		"TN\3\2\2\2TQ\3\2\2\2UX\3\2\2\2VT\3\2\2\2VW\3\2\2\2W\r\3\2\2\2XV\3\2\2"+
+		"\2Y[\b\b\1\2Z\\\t\2\2\2[Z\3\2\2\2[\\\3\2\2\2\\]\3\2\2\2]^\7\5\2\2^_\5"+
+		"\16\b\2_`\7\7\2\2`f\3\2\2\2ac\t\2\2\2ba\3\2\2\2bc\3\2\2\2cd\3\2\2\2df"+
+		"\7\20\2\2eY\3\2\2\2eb\3\2\2\2f|\3\2\2\2gh\f\6\2\2hi\t\3\2\2i{\5\16\b\7"+
+		"jk\f\5\2\2kl\t\2\2\2l{\5\16\b\6mn\f\7\2\2nx\7\t\2\2oy\5\16\b\2pr\t\2\2"+
+		"\2qp\3\2\2\2qr\3\2\2\2rs\3\2\2\2sy\7\21\2\2tv\t\2\2\2ut\3\2\2\2uv\3\2"+
+		"\2\2vw\3\2\2\2wy\7\22\2\2xo\3\2\2\2xq\3\2\2\2xu\3\2\2\2y{\3\2\2\2zg\3"+
+		"\2\2\2zj\3\2\2\2zm\3\2\2\2{~\3\2\2\2|z\3\2\2\2|}\3\2\2\2}\17\3\2\2\2~"+
+		"|\3\2\2\2\177\u0082\7\16\2\2\u0080\u0082\7\17\2\2\u0081\177\3\2\2\2\u0081"+
+		"\u0080\3\2\2\2\u0082\21\3\2\2\2\26\26\33 )\67>BFITV[bequxz|\u0081";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
