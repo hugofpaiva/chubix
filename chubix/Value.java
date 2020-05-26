@@ -21,6 +21,11 @@ abstract public class Value
       assert false;
    }
 
+   public void setStringValue(String val)
+   {
+      assert false;
+   }
+
    public int intValue()
    {
       assert false;
@@ -36,6 +41,12 @@ abstract public class Value
    {
       assert false;
       return false;
+   }
+
+   public String stringValue()
+   {
+      assert false;
+      return "";
    }
 
 }

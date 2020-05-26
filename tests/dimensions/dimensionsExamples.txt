@@ -9,6 +9,7 @@ unit Velocity(mach: 200*m/s);
 dim Acceleration(m/(s^2) : distance/time^2 ); # ou   velocity^-2  
 
 dim Mass(kg: Double);
+
 dim Force(N: Mass*Acceleration);
 
 dim Potential(V: Double);

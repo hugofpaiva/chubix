@@ -1,0 +1,32 @@
+
+module(name,inst,func) ::= <<
+
+import java.util.Scanner;
+
+public class <name> {
+    public static Scanner sc = new Scanner(System.in); 
+
+    <functions(func)>
+    public static void main(String[] args){
+        <insts(inst)>
+    };
+}
+>>
+
+insts(inst) ::= <<
+<if(inst)> <inst; separator='\n'><endif>
+>>
+
+functions(func) ::= <<
+<if(func)> <func; separator='\n\n'><endif>
+>>
+
+//passar o tipo de dados dos args
+function(type, name, args, inst) :: =<< 
+    
+    public static <type> <name> (<if(args)><args separator=','> <endif>){
+        <insts(inst)>
+    }
+>>
+
+

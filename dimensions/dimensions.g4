@@ -1,5 +1,14 @@
 grammar dimensions;
 
+@parser::header {
+    import java.util.Map;
+    import java.util.HashMap;
+}
+
+@parser::members {
+    static protected Map<String,Symbol> dimTable = new HashMap<>();
+}
+
 main: statList EOF;
 
 statList: (stat? ';')*;
@@ -8,27 +17,28 @@ stat: dim
     | unit
     ;
 
-dim : 'dim' ID '(' unitdim ':' (unitdim|type) ')' ;
+dim : 'dim' ID '(' unitdim ':' (unitdim) ')'   #RelativeDim
+    | 'dim' ID '(' unitdim ':' (type) ')'      #PrimitiveDim
+    ;
 
-unit : 'unit' ID '('  unitdim  ':' expr ')' ;
+unit : 'unit' ID '('  unitdim  ':' expr ')';
 
 expr :  
-    <assoc=right> expr '^' expr               #ExprPower
-    | expr op=('*'|'/') expr                  #ExprMultDiv
-    | expr op=('+'|'-') expr                  #ExprSumMin
-    | op=('+'|'-')? '(' expr ')'              #ExprUnn
-    | op=('+'|'-')? ID                        #ExprID
-    | op=('+'|'-')? INTEGER                   #ExprInt
-    | op=('+'|'-')? DOUBLE                    #ExprDouble
-;
+    <assoc=right> expr '^' expr         #ExprPower
+    | expr op=('*'|'/') expr            #ExprMultDiv
+    | expr op=('+'|'-') expr            #ExprSumMin
+    | op=('+'|'-')? '(' expr ')'        #ExprUnn
+    | op=('+'|'-')? ID                  #ExprID
+    | op=('+'|'-')? INTEGER             #ExprInt
+    | op=('+'|'-')? DOUBLE              #ExprDouble
+    ;
 
 unitdim: 
     <assoc=right> unitdim '^' (unitdim| op=('+'|'-')? INTEGER | op=('+'|'-')? DOUBLE )      #DimPower
     | unitdim op=('*'|'/') unitdim                                                          #DimMultDiv
-    | unitdim op=('+'|'-') unitdim                                                          #DimSumMin
     | op=('+'|'-')? '(' unitdim ')'                                                         #DimUnn
     | op=('+'|'-')? ID                                                                      #DimID
-;
+    ;
 
 type ://returns[Type res]:
 	  'Integer'			#intType

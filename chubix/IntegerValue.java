@@ -1,5 +1,8 @@
 public class IntegerValue extends Value
 {
+   private int val;
+   private static IntegerType type = new IntegerType();
+
    public IntegerValue(int val)
    {
       setIntValue(val);
@@ -28,8 +31,4 @@ public class IntegerValue extends Value
    {
       return ""+val;
    }
-
-   private int val;
-
-   private static IntegerType type = new IntegerType();
 }
