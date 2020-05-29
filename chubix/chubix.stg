@@ -17,6 +17,35 @@ insts(inst) ::= <<
 <if(inst)> <inst; separator='\n'><endif>
 >>
 
+print(value) ::=
+<<
+System.out.println(<value>)
+>>
+
+input(value) ::= 
+<<
+sc.nextLine()
+>>
+
+
+
+
+declaration(type,var,value) ::= 
+<<
+<type> <var> <if(value)> = <value><endif>
+>>
+
+assign(var,value) ::=
+<< 
+<var> = <value>
+>>
+
+
+
+
+
+
+
 functions(func) ::= <<
 <if(func)> <func; separator='\n\n'><endif>
 >>

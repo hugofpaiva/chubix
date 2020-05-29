@@ -3,7 +3,7 @@ grammar chubix;
 @parser::members{
   int insideLoop = 0;
   int insideFunc = 0;
-  public static final SymbolTable map = new SymbolTable();
+  public static final HashMap<String, Symbol> map = new HashMap<String, Symbol>();
 }
 main: instList EOF;
 
@@ -35,8 +35,8 @@ function: {insideFunc==0}? {insideFunc++;}
 
 callFunction: func_name=ID '(' (expr (',' expr)*)? ')' ;
 
-assignment: ID '=' (expr|input|STRING) ('['unitdim']')?              #assignVar
-            | declare '=' (expr|input|STRING) ('['unitdim']')?       #defineVar
+assignment: ID '=' (valueex=expr|valuein=input|valuest=STRING) ('['unitdim']')?              #assignVar
+            | declare '=' (valueex=expr|valuein=input|valuest=STRING) ('['unitdim']')?       #defineVar
             ;
 
 declare: type ID;

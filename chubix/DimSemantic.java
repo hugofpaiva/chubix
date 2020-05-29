@@ -85,6 +85,9 @@ public class DimSemantic extends dimensionsBaseVisitor<Boolean> {
    @Override public Boolean visitDimUnn(dimensionsParser.DimUnnContext ctx) {
       return visitChildren(ctx);
    }
+    @Override public Boolean visitDimSumMin(dimensionsParser.DimSumMinContext ctx) {
+      return visitChildren(ctx);
+   }
 
    @Override public Boolean visitDimMultDiv(dimensionsParser.DimMultDivContext ctx) {
       return visitChildren(ctx);

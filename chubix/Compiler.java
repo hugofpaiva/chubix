@@ -2,6 +2,7 @@ import org.stringtemplate.v4.*;
 import java.util.Iterator;
 
 public class Compiler extends chubixBaseVisitor<ST> {
+   private STGroup templates = new STGroupFile("chubix.stg");
 
    @Override public ST visitMain(chubixParser.MainContext ctx) {
       return visitChildren(ctx);
@@ -41,15 +42,31 @@ public class Compiler extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitAssignVar(chubixParser.AssignVarContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("declaration");
+      res.add("type", ctx.type.getText());
+      res.add("type", ctx.ID.getText());
+      return res;
    }
 
    @Override public ST visitDefineVar(chubixParser.DefineVarContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("declaration");
+      res.add("type", visit(ctx.declare).type.getText());
+      res.add("var", visit(ctx.declare).ID.getText());
+      if(ctx.valueex != null){
+         res.add("value", visit(ctx.valueex));
+      }else if(ctx.valuest != null){
+         res.add("value",ctx.valuest.getText());
+      } else if(ctx.valuein != null){
+         res.add("value",visit(ctx.valuein));
+      }
+      return res;
    }
 
    @Override public ST visitDeclare(chubixParser.DeclareContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("declaration");
+      res.add("type", ctx.type.getText());
+      res.add("var", ctx.ID.getText());
+      return res;
    }
 
    @Override public ST visitConditional(chubixParser.ConditionalContext ctx) {
@@ -163,4 +180,5 @@ public class Compiler extends chubixBaseVisitor<ST> {
    @Override public ST visitDimID(chubixParser.DimIDContext ctx) {
       return visitChildren(ctx);
    }
+
 }

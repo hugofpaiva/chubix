@@ -1,10 +1,11 @@
 public class Symbol {
-    private final String name;
-    private final Type type;
-    private Value value;
-    private boolean valueDefined;
-    private String varName;
-    //private String unit = "";
+    private final String name;                  // var_x
+    private final Type type;                    // Integer
+    private Value value;                        // 2
+    private boolean valueDefined;               // true
+    private String varName;                     // ?
+    private String unit;                        // m
+    private String dimName;                     // Distancia
 
     public Symbol(String name, Type type) {
         assert name != null;
@@ -12,6 +13,18 @@ public class Symbol {
 
         this.name = name;
         this.type = type;
+    }
+
+    public void setDim(String dimName) {
+        assert dimName != null;
+
+        this.dimName = dimName;
+    }
+
+    public void setUnit(String unit) {
+        assert unit != null;
+
+        this.unit = unit;
     }
 
     public void setValue(Value value) {

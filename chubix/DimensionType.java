@@ -1,5 +1,6 @@
 import java.util.HashMap;
 
+
 public class DimensionType extends Type {
     private HashMap<String, Double> units;
     private Type dimType;
@@ -14,7 +15,15 @@ public class DimensionType extends Type {
     }
 
     @Override public boolean isNumeric() {
-       return true;
+        return true;
+    }
+
+    @Override public boolean conformsTo(Type other) {
+        return other.name().equals("integer") || other.name().equals("double");
+    }
+
+    public boolean dimConformsTo(DimensionType other) {
+        return other.name().equals(this.name());
     }
 
     public void addUnit(String unit, Double value) {
@@ -27,5 +36,8 @@ public class DimensionType extends Type {
         return this.dimType;
     }
 
-    
+    public HashMap<String, Double> getUnits(){
+        return units;
+    }
+        
 }

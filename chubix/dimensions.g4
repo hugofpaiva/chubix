@@ -6,7 +6,7 @@ grammar dimensions;
 }
 
 @parser::members {
-    static protected Map<String,Symbol> dimTable = new HashMap<>();
+    static protected Map<String,DimensionType> dimTable = new HashMap<>();
 }
 
 main: statList EOF;
@@ -40,9 +40,9 @@ unitdim:
     | op=('+'|'-')? ID                                                                      #DimID
     ;
 
-type ://returns[Type res]:
-	  'Integer'			#intType
-	| 'Double'			#doubleType
+type returns[Type res]:
+	  'Integer'			{$res = new IntegerType();}
+	| 'Double'			{$res = new DoubleType();}    
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
