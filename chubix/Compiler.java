@@ -3,6 +3,12 @@ import java.util.Iterator;
 
 public class Compiler extends chubixBaseVisitor<ST> {
    private STGroup templates = new STGroupFile("chubix.stg");
+   private int numVars = 0;
+
+   private String newVar() {
+      numVars++;
+      return "v"+numVars;
+   }
 
    @Override public ST visitMain(chubixParser.MainContext ctx) {
       return visitChildren(ctx);
@@ -43,8 +49,9 @@ public class Compiler extends chubixBaseVisitor<ST> {
 
    @Override public ST visitAssignVar(chubixParser.AssignVarContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-      res.add("type", ctx.type.getText());
-      res.add("type", ctx.ID.getText());
+      res.add("type", ctx.ID().getText());
+      res.add("inst", visit(ctx.expr()).render());
+      res.add("value", ctx.expr().varName);
       return res;
    }
 

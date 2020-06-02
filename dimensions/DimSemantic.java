@@ -19,14 +19,13 @@ public class DimSemantic extends dimensionsBaseVisitor<Boolean> {
 */
 
    @Override public Boolean visitRelativeDim(dimensionsParser.RelativeDimContext ctx) {
-      
       return visitChildren(ctx);
    }
 
    @Override public Boolean visitPrimitiveDim(dimensionsParser.PrimitiveDimContext ctx) {
-      String id = ctx.ID().getText();
-      String unit = ctx.unitdim().getText();
-      Type type = ctx.type().getText().res;
+      String id = ctx.ID(0).getText();
+      String unit = ctx.ID(1).getText();
+      Type type = ctx.type().res;
       
       if (dimensionsParser.dimTable.containsKey(id))
       {
@@ -34,19 +33,45 @@ public class DimSemantic extends dimensionsBaseVisitor<Boolean> {
          // sys exit
          return false;
       }
-      for (DimensionType dimType : dimensionsParser.dimTable.valuesalues()){
-         if (dimType.containsKey(unit)) {
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
+         if (dimensionsType.getUnits().containsKey(unit)) {
             ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
             return false;
          }
       }
-
-      DimParser.dimTable.put(id, new DimensionType(id, unit, type));  //add dim to map dimTable
+      dimensionsParser.dimTable.put(id, new DimensionsType(id, unit, type));  //add dim to map dimTable
+      
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
+         System.out.println(dimensionsType.toString());
+      }
 
       return true;
    }
 
    @Override public Boolean visitUnit(dimensionsParser.UnitContext ctx) {
+      String id = ctx.ID(0).getText();
+      String unit = ctx.ID(1).getText();
+      Symbol symbol = visit(ctx.expr()); // we dunno yet
+
+      /*
+         unit velo(km : 1000*m)
+      */
+
+      if (dimensionsParser.dimTable.containsKey(id))
+      {
+         ErrorHandling.printError(ctx, "Dimension \""+id+"\" already defined.\"");
+         // sys exit
+         return false;
+      }
+      
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
+         if (dimensionsType.getUnits().containsKey(unit)) {
+            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
+            return false;
+         }
+      }
+      
+
       return visitChildren(ctx);
    }
 

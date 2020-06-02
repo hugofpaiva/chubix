@@ -22,9 +22,7 @@ instruction:  print
             | returnFunc
             ;
 
-print: 'print' '(' (expr|STRING)? ')';
-
-input: 'input' '(' STRING? ')';
+print: 'print' '(' (expr)? ')';
 
 returnFunc: {insideFunc > 0}? 'return' (expr)?;
 
@@ -35,8 +33,8 @@ function: {insideFunc==0}? {insideFunc++;}
 
 callFunction: func_name=ID '(' (expr (',' expr)*)? ')' ;
 
-assignment: ID '=' (valueex=expr|valuein=input|valuest=STRING) ('['unitdim']')?              #assignVar
-            | declare '=' (valueex=expr|valuein=input|valuest=STRING) ('['unitdim']')?       #defineVar
+assignment: ID '=' expr             #assignVar
+            | declare '=' expr      #defineVar
             ;
 
 declare: type ID;
@@ -61,7 +59,7 @@ breakLoop: {insideLoop > 0}? 'break';
 
 continueLoop: {insideLoop > 0}? 'continue';
            
-type ://returns[Type res]:
+type returns[Type res]:
 	  'Integer'			#intType
 	| 'Double'			#doubleType
 	| 'Boolean'			#boolType
@@ -69,7 +67,7 @@ type ://returns[Type res]:
   | ID            #dimensionType
 	;
 
-expr: //returns[Type exprType, String varName]:
+expr returns[Type exprType, String varName]:
       sign=('+'|'-') expr                                         #signExpr
     | <assoc=right> expr '^' expr                                 #powExpr
     | expr op=('*' | '/' | '%' | '//') expr                       #multDivRestExpr
@@ -77,10 +75,12 @@ expr: //returns[Type exprType, String varName]:
     | expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') expr        #conditionalExpr
     | '(' expr ')'                                                #parenExpr
     | ID op=('++' | '--')                                         #doubleSumMin
+    | 'input' '(' STRING? ')' ('['unitdim']')                     #inputExpr
     | DOUBLE ('['unitdim']')?                                     #doubleExpr
     | INTEGER ('['unitdim']')?                                    #integerExpr
     | BOOLEAN                                                     #booleanExpr
     | ID                                                          #idExpr
+    | STRING                                                      #stringExpr
     | callFunction                                                #functionExpr
     ;
 
