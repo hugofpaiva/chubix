@@ -3,26 +3,26 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.HashMap;
 
-public class DimSemantic extends dimensionsBaseVisitor<Boolean> {
+public class DimSemantic extends dimensionsBaseVisitor<Value> {
 /*
-   @Override public Boolean visitMain(dimensionsParser.MainContext ctx) {
+   @Override public Value visitMain(dimensionsParser.MainContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitStatList(dimensionsParser.StatListContext ctx) {
+   @Override public Value visitStatList(dimensionsParser.StatListContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitStat(dimensionsParser.StatContext ctx) {
+   @Override public Value visitStat(dimensionsParser.StatContext ctx) {
       return visitChildren(ctx);
    }
 */
 
-   @Override public Boolean visitRelativeDim(dimensionsParser.RelativeDimContext ctx) {
+   @Override public Value visitRelativeDim(dimensionsParser.RelativeDimContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitPrimitiveDim(dimensionsParser.PrimitiveDimContext ctx) {
+   @Override public Value visitPrimitiveDim(dimensionsParser.PrimitiveDimContext ctx) {
       String id = ctx.ID(0).getText();
       String unit = ctx.ID(1).getText();
       Type type = ctx.type().res;
@@ -30,92 +30,101 @@ public class DimSemantic extends dimensionsBaseVisitor<Boolean> {
       if (dimensionsParser.dimTable.containsKey(id))
       {
          ErrorHandling.printError(ctx, "Dimension \""+id+"\" already defined.\"");
-         // sys exit
-         return false;
+         return new BooleanValue(false);
       }
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.getUnits().containsKey(unit)) {
             ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
-            return false;
+            return new BooleanValue(false);
          }
       }
-      dimensionsParser.dimTable.put(id, new DimensionsType(id, unit, type));  //add dim to map dimTable
       
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
-         System.out.println(dimensionsType.toString());
-      }
+      dimensionsParser.dimTable.put(id, new DimensionsType(id, unit, type));  //add dim to map dimTable
 
-      return true;
+      return new BooleanValue(true);
    }
 
-   @Override public Boolean visitUnit(dimensionsParser.UnitContext ctx) {
+   @Override public Value visitUnit(dimensionsParser.UnitContext ctx) {
       String id = ctx.ID(0).getText();
       String unit = ctx.ID(1).getText();
-      Symbol symbol = visit(ctx.expr()); // we dunno yet
+      Value value = visit(ctx.expr()); // returns the value of the unit
+      
+      double conversion_value;
+      if (value.type().name().equals("double"))
+         conversion_value = value.doubleValue();
+      else 
+         conversion_value = value.intValue();
+  
+      // default m
+      //    unit velo(km : 1000*dm)
+         
+      //    -> dm : 4
 
-      /*
-         unit velo(km : 1000*m)
-      */
+      //    -> 4*1000
 
-      if (dimensionsParser.dimTable.containsKey(id))
+      //    -> 4000m
+      
+      if (!dimensionsParser.dimTable.containsKey(id))
       {
          ErrorHandling.printError(ctx, "Dimension \""+id+"\" already defined.\"");
          // sys exit
-         return false;
+         return new BooleanValue(false);
       }
       
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
          if (dimensionsType.getUnits().containsKey(unit)) {
             ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
-            return false;
+            return new BooleanValue(false);
          }
       }
-      
+
+      // para o interpreter
+      dimensionsParser.dimTable.get(id).getUnits().put(unit, conversion_value);
 
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprUnn(dimensionsParser.ExprUnnContext ctx) {
+   @Override public Value visitExprUnn(dimensionsParser.ExprUnnContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprDouble(dimensionsParser.ExprDoubleContext ctx) {
+   @Override public Value visitExprDouble(dimensionsParser.ExprDoubleContext ctx) {
+      return new DoubleValue(Double.parseDouble(ctx.DOUBLE().getText()));
+   }
+
+   @Override public Value visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
+   @Override public Value visitExprInt(dimensionsParser.ExprIntContext ctx) {
+      return new IntegerValue(Integer.parseInt(ctx.INTEGER().getText()));
+   }
+
+   @Override public Value visitExprMultDiv(dimensionsParser.ExprMultDivContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprInt(dimensionsParser.ExprIntContext ctx) {
+   @Override public Value visitExprPower(dimensionsParser.ExprPowerContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprMultDiv(dimensionsParser.ExprMultDivContext ctx) {
+   @Override public Value visitExprID(dimensionsParser.ExprIDContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprPower(dimensionsParser.ExprPowerContext ctx) {
+   @Override public Value visitDimPower(dimensionsParser.DimPowerContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitExprID(dimensionsParser.ExprIDContext ctx) {
+   @Override public Value visitDimUnn(dimensionsParser.DimUnnContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitDimPower(dimensionsParser.DimPowerContext ctx) {
+   @Override public Value visitDimMultDiv(dimensionsParser.DimMultDivContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitDimUnn(dimensionsParser.DimUnnContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public Boolean visitDimMultDiv(dimensionsParser.DimMultDivContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public Boolean visitDimID(dimensionsParser.DimIDContext ctx) {
+   @Override public Value visitDimID(dimensionsParser.DimIDContext ctx) {
       return visitChildren(ctx);
    }
 
