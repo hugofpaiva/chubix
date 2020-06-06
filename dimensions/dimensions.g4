@@ -29,8 +29,8 @@ expr :
     | expr op=('+'|'-') expr            #ExprSumMin
     | op=('+'|'-')? '(' expr ')'        #ExprUnn
     | op=('+'|'-')? ID                  #ExprID
-    | op=('+'|'-')? INTEGER             #ExprInt
-    | op=('+'|'-')? DOUBLE              #ExprDouble
+    | INTEGER                           #ExprInt
+    | DOUBLE                            #ExprDouble
     ;
 
 unitdim:
@@ -46,8 +46,8 @@ type returns[Type res]:
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INTEGER : [0-9]+;
-DOUBLE: [0-9]+ ('.' [0-9]+)?;
+INTEGER : ('+'|'-')? [0-9]+;
+DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n' -> skip;
 ERROR: .;

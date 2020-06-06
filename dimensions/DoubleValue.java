@@ -1,5 +1,8 @@
 public class DoubleValue extends Value
 {
+   private double val;
+   private static Type type = new DoubleType();
+
    public DoubleValue(double val)
    {
       setDoubleValue(val);
@@ -28,9 +31,5 @@ public class DoubleValue extends Value
    {
       return ""+val;
    }
-
-   private double val;
-
-   private static Type type = new DoubleType();
 }
 

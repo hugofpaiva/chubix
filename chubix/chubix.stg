@@ -1,3 +1,10 @@
+typeValue ::= [
+    "Integer"  : "int",
+    "Double"     : "double",
+    "Boolean"  : "boolean",
+    "String"   : "String",
+    default    : "null"
+]
 
 module(name,inst,func) ::= <<
 
@@ -14,7 +21,7 @@ public class <name> {
 >>
 
 insts(inst) ::= <<
-<if(inst)> <inst; separator='\n'><endif>
+<if(inst)> <inst; separator="\n"><endif>
 >>
 
 print(inst, value) ::=
@@ -22,36 +29,34 @@ print(inst, value) ::=
 <insts(inst)>
 System.out.println(<value>);
 >>
+// Input
+input(value) ::= "sc.nextLine();"
 
-input(value) ::= 
-<<
-sc.nextLine();
->>
-
-// no insts inserimos a declaração das variáveis, as contas com elas e etc, consoante as operações
-declaration(type,var,value,inst) ::= 
-<<
-<insts(inst)>
-
-<type> <var> <if(value)> = <value><endif>;
->>
-
-assign(var,value) ::=
-<< 
-<var> = <value>;
+// Declaration serve para o declaration e para o assign
+declaration(type,var,value,inst) ::=<< 
+<if(inst)><insts(inst)><endif>
+<if(type)><type><endif> <var><if(value)> = <value>;<endif>
 >>
 
 
 
 
 
-forLoop(assign1 ,expr,assign2,inst) :: =<<
+binaryOperation(inst,type,var,e1,op,e2) ::= <<
+<declaration(type, var, [e1, " ", op, " ", e2], inst)>
+>>
+
+
+
+
+
+forLoop(assign1 ,expr,assign2,inst) ::= <<
 for (<assign1>; <expr>; <assign2>) {
 <insts(inst)>
 };
 >>
 
-whileLoop(expr, inst) :: <<
+whileLoop(expr, inst) ::= <<
 
 while (<expr>) {
 <insts(inst)>
@@ -61,40 +66,18 @@ while (<expr>) {
 
 
 
-conditional(conditions,inst,else) :: <<
-
-if(expr){
-    <inst>
-}<if (else)>
-else{
-<elseCond(else)>
-}<endif>
-
->>
-
-
-elseCond(conditional, inst) :: <<
-else <if (conditional)><conditional>
-<else>{
-<insts(inst)>
-}<endif>
-
-
-
->>
-
 
 
 
 
 functions(func) ::= <<
-<if(func)> <func; separator='\n\n'><endif>
+<if(func)> <func; separator="\n\n"><endif>
 >>
 
 //passar o tipo de dados dos args
-function(type, name, args, inst) :: =<< 
+function(type, name, args, inst) ::= << 
     
-    public static <type> <name> (<if(args)><args separator=','> <endif>){
+    public static <type> <name> (<if(args)><args;separator=","> <endif>){
         <insts(inst)>
     }
 >>

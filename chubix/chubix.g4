@@ -5,6 +5,10 @@ grammar chubix;
   int insideFunc = 0;
   public static final HashMap<String, Symbol> map = new HashMap<String, Symbol>();
 }
+@parser::header{
+  import java.util.HashMap;
+}
+
 main: instList EOF;
 
 instList: (instruction? ';')* ;
@@ -69,10 +73,10 @@ type returns[Type res]:
 
 expr returns[Type exprType, String varName]:
       sign=('+'|'-') expr                                         #signExpr
-    | <assoc=right> expr '^' expr                                 #powExpr
-    | expr op=('*' | '/' | '%' | '//') expr                       #multDivRestExpr
-    | expr op=('+' | '-') expr                                    #addSubExpr
-    | expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') expr        #conditionalExpr
+    | <assoc=right> e1=expr '^' e2=expr                                 #powExpr
+    | e1=expr op=('*' | '/' | '%' | '//') e2=expr                       #multDivRestExpr
+    | e1=expr op=('+' | '-') e2=expr                                    #addSubExpr
+    | e1=expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') e2=expr        #conditionalExpr
     | '(' expr ')'                                                #parenExpr
     | ID op=('++' | '--')                                         #doubleSumMin
     | 'input' '(' STRING? ')' ('['unitdim']')                     #inputExpr
