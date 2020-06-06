@@ -11,7 +11,7 @@ public class DimensionsType extends Type {
         assert unit != null;
         assert dimType != null;
         this.units = new HashMap<>();
-        this.defaultUnit=unit;
+        this.defaultUnit = unit;
         this.units.put(unit, 1.0);
         this.dimType = dimType;
     }
@@ -38,4 +38,7 @@ public class DimensionsType extends Type {
         return units;
     }
 
+    public String getUnit(){
+        return defaultUnit;
+    }
 }

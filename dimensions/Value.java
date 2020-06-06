@@ -49,5 +49,59 @@ abstract public class Value
       return "";
    }
 
-}
+   public Value sum(Value v2){
+      if (this.type().name().equals("integer")){
+         if (v2.type().name().equals("integer"))
+            return new IntegerValue(this.intValue()+v2.intValue());
+         else
+            return new DoubleValue(this.intValue()+v2.doubleValue());
+      } else {
+         if (v2.type().name().equals("integer"))
+            return new DoubleValue(this.doubleValue()+v2.intValue());
+         else
+            return new DoubleValue(this.doubleValue()+v2.doubleValue());
+      }
+   }
 
+   public Value sub(Value v2) {
+      if (this.type().name().equals("integer")){
+         if (v2.type().name().equals("integer"))
+            return new IntegerValue(this.intValue()-v2.intValue());
+         else
+            return new DoubleValue(this.intValue()-v2.doubleValue());
+      } else {
+         if (v2.type().name().equals("integer"))
+            return new DoubleValue(this.doubleValue()-v2.intValue());
+         else
+            return new DoubleValue(this.doubleValue()-v2.doubleValue());
+      }
+   }
+
+   public Value div(Value v2) {
+      if (this.type().name().equals("integer")){
+         if (v2.type().name().equals("integer"))
+            return new IntegerValue(this.intValue()/v2.intValue());
+         else
+            return new DoubleValue(this.intValue()/v2.doubleValue());
+      } else {
+         if (v2.type().name().equals("integer"))
+            return new DoubleValue(this.doubleValue()/v2.intValue());
+         else
+            return new DoubleValue(this.doubleValue()/v2.doubleValue());
+      }
+   }
+
+   public Value mul(Value v2) {
+      if (this.type().name().equals("integer")){
+         if (v2.type().name().equals("integer"))
+            return new IntegerValue(this.intValue()*v2.intValue());
+         else
+            return new DoubleValue(this.intValue()*v2.doubleValue());
+      } else {
+         if (v2.type().name().equals("integer"))
+            return new DoubleValue(this.doubleValue()*v2.intValue());
+         else
+            return new DoubleValue(this.doubleValue()*v2.doubleValue());
+      }
+   }
+}

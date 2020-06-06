@@ -143,9 +143,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());
       res.add("e2", ctx.e2.varName);
-
-
-
       return res;
    }
 
@@ -166,8 +163,12 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.BOOLEAN().getText());
       return res;
    }
-
+   //ta a fazer input no meu terminal xD
    @Override public ST visitInputExpr(chubixParser.InputExprContext ctx) {
+
+      ST res = templates.getInstanceOf("input");
+      res.add("value",ctx.STRING().getText());
+
       return visitChildren(ctx);
    }
 
@@ -189,21 +190,54 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.STRING().getText());
       return res;
    }
-
+   // parece estar a dar
    @Override public ST visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
-      return visitChildren(ctx);
-   }
+      ST res = templates.getInstanceOf("declaration");
+      ctx.varName = newVar();
+      res.add("type","Double");
+      res.add("var",ctx.varName);
+      res.add("value",ctx.ID().getText()+ctx.op.getText());
 
+      return res;
+   }
+   //feito de maneira estupida
    @Override public ST visitSignExpr(chubixParser.SignExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("binaryOperation");
+      ctx.varName = newVar();
+      res.add("inst", visit(ctx.expr()).render());
+      res.add("type", "Double");
+      res.add("var", ctx.varName);
+      res.add("e1", 0);
+      res.add("op", ctx.sign.getText());
+      res.add("e2", ctx.expr().varName);
+      return res;
+      
    }
 
    @Override public ST visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) {
-      return visitChildren(ctx);
-   }
+      ST res = templates.getInstanceOf("binaryOperation");
+      ctx.varName = newVar();
 
+      res.add("inst", visit(ctx.e1).render());
+      res.add("inst", visit(ctx.e2).render());
+      res.add("type", "Double");
+      res.add("var", ctx.varName);
+      res.add("e1", ctx.e1.varName);
+      res.add("op", ctx.op.getText());
+      res.add("e2", ctx.e2.varName);
+      return res;
+   }
+   // feito i guess
    @Override public ST visitPowExpr(chubixParser.PowExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("powerExpr");
+      ctx.varName = newVar();
+      res.add("inst",visit(ctx.e1).render());
+      res.add("inst",visit(ctx.e2).render());
+      res.add("type","Double");
+      res.add("var",ctx.varName);
+      res.add("e1",ctx.e1.varName);
+      res.add("e2",ctx.e2.varName);
+      return res;
    }
 
    @Override public ST visitConditionalExpr(chubixParser.ConditionalExprContext ctx) {

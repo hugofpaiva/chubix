@@ -6,6 +6,8 @@ public class DoubleType extends Type {
     public boolean isNumeric() {
        return true;
     }
+
+    
 }
  
  

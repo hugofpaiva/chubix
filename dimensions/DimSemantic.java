@@ -1,6 +1,7 @@
 import static java.lang.System.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
+
 import java.util.HashMap;
 
 public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
@@ -30,19 +31,19 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       
       if (dimensionsParser.dimTable.containsKey(dim))
       {
-         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.\"");
-         return new BooleanValue(false);
+         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.");
+         return null;
       }
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.getUnits().containsKey(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
-            return new BooleanValue(false);
+            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
+            return null;
          }
       }
       
       dimensionsParser.dimTable.put(dim, new DimensionsType(dim, unit, type));  //add dim to map dimTable
 
-      return new BooleanValue(true);
+      return null;
    }
 
    @Override public Symbol visitUnit(dimensionsParser.UnitContext ctx) {
@@ -50,56 +51,33 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
       if (!dimensionsParser.dimTable.containsKey( dim ))
       {
-         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.\"");
+         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.");
          // sys exit
-         return new BooleanValue(false);
+         return null;
       }
 
-      Type dimType = dim.getType();
+      Type dimType = dimensionsParser.dimTable.get(dim);
 
       String unit = ctx.ID(1).getText();
 
-      Symbol value = visit(ctx.expr()); // returns the value of the unit
+      Symbol sym = visit(ctx.expr()); // returns the value of the unit
 
-      // m/s
 
-      // 200m * 30s = 6000 m/S
-
-      // val 200
-      // type dimtype distancia
-
-      // val 6000
-      // type 
-
-      double conversion_value;
-      if (value.type().name().equals("double"))
-         conversion_value = value.doubleValue();
+      Double convert_value;
+      if (sym.value().type().name().equals("double"))
+         convert_value = sym.value().doubleValue();
       else 
-         conversion_value = value.intValue();
-  
-      // default m
-      //    unit velo(km : 1000*dm)       
-      //    -> dm : 4
-      //    -> 4*1000
-      //    -> 4000m
-
-      // default m/s -> 1
-      // unit
-      // mack 200 * m/s
-      // -> 200 * 1
-      // -> 200
-      
-      
+         convert_value = (double)sym.value().intValue();  
       
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
          if (dimensionsType.getUnits().containsKey(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.\"");
-            return new BooleanValue(false);
+            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
+            return null;
          }
       }
 
       // para o interpreter
-      dimensionsParser.dimTable.get(dim).getUnits().put(unit, conversion_value);
+      dimensionsParser.dimTable.get(dim).getUnits().put(unit, convert_value);
 
       return visitChildren(ctx);
    }
@@ -107,12 +85,12 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
 
    @Override public Symbol visitExprUnn(dimensionsParser.ExprUnnContext ctx) {
-      if (ctc.op().getText().equals("-")) {
+      if (ctx.op.getText().equals("-")) {
          Symbol sym = visitChildren(ctx);
-         if (value.type().name().equals("double"))
+         if (sym.value().type().name().equals("double"))
             sym.value().setDoubleValue(-sym.value().doubleValue());
          else 
-            sym.value().setIntegerValue(-sym.value().integerValue());  
+            sym.value().setIntValue(-sym.value().intValue());  
          return sym;
       }
       return visitChildren(ctx);
@@ -122,8 +100,32 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       return new Symbol(new DoubleType(), new DoubleValue(Double.parseDouble(ctx.DOUBLE().getText())));
    }
 
-   @Override public Value visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
-      return visitChildren(ctx);
+   @Override public Symbol visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
+      String op = ctx.op.getText();
+
+      Symbol v1 = visit(ctx.expr(0)); 
+      Symbol v2 = visit(ctx.expr(1));
+
+      // semantic check
+      if (!v1.type().conformsTo(v2.type())) {
+         ErrorHandling.printError(ctx, "Units are not of the same dimension.");
+         return null;
+      }
+
+      Type resType = new IntegerType();
+      if (!v1.dim().equals(""))
+         resType = v1.type();
+      else if (v1.value().type().name().equals("double") || v2.value().type().name().equals("double"))
+         resType = new DoubleType();
+
+      switch (op) {
+         case "+":
+            return new Symbol(resType, v1.value().sum(v2.value()));
+         case "-":
+            return new Symbol(resType, v1.value().sub(v2.value()));
+      }
+
+      return null;
    }
 
    @Override public Symbol visitExprInt(dimensionsParser.ExprIntContext ctx) {
@@ -131,7 +133,47 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
    }
 
    @Override public Symbol visitExprMultDiv(dimensionsParser.ExprMultDivContext ctx) {
-      return visitChildren(ctx);
+      String op = ctx.op.getText();
+
+      Symbol v1 = visit(ctx.expr(0));
+      Symbol v2 = visit(ctx.expr(1));
+
+      Type resType = null;
+      
+      if (!v1.dim().equals("")){
+         if (v1.dim().equals(v2.dim()))
+            resType = v1.type();
+         else {
+            if (!v2.dim().equals("")){
+               // check if complex dimension exists
+               String unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
+               for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
+                  if (dimensionsType.getUnits().containsKey(unit)) {
+                     resType = dimensionsType;
+                  }
+               }
+               if (resType == null){
+                  ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
+                  return null;
+               }
+            } else {
+               resType = v1.type();
+            }
+         }
+      }
+      else if (v1.type().name().equals("double") || v2.type().name().equals("double"))
+         resType = new DoubleType();  
+      else
+         resType = new IntegerType();
+          
+      switch (op) {
+         case "*":
+            return new Symbol(resType, v1.value().mul(v2.value()));
+         case "/":
+            return new Symbol(resType, v1.value().div(v2.value()));
+      }
+      
+      return null;
    }
 
    @Override public Symbol visitExprPower(dimensionsParser.ExprPowerContext ctx) {
@@ -140,19 +182,24 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitExprID(dimensionsParser.ExprIDContext ctx) {
       String unit = ctx.ID().getText();
-      
       // check if ID exists
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
          if (dimensionsType.getUnits().containsKey(unit)) {
-            return new Symbol(dimensionsType, dimensionsType.getUnits().get(unit)).setDim(dimensionsType.name);
+            Symbol temp;
+            if (dimensionsType.getType().name().equals("integer")){
+               temp = new Symbol(dimensionsType, new IntegerValue(dimensionsType.getUnits().get(unit).intValue()));
+               temp.setDim(dimensionsType.name());
+               return temp;
+            } else {
+               temp = new Symbol(dimensionsType, new DoubleValue(dimensionsType.getUnits().get(unit)));
+               temp.setDim(dimensionsType.name());
+               return temp;
+            }
          }
       }
-      ErrorHandling.printError(ctx, "Unit \""+unit+"\" not defined.\"");
+      ErrorHandling.printError(ctx, "Unit \""+unit+"\" not defined.");
       return null;
    }
-
-
-
 
    @Override public Symbol visitDimPower(dimensionsParser.DimPowerContext ctx) {
       return visitChildren(ctx);
