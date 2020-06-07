@@ -81,11 +81,19 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConditional(chubixParser.ConditionalContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link chubixParser#elseCond}.
+	 * Visit a parse tree produced by the {@code conditionalElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitElseCond(chubixParser.ElseCondContext ctx);
+	T visitConditionalElse(chubixParser.ConditionalElseContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code instElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInstElse(chubixParser.InstElseContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link chubixParser#forLoop}.
 	 * @param ctx the parse tree

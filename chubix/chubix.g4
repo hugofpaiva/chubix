@@ -45,7 +45,7 @@ declare: type ID;
 
 conditional: 'if' '(' expr ')' '{' trueSL=instList '}' ('else' falseSL=elseCond)?;
 
-elseCond: conditional               #contionalElse
+elseCond: conditional               #conditionalElse
         | '{' instList '}'          #instElse
         ;
 

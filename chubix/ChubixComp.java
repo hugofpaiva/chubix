@@ -1,6 +1,7 @@
 import org.stringtemplate.v4.*;
 import java.util.Iterator;
 
+
 public class ChubixComp extends chubixBaseVisitor<ST> {
    private STGroup templates = new STGroupFile("chubix.stg");
    private int numVars = 0;
@@ -9,24 +10,28 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       numVars++;
       return "v"+numVars;
    }
+   
    //FEITO
    @Override public ST visitMain(chubixParser.MainContext ctx) {
-      return visit(ctx.instList());
+      ST res = templates.getInstanceOf("module");
+      res.add("inst", visit(ctx.instList()).render());   
+      return res;
    }
+
    //FEITO
    @Override public ST visitInstList(chubixParser.InstListContext ctx) {
-      ST res = templates.getInstanceOf("module");
+      ST res = templates.getInstanceOf("insts");
       Iterator<chubixParser.InstructionContext> list = ctx.instruction().iterator();
       while (list.hasNext()) {
          res.add("inst", visit(list.next()).render());
       }
       return res;
    }
-   //FEITO
+
    @Override public ST visitInstruction(chubixParser.InstructionContext ctx) {
       return visitChildren(ctx);
    }
-   //FEITO
+   //Tratar tipos
    @Override public ST visitPrint(chubixParser.PrintContext ctx) {
       ST res = templates.getInstanceOf("print");
       if(ctx.expr()!=null){
@@ -47,7 +52,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitCallFunction(chubixParser.CallFunctionContext ctx) {
       return visitChildren(ctx);
    }
-   //FEITO  
+
+   //FEITO
    @Override public ST visitAssignVar(chubixParser.AssignVarContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
@@ -56,7 +62,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.expr().varName);     
       return res;
    }
-   //Tratar dos tipos
+   //Tratar tipos
    @Override public ST visitDefineVar(chubixParser.DefineVarContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
@@ -69,7 +75,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       return res;
    }
-   //Tratar dos tipos
+
+   //TRATAR TIPOS
    @Override public ST visitDeclare(chubixParser.DeclareContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
@@ -80,15 +87,30 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitConditional(chubixParser.ConditionalContext ctx) {
+      ST res = templates.getInstanceOf("cond");
+
+      res.add("expr", ctx.expr().getText());
+      res.add("inst", visit(ctx.trueSL).render());  
+      
+      return res;
+   }
+
+   @Override public ST visitConditionalElse(chubixParser.ConditionalElseContext ctx) {
       return visitChildren(ctx);
    }
 
-   @Override public ST visitElseCond(chubixParser.ElseCondContext ctx) {
+   @Override public ST visitInstElse(chubixParser.InstElseContext ctx) {
       return visitChildren(ctx);
    }
 
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("forLoop");
+      res.add("inst",visit(ctx.var).render());
+      res.add("assign1", );
+      res.add("expr",ctx.expr().getText());
+      res.add("assign2",visit(ctx.assignment(1)).render());
+      res.add("inside",visit(ctx.instList()).render());
+      return res;
    }
 
    @Override public ST visitWhileLoop(chubixParser.WhileLoopContext ctx) {
@@ -122,7 +144,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitDimensionType(chubixParser.DimensionTypeContext ctx) {
       return visitChildren(ctx);
    }
-   //Tratar dos tipos
+   //FEITO
    @Override public ST visitDoubleExpr(chubixParser.DoubleExprContext ctx) {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
@@ -131,7 +153,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.DOUBLE().getText());
       return res;
    }
-    //Tratar dos tipos
+
+   //TRATAR TIPOS
    @Override public ST visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
       ST res = templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
@@ -163,7 +186,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.BOOLEAN().getText());
       return res;
    }
-    //Tratar dos tipos
+   //TRATAR TIPOS
    @Override public ST visitInputExpr(chubixParser.InputExprContext ctx) {
       ctx.varName = newVar();
       ST res = templates.getInstanceOf("input");
@@ -201,7 +224,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    
       return res;
    }
-   //Tratar tipos
+
+   //TRATAR TIPOS
    @Override public ST visitSignExpr(chubixParser.SignExprContext ctx) {
       ST res = templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
@@ -212,9 +236,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("op", ctx.sign.getText());
       res.add("e2", ctx.expr().varName);
       return res;
-      
    }
-   //Tratar tipos
+
    @Override public ST visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) {
       ST res = templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
@@ -228,7 +251,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("e2", ctx.e2.varName);
       return res;
    }
-   //Tratar tipos
+
+   //TRATAR TIPOS
    @Override public ST visitPowExpr(chubixParser.PowExprContext ctx) {
       ST res = templates.getInstanceOf("powerExpr");
       ctx.varName = newVar();

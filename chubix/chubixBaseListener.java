@@ -150,13 +150,25 @@ public class chubixBaseListener implements chubixListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterElseCond(chubixParser.ElseCondContext ctx) { }
+	@Override public void enterConditionalElse(chubixParser.ConditionalElseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitElseCond(chubixParser.ElseCondContext ctx) { }
+	@Override public void exitConditionalElse(chubixParser.ConditionalElseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInstElse(chubixParser.InstElseContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInstElse(chubixParser.InstElseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

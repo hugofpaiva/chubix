@@ -151,6 +151,18 @@ public class dimensionsBaseListener implements dimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExprSign(dimensionsParser.ExprSignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprSign(dimensionsParser.ExprSignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExprPower(dimensionsParser.ExprPowerContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -218,6 +230,18 @@ public class dimensionsBaseListener implements dimensionsListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDimID(dimensionsParser.DimIDContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDimSign(dimensionsParser.DimSignContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDimSign(dimensionsParser.DimSignContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

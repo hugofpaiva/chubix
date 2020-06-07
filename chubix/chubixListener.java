@@ -124,15 +124,29 @@ public interface chubixListener extends ParseTreeListener {
 	 */
 	void exitConditional(chubixParser.ConditionalContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link chubixParser#elseCond}.
+	 * Enter a parse tree produced by the {@code conditionalElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
 	 * @param ctx the parse tree
 	 */
-	void enterElseCond(chubixParser.ElseCondContext ctx);
+	void enterConditionalElse(chubixParser.ConditionalElseContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link chubixParser#elseCond}.
+	 * Exit a parse tree produced by the {@code conditionalElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
 	 * @param ctx the parse tree
 	 */
-	void exitElseCond(chubixParser.ElseCondContext ctx);
+	void exitConditionalElse(chubixParser.ConditionalElseContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code instElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
+	 * @param ctx the parse tree
+	 */
+	void enterInstElse(chubixParser.InstElseContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code instElse}
+	 * labeled alternative in {@link chubixParser#elseCond}.
+	 * @param ctx the parse tree
+	 */
+	void exitInstElse(chubixParser.InstElseContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link chubixParser#forLoop}.
 	 * @param ctx the parse tree

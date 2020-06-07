@@ -3,10 +3,10 @@ dim Distance(m: Double);
 dim Time(s: Integer);
 unit Time(h: 3600*s);
 
-dim Velocity(m/s: distancia/time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
+dim Velocity(Distance/Time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
 unit Velocity(mach: 200*m/s);
 
-dim Acceleration(m/(s^2) : distance/time^2 ); # ou   velocity^-2  
+dim Acceleration(Distance/Time^2); # ou   velocity^-2  
 
 dim Mass(kg: Double);
 
@@ -26,6 +26,6 @@ unit Power(KW: W*10^3);
 
 dim Price(euro : Double);
 
-dim PricePerPowerTime(euro/W*s :Price/Power*Time);
+dim PricePerPowerTime(Price/Power*Time);
 
 dim Charge(C: Double);

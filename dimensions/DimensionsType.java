@@ -34,6 +34,10 @@ public class DimensionsType extends Type {
         return this.dimType;
     }
 
+    public void setType(Type dimType) {
+        this.dimType = dimType;
+    }
+
     public HashMap<String, Double> getUnits(){
         return units;
     }

@@ -108,7 +108,7 @@ abstract public class Value
    public Value pow(Value v2) {
       if (this.type().name().equals("integer")){
          if (v2.type().name().equals("integer"))
-            return new IntegerValue(Math.pow(this.intValue(),v2.intValue()));
+            return new IntegerValue((int) Math.pow(this.intValue(),v2.intValue()));
          else
             return new DoubleValue(Math.pow(this.intValue(), v2.doubleValue()));
       } else {

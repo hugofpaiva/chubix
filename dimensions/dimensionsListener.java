@@ -135,6 +135,18 @@ public interface dimensionsListener extends ParseTreeListener {
 	 */
 	void exitExprMultDiv(dimensionsParser.ExprMultDivContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ExprSign}
+	 * labeled alternative in {@link dimensionsParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprSign(dimensionsParser.ExprSignContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ExprSign}
+	 * labeled alternative in {@link dimensionsParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprSign(dimensionsParser.ExprSignContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ExprPower}
 	 * labeled alternative in {@link dimensionsParser#expr}.
 	 * @param ctx the parse tree
@@ -206,6 +218,18 @@ public interface dimensionsListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDimID(dimensionsParser.DimIDContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code DimSign}
+	 * labeled alternative in {@link dimensionsParser#unitdim}.
+	 * @param ctx the parse tree
+	 */
+	void enterDimSign(dimensionsParser.DimSignContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code DimSign}
+	 * labeled alternative in {@link dimensionsParser#unitdim}.
+	 * @param ctx the parse tree
+	 */
+	void exitDimSign(dimensionsParser.DimSignContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link dimensionsParser#type}.
 	 * @param ctx the parse tree

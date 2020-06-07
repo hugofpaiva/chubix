@@ -925,27 +925,51 @@ public class chubixParser extends Parser {
 	}
 
 	public static class ElseCondContext extends ParserRuleContext {
-		public ConditionalContext conditional() {
-			return getRuleContext(ConditionalContext.class,0);
-		}
-		public InstListContext instList() {
-			return getRuleContext(InstListContext.class,0);
-		}
 		public ElseCondContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_elseCond; }
+	 
+		public ElseCondContext() { }
+		public void copyFrom(ElseCondContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class InstElseContext extends ElseCondContext {
+		public InstListContext instList() {
+			return getRuleContext(InstListContext.class,0);
+		}
+		public InstElseContext(ElseCondContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof chubixListener ) ((chubixListener)listener).enterElseCond(this);
+			if ( listener instanceof chubixListener ) ((chubixListener)listener).enterInstElse(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof chubixListener ) ((chubixListener)listener).exitElseCond(this);
+			if ( listener instanceof chubixListener ) ((chubixListener)listener).exitInstElse(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof chubixVisitor ) return ((chubixVisitor<? extends T>)visitor).visitElseCond(this);
+			if ( visitor instanceof chubixVisitor ) return ((chubixVisitor<? extends T>)visitor).visitInstElse(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ConditionalElseContext extends ElseCondContext {
+		public ConditionalContext conditional() {
+			return getRuleContext(ConditionalContext.class,0);
+		}
+		public ConditionalElseContext(ElseCondContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof chubixListener ) ((chubixListener)listener).enterConditionalElse(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof chubixListener ) ((chubixListener)listener).exitConditionalElse(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof chubixVisitor ) return ((chubixVisitor<? extends T>)visitor).visitConditionalElse(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -958,6 +982,7 @@ public class chubixParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case T__10:
+				_localctx = new ConditionalElseContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(139);
@@ -965,6 +990,7 @@ public class chubixParser extends Parser {
 				}
 				break;
 			case T__7:
+				_localctx = new InstElseContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(140);
