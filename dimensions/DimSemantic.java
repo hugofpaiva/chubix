@@ -3,6 +3,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
@@ -79,12 +80,13 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }     
       dimensionsParser.dimTable.put(dim, new DimensionsType(dim, unit, type));  //add dim to map dimTable
 
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
-         System.out.println(dimensionsType.name());
-         if (dimensionsType.getUnits().containsKey(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
-            return null;
+      for (Map.Entry dimensionsType : dimensionsParser.dimTable.entrySet()){
+         System.out.println(dimensionsType.getKey());
+         System.out.println("\ndefault Unit of dim:"+ ((DimensionsType) dimensionsType.getValue()).getUnit()+"\n");
+         for (Map.Entry unit_dim : ((DimensionsType) dimensionsType.getValue()).getUnits().entrySet()){
+            System.out.println(unit_dim.getKey()+" value : "+ unit_dim.getValue()+"\n");
          }
+         System.out.println("-------------------------------------");
       }
 
       return null;
@@ -191,8 +193,10 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
             switch (op) {
                case "*":
                   resType = getExistingDimType(unit);
-                  if (resType == null)
-                     resType = new DimensionsType("", unit, new DoubleType());
+                  if (resType == null){
+                     ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
+                     return null;
+                  }
                   break;
                case "/":
                   resType = new DoubleType();
@@ -245,15 +249,18 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
       Type resType = null;
       Symbol resSymb;
-
-      String unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
+      String unit;
       if (!v1.dim().equals("")){
          if (v1.dim().equals(v2.dim())) {
+            unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
             resType = getExistingDimType(unit);
-            if (resType == null)
-               resType = new DimensionsType("", unit, new DoubleType());
+            if (resType == null){
+               ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
+               return null;
+            }
          } else {
             if (!v2.dim().equals("")){
+               unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
                resType = getExistingDimType(unit);
                if (resType == null){
                   ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
@@ -298,24 +305,33 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
    
    @Override public Symbol visitDimPower(dimensionsParser.DimPowerContext ctx) {
       Symbol v1 = visit(ctx.unitdim(0));
-      if (visit(ctx.unitdim(1))!=null){
+      Symbol resSym;
+      String n;
+      if (ctx.unitdim(1)!=null) {
          Symbol v2 = visit(ctx.unitdim(1));
-
          Type resType = null;
          
          String unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
          resType = getExistingDimType(unit);
          if (resType == null)
             resType = new DimensionsType("", unit, new DoubleType());
-         Symbol resSym = new Symbol(resType, new DoubleValue(1.0));
+         resSym = new Symbol(resType, new DoubleValue(1.0));
          resSym.setDim(resType.name()); //so podemos meter
-      } else (visit(ctx.DOUBLE(1))!=null) {
-         String n = ctx.DOUBLE().getText();
-         
-      } else {
-         String n = ctx.INTEGER().getText();
 
+         return resSym;
+      } else if (ctx.DOUBLE()!=null) {  
+         n = ctx.DOUBLE().getText();    
+      } else {
+         n = ctx.INTEGER().getText();
       }
+      Type resType = null;
+         
+      String unit = ((DimensionsType) v1.type()).getUnit()+"^"+n;
+      resType = getExistingDimType(unit);
+      if (resType == null)
+         resType = new DimensionsType("", unit, new DoubleType());
+      resSym = new Symbol(resType, new DoubleValue(1.0));
+      resSym.setDim(resType.name()); //so podemos meter
       return resSym;
    }
 

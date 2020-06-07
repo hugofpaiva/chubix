@@ -36,7 +36,7 @@ expr :
 
 unitdim:
       sign=('+'|'-') e=unitdim                                                                  #DimSign
-    | <assoc=right> unitdim '^' (unitdim | sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE )    #DimPower
+    | <assoc=right> unitdim '^' (unitdim | sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE )   #DimPower
     | unitdim op=('*'|'/') unitdim                                                              #DimMultDiv
     | '(' unitdim ')'                                                                           #DimUnn
     | ID                                                                                        #DimID
