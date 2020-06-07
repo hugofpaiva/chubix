@@ -104,4 +104,18 @@ abstract public class Value
             return new DoubleValue(this.doubleValue()*v2.doubleValue());
       }
    }
+
+   public Value pow(Value v2) {
+      if (this.type().name().equals("integer")){
+         if (v2.type().name().equals("integer"))
+            return new IntegerValue(Math.pow(this.intValue(),v2.intValue()));
+         else
+            return new DoubleValue(Math.pow(this.intValue(), v2.doubleValue()));
+      } else {
+         if (v2.type().name().equals("integer"))
+            return new DoubleValue(Math.pow(this.doubleValue(), v2.intValue()));
+         else
+            return new DoubleValue(Math.pow(this.doubleValue(), v2.doubleValue()));
+      }
+   }
 }

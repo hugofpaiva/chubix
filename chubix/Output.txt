@@ -4,13 +4,6 @@ public class Output {
     public static Scanner sc = new Scanner(System.in); 
 
     public static void main(String[] args){
-         
-         
-         
-        int v2 = 10;
-
-        int v3 = 2;
-        double v1 = Math.pow(v2, v3);
-        double a = v1;
+         System.out.println();
     };
 }

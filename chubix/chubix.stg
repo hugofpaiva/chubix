@@ -30,9 +30,9 @@ System.out.println(<value>);
 >>
 
 // Input
-input(value) ::= <<
+input(value, type, var,inst) ::= <<
 System.out.println(<value>);
-sc.nextLine();
+<declaration(typeValue.(type), var, "sc.nextLine()", inst)>
 >>
 
 // Declaration serve para o declaration e para o assign
@@ -52,7 +52,21 @@ binaryOperation(inst,type,var,e1,op,e2) ::= <<
 powerExpr(type,var,e1,e2,inst) ::= "<declaration(type,var,[\"Math.pow(\", e1, \", \", e2, \")\"],inst)>"
 
 
+cond(inst,else) :: <<
+if(expr){
+    <inst>
+}<if (else)>
+else{
+<elseCond(else)>
+}<endif>
+>>
 
+elseCond(conditional, inst) :: <<
+else <if (conditional)><cond(conditional)>
+<else>{
+<insts(inst)>
+}<endif>
+>>
 
 forLoop(assign1 ,expr,assign2,inst) ::= <<
 for (<assign1>; <expr>; <assign2>) {

@@ -24,20 +24,22 @@ dim : 'dim' ID '(' ID ':' (type) ')'      #PrimitiveDim
 unit : 'unit' ID '('  ID  ':' expr ')';
 
 expr :  
-    <assoc=right> expr '^' expr         #ExprPower
+      sign=('+'|'-') e=expr             #ExprSign
+    | <assoc=right> expr '^' expr       #ExprPower
     | expr op=('*'|'/') expr            #ExprMultDiv
     | expr op=('+'|'-') expr            #ExprSumMin
-    | op=('+'|'-')? '(' expr ')'        #ExprUnn
-    | op=('+'|'-')? ID                  #ExprID
+    | '(' expr ')'                      #ExprUnn
+    | ID                                #ExprID
     | INTEGER                           #ExprInt
     | DOUBLE                            #ExprDouble
     ;
 
 unitdim:
-    <assoc=right> unitdim '^' (unitdim| op=('+'|'-')? INTEGER | op=('+'|'-')? DOUBLE )      #DimPower
-    | unitdim op=('*'|'/') unitdim                                                          #DimMultDiv
-    | op=('+'|'-')? '(' unitdim ')'                                                         #DimUnn
-    | op=('+'|'-')? ID                                                                      #DimID
+    sign=('+'|'-') e=expr                                                                       #DimSign
+    | <assoc=right> unitdim '^' (unitdim| sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE )    #DimPower
+    | unitdim op=('*'|'/') unitdim                                                              #DimMultDiv
+    | '(' unitdim ')'                                                                           #DimUnn
+    | ID                                                                                        #DimID
     ;
 
 type returns[Type res]:
@@ -46,7 +48,7 @@ type returns[Type res]:
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INTEGER : ('+'|'-')? [0-9]+;
+INTEGER : ('+'|'-')? [0-9]+;        // remover ??
 DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n' -> skip;
