@@ -19,7 +19,7 @@ dim Resistence(O: Double);
 
 dim Current(A: Double);
 
-dim Energy(J: Mass/(Distance^2)*Time^-2);
+dim Energy(J: Mass/(Distance^2)*Time^-2); #tem erro qql
 
 dim Power(W: Energy/Time);
 unit Power(KW: W*10^3);

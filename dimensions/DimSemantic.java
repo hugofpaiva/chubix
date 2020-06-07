@@ -82,7 +82,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
       for (Map.Entry dimensionsType : dimensionsParser.dimTable.entrySet()){
          System.out.println(dimensionsType.getKey());
-         System.out.println("\ndefault Unit of dim:"+ ((DimensionsType) dimensionsType.getValue()).getUnit()+"\n");
+         System.out.println("\ndefault Unit of dim : "+ ((DimensionsType) dimensionsType.getValue()).getUnit()+"\n");
          for (Map.Entry unit_dim : ((DimensionsType) dimensionsType.getValue()).getUnits().entrySet()){
             System.out.println(unit_dim.getKey()+" value : "+ unit_dim.getValue()+"\n");
          }
