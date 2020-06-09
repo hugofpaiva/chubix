@@ -38,11 +38,41 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitAssignVar(chubixParser.AssignVarContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = visit(ctx.expr());
+      String id = ctx.ID().getText();
+      if (res) {
+         if (!chubixParser.symbolTable.containsKey(id)) {
+            ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exists!");
+            res = false;
+         } else {
+            Symbol sym = chubixParser.symbolTable.get(id);
+            if (!ctx.expr().exprType.conformsTo(sym.type())) {
+               ErrorHandling.printError(ctx, "Expression type does not conform to variable \""+id+"\" type!");
+               res = false;
+            } else
+               sym.setValueDefined();
+         }
+      }
+      return res;
    }
 
    @Override public Boolean visitDefineVar(chubixParser.DefineVarContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = visit(ctx.expr());
+      String id = ctx.declare().getText();
+      if (res) {
+            if (chubixParser.symbolTable.containsKey(id)) {
+               ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
+               res = false;
+            } else
+               chubixParser.symbolTable.put(id, new Symbol(id, ctx.type().res));
+            if (!ctx.expr().exprType.conformsTo(sym.type())) {
+               ErrorHandling.printError(ctx, "Expression type does not conform to variable \""+id+"\" type!");
+               res = false;
+            } else
+               sym.setValueDefined();
+         }
+      }
+      return res;
    }
 
    @Override public Boolean visitDeclare(chubixParser.DeclareContext ctx) {
@@ -50,24 +80,34 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       //visit(ctx.type());
       String id = ctx.ID().getText();
 
-      if (CalcParser.symbolTable.containsKey(id)) {
+      if (chubixParser.symbolTable.containsKey(id)) {
          ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
          res = false;
       } else
-            CalcParser.symbolTable.put(id, new VariableSymbol(id, ctx.type().res));
+         chubixParser.symbolTable.put(id, new Symbol(id, ctx.type().res));
       return res;
    }
 
    @Override public Boolean visitConditional(chubixParser.ConditionalContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = visit(ctx.expr());
+      visit(ctx.trueSL); // ignores result on purpose (to avoid override of all visit*)!
+      if (ctx.falseSL != null)
+         visit(ctx.falseSL); // ignores result on purpose (to avoid override of all visit*)!
+      if (res) {
+         if (!"boolean".equals(ctx.expr().exprType.name())) {
+            ErrorHandling.printError(ctx, "Boolean expression required in conditional instruction!");
+            res = false;
+         }
+      }
+      return res;
    }
 
    @Override public Boolean visitConditionalElse(chubixParser.ConditionalElseContext ctx) {
-      return visitChildren(ctx);
+      return visit(ctx.conditional());
    }
 
    @Override public Boolean visitInstElse(chubixParser.InstElseContext ctx) {
-      return visitChildren(ctx);
+      return visit(ctx.instList());
    }
 
    @Override public Boolean visitForLoop(chubixParser.ForLoopContext ctx) {
