@@ -133,9 +133,9 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       return visitChildren(ctx);
    }
 
-   // @Override public Symbol visitExprUnn(dimensionsParser.ExprUnnContext ctx) {
-   //    return visitChildren(ctx);
-   // }
+   @Override public Symbol visitExprUnn(dimensionsParser.ExprUnnContext ctx) {
+      return visit(ctx.expr());
+   }
 
    @Override public Symbol visitExprDouble(dimensionsParser.ExprDoubleContext ctx) {
       return new Symbol(new DoubleType(), new DoubleValue(Double.parseDouble(ctx.DOUBLE().getText())));
@@ -186,10 +186,11 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       Symbol v2 = visit(ctx.expr(1));
 
       Type resType = null;
+      String unit;
       
       if (!v1.dim().equals("")) {
-         String unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
          if (v1.dim().equals(v2.dim())) {
+            unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
             switch (op) {
                case "*":
                   resType = getExistingDimType(unit);
@@ -204,6 +205,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
             }
          } else {
             if (!v2.dim().equals("")){
+               unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
                // check if complex dimension exists    
                for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
                   if (dimensionsType.getUnits().containsKey(unit)) {
@@ -316,7 +318,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          if (resType == null)
             resType = new DimensionsType("", unit, new DoubleType());
          resSym = new Symbol(resType, new DoubleValue(1.0));
-         resSym.setDim(resType.name()); //so podemos meter
+         resSym.setDim(resType.name()); 
 
          return resSym;
       } else if (ctx.DOUBLE()!=null) {  
@@ -325,28 +327,26 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          n = ctx.INTEGER().getText();
       }
       Type resType = null;
-         
       String unit = ((DimensionsType) v1.type()).getUnit()+"^"+n;
       resType = getExistingDimType(unit);
       if (resType == null)
          resType = new DimensionsType("", unit, new DoubleType());
       resSym = new Symbol(resType, new DoubleValue(1.0));
-      resSym.setDim(resType.name()); //so podemos meter
+      resSym.setDim(resType.name());
       return resSym;
    }
 
-   // @Override public Symbol visitDimUnn(dimensionsParser.DimUnnContext ctx) {
-   //    return visitChildren(ctx);
-   // }
+   @Override public Symbol visitDimUnn(dimensionsParser.DimUnnContext ctx) {
+      return visit(ctx.unitdim());
+   }
 
    @Override public Symbol visitDimMultDiv(dimensionsParser.DimMultDivContext ctx) {
       String op = ctx.op.getText();
       Symbol v1 = visit(ctx.unitdim(0));
       Symbol v2 = visit(ctx.unitdim(1));
-
       Type resType = null;
-      
-      String unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
+
+      String unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType) v2.type()).getUnit();
       if (v1.dim().equals(v2.dim())) {
          switch (op) {
             case "*":
@@ -367,11 +367,11 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       if (((DimensionsType) v1.type()).getType().name().equals("integer") || ((DimensionsType) v2.type()).getType().name().equals("integer"))
          ((DimensionsType) resType).setType(new IntegerType());
       Symbol resSymb = new Symbol(resType, new DoubleValue(1.0));
-      resSymb.setDim(resType.name()); //so podemos meter
+      resSymb.setDim(resType.name());
       return resSymb;
    }
 
-   @Override public Symbol visitDimID(dimensionsParser.DimIDContext ctx) {   
+   @Override public Symbol visitDimID(dimensionsParser.DimIDContext ctx) {
       String dim = ctx.ID().getText();
       // check if ID exists
       
@@ -395,3 +395,5 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       return null;
    }
 }
+
+// meter unidades em arrays e pares com a unit e expoente, [(m,2)]

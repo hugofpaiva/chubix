@@ -35,11 +35,11 @@ expr :
     ;
 
 unitdim:
-      sign=('+'|'-') e=unitdim                                                                  #DimSign
-    | <assoc=right> unitdim '^' (unitdim | sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE )   #DimPower
-    | unitdim op=('*'|'/') unitdim                                                              #DimMultDiv
-    | '(' unitdim ')'                                                                           #DimUnn
-    | ID                                                                                        #DimID
+      sign=('+'|'-') e=unitdim                                                                      #DimSign
+    | <assoc=right> unitdim '^' ( unitdim | sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE)       #DimPower
+    | unitdim op=('*'|'/') unitdim                                                                  #DimMultDiv
+    | '(' unitdim  ')'                                                                              #DimUnn
+    | ID                                                                                            #DimID
     ;
 
 type returns[Type res]:

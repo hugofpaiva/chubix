@@ -88,10 +88,9 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
    @Override public ST visitConditional(chubixParser.ConditionalContext ctx) {
       ST res = templates.getInstanceOf("cond");
-
-      res.add("expr", ctx.expr().getText());
-      res.add("inst", visit(ctx.trueSL).render());  
-      
+      res.add("instif", visit(ctx.expr()).render());
+      res.add("var",ctx.expr().varName);
+      res.add("inst",visit(ctx.instList()).render());  
       return res;
    }
 
@@ -104,25 +103,34 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
-      ST res = templates.getInstanceOf("forLoop");
-      res.add("inst",visit(ctx.var).render());
-      res.add("assign1", );
-      res.add("expr",ctx.expr().getText());
-      res.add("assign2",visit(ctx.assignment(1)).render());
-      res.add("inside",visit(ctx.instList()).render());
+      ST res = templates.getInstanceOf("whileLoop");
+      res.add("instfor", visit(ctx.assignment(0)).render());
+      res.add("instbefore",visit(ctx.expr()).render());
+      res.add("var",ctx.varBreak.varName);
+      res.add("instafter",visit(ctx.instList()).render());
+      res.add("instafter", visit(ctx.assignment(1)).render());
       return res;
    }
 
    @Override public ST visitWhileLoop(chubixParser.WhileLoopContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("whileLoop");
+
+      res.add("instbefore",visit(ctx.expr()).render());
+      res.add("var", ctx.expr().varName);
+      res.add("instafter",visit(ctx.instList()).render());
+      return res;  
    }
 
    @Override public ST visitBreakLoop(chubixParser.BreakLoopContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("insert");
+      res.add("var", "break");
+      return res;
    }
 
    @Override public ST visitContinueLoop(chubixParser.ContinueLoopContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("insert");
+      res.add("var", "continue");
+      return res;
    }
 
    @Override public ST visitIntType(chubixParser.IntTypeContext ctx) {
@@ -266,11 +274,25 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitConditionalExpr(chubixParser.ConditionalExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("binaryOperation");
+      ctx.varName = newVar();
+      res.add("inst", visit(ctx.e1).render());
+      res.add("inst", visit(ctx.e2).render());
+      res.add("type", "Boolean");
+      res.add("var", ctx.varName);
+      res.add("e1", ctx.e1.varName);
+      res.add("op", ctx.op.getText());
+      res.add("e2", ctx.e2.varName);
+      return res;
    }
 
    @Override public ST visitIdExpr(chubixParser.IdExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("declaration");
+      ctx.varName = newVar();
+      res.add("var", ctx.varName);
+      res.add("type","Double");
+      res.add("value",ctx.ID().getText());
+      return res;
    }
 
    @Override public ST visitDimPower(chubixParser.DimPowerContext ctx) {

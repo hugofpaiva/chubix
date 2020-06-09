@@ -3,7 +3,7 @@ grammar chubix;
 @parser::members{
   int insideLoop = 0;
   int insideFunc = 0;
-  public static final HashMap<String, Symbol> map = new HashMap<String, Symbol>();
+  public static final HashMap<String, Symbol> symbolTable = new HashMap<String, Symbol>();
 }
 @parser::header{
   import java.util.HashMap;
@@ -79,7 +79,7 @@ expr returns[Type exprType, String varName]:
     | e1=expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') e2=expr  #conditionalExpr
     | '(' expr ')'                                                #parenExpr
     | ID op=('++' | '--')                                         #doubleSumMin
-    | 'input' '(' STRING? ')' ('['unitdim']')                     #inputExpr
+    | 'input' '(' STRING? ')' ('['unitdim']')?                    #inputExpr
     | DOUBLE ('['unitdim']')?                                     #doubleExpr
     | INTEGER ('['unitdim']')?                                    #integerExpr
     | BOOLEAN                                                     #booleanExpr
