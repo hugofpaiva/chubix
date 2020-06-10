@@ -24,6 +24,7 @@ instruction:  print
             | callFunction
             | function
             | returnFunc
+            | declAssig
             ;
 
 print: 'print' '(' (expr)? ')';
@@ -37,9 +38,9 @@ function: {insideFunc==0}? {insideFunc++;}
 
 callFunction: func_name=ID '(' (expr (',' expr)*)? ')' ;
 
-assignment: ID '=' expr             #assignVar
-            | declare '=' expr      #defineVar
-            ;
+assignment: ID '=' expr ;
+
+declAssig: declare '=' expr;
 
 declare: type ID;
 
@@ -50,7 +51,7 @@ elseCond: conditional               #conditionalElse
         ;
 
 forLoop : {insideLoop++;}
-          'for' '(' var=assignment ';' varBreak= expr ';' assignment ')' '{' instList '}'
+          'for' '(' var=(declAssig|assignment)';' varBreak= expr ';' assignment ')' '{' instList '}'
           {insideLoop--;}
           ;
 

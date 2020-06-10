@@ -1,4 +1,3 @@
-
 import java.util.HashMap;
 
 public class SemanticChubix extends chubixBaseVisitor<Boolean> {
@@ -6,7 +5,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final IntegerType integerType = new IntegerType();
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
-   private final DimensionsType dimensionType = new DimensionType("", "", new DoubleValue(1));
+   private final DimensionsType dimensionType = new DimensionsType("", "", new DoubleValue(1));
 
 
    @Override public Boolean visitMain(chubixParser.MainContext ctx) {
@@ -20,11 +19,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    @Override public Boolean visitInstruction(chubixParser.InstructionContext ctx) {
       return visitChildren(ctx);
    }
-
+/*
    @Override public Boolean visitPrint(chubixParser.PrintContext ctx) {
       return visitChildren(ctx);
    }
-
+*/
    @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
       return visitChildren(ctx);
    }
@@ -37,7 +36,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return visitChildren(ctx);
    }
 
-   @Override public Boolean visitAssignVar(chubixParser.AssignVarContext ctx) {
+   @Override public Boolean visitAssignment(chubixParser.AssignmentContext ctx) {
       Boolean res = visit(ctx.expr());
       String id = ctx.ID().getText();
       if (res) {
@@ -56,7 +55,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return res;
    }
 
-   @Override public Boolean visitDefineVar(chubixParser.DefineVarContext ctx) {
+   @Override public Boolean visitDeclAssig(chubixParser.DeclAssigContext ctx) {
       Boolean res = visit(ctx.expr());
       String id = ctx.declare().getText();
       if (res) {
@@ -111,10 +110,30 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitForLoop(chubixParser.ForLoopContext ctx) {
-      return visitChildren(ctx);
+      //  'for' '(' var=assignment ';' varBreak= expr ';' assignment ')' '{' instList '}'
+      Boolean res = visit(ctx.var) && visit(ctx.varBreak) && visit(ctx.assignment());
+      if(res){
+         if(!ctx.varBreak.exprType.conformsTo(booleanType)){
+            ErrorHandling.printError(ctx, "Break Condition \""+ctx.varBreak.getText()+"\" isn't a Boolean expression!");
+            return false;
+         }
+      } else
+         return res;
+      visit(ctx.instList());
+      return res;
    }
 
    @Override public Boolean visitWhileLoop(chubixParser.WhileLoopContext ctx) {
+      //whileLoop : 'while' '(' expr ')' '{' condSL=instList '}';
+      Boolean res = visit(ctx.expr);
+      if(res){
+         if(!ctx.expr.exprType.conformsTo(booleanType)){
+            ErrorHandling.printError(ctx, "Condition \""+ctx.expr.getText()+"\" isn't a Boolean expression!");
+            return false;
+         }
+      } else{
+         return res;
+      }
       return visitChildren(ctx);
    }
 
@@ -127,19 +146,23 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitIntType(chubixParser.IntTypeContext ctx) {
-      return visitChildren(ctx);
+      ctx.res = integerType;
+      return true;
    }
 
    @Override public Boolean visitDoubleType(chubixParser.DoubleTypeContext ctx) {
-      return visitChildren(ctx);
+      ctx.res = doubleType;
+      return true;
    }
 
    @Override public Boolean visitBoolType(chubixParser.BoolTypeContext ctx) {
-      return visitChildren(ctx);
+      ctx.res = booleanType;
+      return true;
    }
 
    @Override public Boolean visitStrType(chubixParser.StrTypeContext ctx) {
-      return visitChildren(ctx);
+      ctx.res = stringType;
+      return true;
    }
 
    @Override public Boolean visitDimensionType(chubixParser.DimensionTypeContext ctx) {
@@ -192,7 +215,8 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitStringExpr(chubixParser.StringExprContext ctx) {
-      return visitChildren(ctx);
+      ctx.exprType = stringType;
+      return true;
    }
 
    @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
@@ -288,6 +312,8 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    private Boolean checkUnit(String unit){
+      // veryfy if 
+      // print error if unit doesnt exist I guess...
       return true;
    }
 }
