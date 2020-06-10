@@ -49,6 +49,14 @@ abstract public class Value
       return "";
    }
 
+
+   public Type operationType(Type t2){
+      if (this.type().name().equals("integer") && t2.type().name().equals("integer")){
+         return new IntegerValue();
+      else
+         return new DoubleValue();
+   }
+/*
    public Value sum(Value v2){
       if (this.type().name().equals("integer")){
          if (v2.type().name().equals("integer"))
@@ -118,4 +126,5 @@ abstract public class Value
             return new DoubleValue(Math.pow(this.doubleValue(), v2.doubleValue()));
       }
    }
+   */
 }

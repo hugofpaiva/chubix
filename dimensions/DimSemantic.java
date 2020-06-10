@@ -143,7 +143,6 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
       String op = ctx.op.getText();
-
       Symbol v1 = visit(ctx.expr(0)); 
       Symbol v2 = visit(ctx.expr(1));
 

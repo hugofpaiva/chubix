@@ -80,29 +80,25 @@ public interface chubixListener extends ParseTreeListener {
 	 */
 	void exitCallFunction(chubixParser.CallFunctionContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code assignVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Enter a parse tree produced by {@link chubixParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void enterAssignVar(chubixParser.AssignVarContext ctx);
+	void enterAssignment(chubixParser.AssignmentContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code assignVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Exit a parse tree produced by {@link chubixParser#assignment}.
 	 * @param ctx the parse tree
 	 */
-	void exitAssignVar(chubixParser.AssignVarContext ctx);
+	void exitAssignment(chubixParser.AssignmentContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code defineVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Enter a parse tree produced by {@link chubixParser#declAssig}.
 	 * @param ctx the parse tree
 	 */
-	void enterDefineVar(chubixParser.DefineVarContext ctx);
+	void enterDeclAssig(chubixParser.DeclAssigContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code defineVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Exit a parse tree produced by {@link chubixParser#declAssig}.
 	 * @param ctx the parse tree
 	 */
-	void exitDefineVar(chubixParser.DefineVarContext ctx);
+	void exitDeclAssig(chubixParser.DeclAssigContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link chubixParser#declare}.
 	 * @param ctx the parse tree
@@ -439,18 +435,6 @@ public interface chubixListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDimUnn(chubixParser.DimUnnContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code DimSumMin}
-	 * labeled alternative in {@link chubixParser#unitdim}.
-	 * @param ctx the parse tree
-	 */
-	void enterDimSumMin(chubixParser.DimSumMinContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code DimSumMin}
-	 * labeled alternative in {@link chubixParser#unitdim}.
-	 * @param ctx the parse tree
-	 */
-	void exitDimSumMin(chubixParser.DimSumMinContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code DimMultDiv}
 	 * labeled alternative in {@link chubixParser#unitdim}.

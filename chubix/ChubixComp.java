@@ -46,7 +46,16 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("function");
+      //type name args inst
+      visit(ctx.ret_type);
+      res.add("type",ctx.ret_type.res);
+      res.add("name",ctx.func_name.getText());
+      for(int i=0;i<ctx.declare().size();i++){
+         res.add("args",visit(ctx.declare(i)).render());
+      }
+      res.add("inst",visit(ctx.instList()).render());
+      return res;
    }
 
    @Override public ST visitCallFunction(chubixParser.CallFunctionContext ctx) {
@@ -54,7 +63,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    //FEITO
-   @Override public ST visitAssignVar(chubixParser.AssignVarContext ctx) {
+   @Override public ST visitAssignment(chubixParser.AssignmentContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
       res.add("var", ctx.ID().getText());
@@ -63,7 +72,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       return res;
    }
    //Tratar tipos
-   @Override public ST visitDefineVar(chubixParser.DefineVarContext ctx) {
+   @Override public ST visitDeclAssig(chubixParser.DeclAssigContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
       res.add("type", ctx.declare().type().getText());
@@ -101,14 +110,17 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitInstElse(chubixParser.InstElseContext ctx) {
       return visitChildren(ctx);
    }
-
+   //ta mal por causa do chico
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
       ST res = templates.getInstanceOf("whileLoop");
-      res.add("instfor", visit(ctx.assignment(0)).render());
+      if(ctx.var!=null)
+         res.add("instfor", visit(ctx.var).render());
+      else
+         res.add("instfor",visit(ctx.declAssig()));
       res.add("instbefore",visit(ctx.expr()).render());
       res.add("var",ctx.varBreak.varName);
       res.add("instafter",visit(ctx.instList()).render());
-      res.add("instafter", visit(ctx.assignment(1)).render());
+      res.add("instafter", visit(ctx.varInc).render());
       return res;
    }
 
@@ -300,10 +312,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitDimUnn(chubixParser.DimUnnContext ctx) {
-      return visitChildren(ctx);
-   }
-
-   @Override public ST visitDimSumMin(chubixParser.DimSumMinContext ctx) {
       return visitChildren(ctx);
    }
 

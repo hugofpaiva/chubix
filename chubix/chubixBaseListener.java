@@ -102,25 +102,25 @@ public class chubixBaseListener implements chubixListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssignVar(chubixParser.AssignVarContext ctx) { }
+	@Override public void enterAssignment(chubixParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitAssignVar(chubixParser.AssignVarContext ctx) { }
+	@Override public void exitAssignment(chubixParser.AssignmentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDefineVar(chubixParser.DefineVarContext ctx) { }
+	@Override public void enterDeclAssig(chubixParser.DeclAssigContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDefineVar(chubixParser.DefineVarContext ctx) { }
+	@Override public void exitDeclAssig(chubixParser.DeclAssigContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -469,18 +469,6 @@ public class chubixBaseListener implements chubixListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDimUnn(chubixParser.DimUnnContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDimSumMin(chubixParser.DimSumMinContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDimSumMin(chubixParser.DimSumMinContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

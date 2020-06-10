@@ -5,8 +5,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final IntegerType integerType = new IntegerType();
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
-   private final DimensionsType dimensionType = new DimensionsType("", "", new DoubleValue(1));
-
+   private final DimensionsType dimensionType = new DimensionsType("", new HashMap<>(), new DoubleType());
 
    @Override public Boolean visitMain(chubixParser.MainContext ctx) {
       return visitChildren(ctx);
@@ -58,18 +57,20 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    @Override public Boolean visitDeclAssig(chubixParser.DeclAssigContext ctx) {
       Boolean res = visit(ctx.expr());
       String id = ctx.declare().getText();
+      Symbol sym = new Symbol(id, ctx.declare().type().res);
+            
       if (res) {
-            if (chubixParser.symbolTable.containsKey(id)) {
-               ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
-               res = false;
-            } else
-               chubixParser.symbolTable.put(id, new Symbol(id, ctx.type().res));
-            if (!ctx.expr().exprType.conformsTo(sym.type())) {
-               ErrorHandling.printError(ctx, "Expression type does not conform to variable \""+id+"\" type!");
-               res = false;
-            } else
-               sym.setValueDefined();
+         if (chubixParser.symbolTable.containsKey(id)) {
+            ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
+            res = false;
+         } else {
+            chubixParser.symbolTable.put(id, sym);
          }
+         if (!ctx.expr().exprType.conformsTo(sym.type())) {
+            ErrorHandling.printError(ctx, "Expression type does not conform to variable \""+id+"\" type!");
+            res = false;
+         } else
+            sym.setValueDefined();
       }
       return res;
    }
@@ -110,8 +111,15 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitForLoop(chubixParser.ForLoopContext ctx) {
-      //  'for' '(' var=assignment ';' varBreak= expr ';' assignment ')' '{' instList '}'
-      Boolean res = visit(ctx.var) && visit(ctx.varBreak) && visit(ctx.assignment());
+      // 'for' '(' declAssig|var=assignment ';' varBreak= expr ';' varInc=assignment ')' '{' instList '}'
+      Boolean res;
+      if (ctx.declAssig()!=null)
+         res = visit(ctx.declAssig());
+      else
+         res = visit(ctx.var);
+
+      res = res && visit(ctx.varBreak) && visit(ctx.varInc);
+
       if(res){
          if(!ctx.varBreak.exprType.conformsTo(booleanType)){
             ErrorHandling.printError(ctx, "Break Condition \""+ctx.varBreak.getText()+"\" isn't a Boolean expression!");
@@ -125,16 +133,17 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    @Override public Boolean visitWhileLoop(chubixParser.WhileLoopContext ctx) {
       //whileLoop : 'while' '(' expr ')' '{' condSL=instList '}';
-      Boolean res = visit(ctx.expr);
+      Boolean res = visit(ctx.expr());
       if(res){
-         if(!ctx.expr.exprType.conformsTo(booleanType)){
-            ErrorHandling.printError(ctx, "Condition \""+ctx.expr.getText()+"\" isn't a Boolean expression!");
+         if(!ctx.expr().exprType.conformsTo(booleanType)){
+            ErrorHandling.printError(ctx, "Condition \""+ctx.expr().getText()+"\" isn't a Boolean expression!");
             return false;
          }
       } else{
          return res;
       }
-      return visitChildren(ctx);
+      visit(ctx.condSL);
+      return res;
    }
 
    @Override public Boolean visitBreakLoop(chubixParser.BreakLoopContext ctx) {
@@ -170,13 +179,14 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) {
-      ctx.exprType = realType;
+      ctx.exprType = doubleType;
       if (ctx.unitdim() != null)
          return checkUnit(ctx.unitdim().getText());
       return true;
    }
 
    @Override public Boolean visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
+      
       return visitChildren(ctx);
    }
 
@@ -267,26 +277,93 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDimPower(chubixParser.DimPowerContext ctx) {
-      return visitChildren(ctx);
-   }
+      Boolean res =  visit(ctx.unitdim());
+      
+      if (!res)
+         return false;
+      int i = Integer.parseInt(ctx.op.getText()+ctx.INTEGER().getText());
+      
+      if(i==0){
+         ErrorHandling.printError(ctx, "Power of 0 is not possible when defining a unit");
+         return false;
+      }
 
+      DimensionsType dim1 = ctx.unitdim().unitdimType;
+      HashMap<String,Integer> map1 = dim1.getUnit();
+
+      map1.forEach((k, v) -> {
+         map1.put(k, (int) Math.pow(map1.get(k), i));
+      });
+
+      dim1.setUnit(map1);
+     
+      ctx.unitdimType = dim1;
+
+      return res;
+   }
+   /*
    @Override public Boolean visitDimUnn(chubixParser.DimUnnContext ctx) {
       return visitChildren(ctx);
    }
+   */
 
-   @Override public Boolean visitDimSumMin(chubixParser.DimSumMinContext ctx) {
-      return visitChildren(ctx);
-   }
+
 
    @Override public Boolean visitDimMultDiv(chubixParser.DimMultDivContext ctx) {
-      return visitChildren(ctx);
+      Boolean res =  visit(ctx.unitdim(0)) &&  visit(ctx.unitdim(1));
+      if (!res)
+         return false;
+      DimensionsType dim1 = ctx.unitdim(0).unitdimType;
+      DimensionsType dim2 = ctx.unitdim(1).unitdimType;
+      HashMap<String,Integer> map1 = dim1.getUnit();
+      HashMap<String,Integer> map2 = dim2.getUnit();
+
+      switch(ctx.op.getText()){
+         case "*":
+            //Merge maps
+            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
+            map1.forEach((k, v) -> {
+               map2.putIfAbsent(k, v);
+            });
+            map2.values().removeIf(f -> f == 0f);
+
+            dim2.setUnit(map2);
+            break;
+         case "/":
+             map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
+            map1.forEach((k, v) -> {
+               map2.putIfAbsent(k, v);
+            });
+            map2.values().removeIf(f -> f == 0f);
+            dim2.setUnit(map2);
+            break;
+      }
+      ctx.unitdimType = dim2;
+
+      return res;
    }
 
    @Override public Boolean visitDimID(chubixParser.DimIDContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = false;
+      String unit = ctx.ID().getText();
+
+      HashMap<String, Integer> unitmap = new HashMap<>();
+      unitmap.put(unit, 1);
+      /*
+      for (DimensionsType dimType : dimensionParser.dimTable) {//dimensionParser n tá na pasta
+         if (dimType.containsUnit(unitmap)){
+            ctx.unitdimType = dimType;
+            res = true;
+         }
+      }
+      */ 
+      if (!res)
+         ErrorHandling.printError(ctx, "There is no dimension with that unit!");
+         
+      return res;
    }
 
-   private Boolean checkNumericType(ParserRuleContext ctx, Type t) {
+   private Boolean checkNumericType(chubixParser.ExprContext ctx, Type t) {
       Boolean res = true;
       if (!t.isNumeric()) {
          ErrorHandling.printError(ctx, "Numeric operator applied to a non-numeric operand!");

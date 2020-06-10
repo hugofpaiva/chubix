@@ -2,7 +2,6 @@ import java.io.IOException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.stringtemplate.v4.*;
-
 public class chubixMain {
    public static void main(String[] args) {
       try {
@@ -22,10 +21,11 @@ public class chubixMain {
          if (parser.getNumberOfSyntaxErrors() == 0) {
             // print LISP-style tree:
             // System.out.println(tree.toStringTree(parser));
+            //SemanticChubix visitor0 = new SemanticChubix();
+            //visitor0.visit(tree);
             ChubixComp compiler = new ChubixComp();
-            ST result = compiler.visit(tree);
-            result.add("name","Output");
-            System.out.println(result.render());
+            ST res =compiler.visit(tree);
+            System.out.println(res.render());
          }
       }
       catch(IOException e) {

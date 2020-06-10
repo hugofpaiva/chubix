@@ -32,7 +32,7 @@ print: 'print' '(' (expr)? ')';
 returnFunc: {insideFunc > 0}? 'return' (expr)?;
 
 function: {insideFunc==0}? {insideFunc++;} 
-          'function' ret_type=type func_name=ID '(' (declare (',' declare)*)? ')' '{' (instruction ';')* '}'
+          'function' ret_type=type func_name=ID '(' (declare (',' declare)*)? ')' '{' instList '}'
           {insideFunc--;} 
           ;
 
@@ -51,7 +51,7 @@ elseCond: conditional               #conditionalElse
         ;
 
 forLoop : {insideLoop++;}
-          'for' '(' var=(declAssig|assignment)';' varBreak= expr ';' assignment ')' '{' instList '}'
+          'for' '(' (declAssig|var=assignment) ';' varBreak= expr ';' varInc=assignment ')' '{' instList '}'
           {insideLoop--;}
           ;
 
@@ -89,12 +89,11 @@ expr returns[Type exprType, String varName]:
     | callFunction                                                #functionExpr
     ;
 
-unitdim: 
-    <assoc=right> unitdim '^' (unitdim| op=('+'|'-')? INTEGER  | op=('+'|'-')? DOUBLE )   #DimPower
-    | unitdim op=('*'|'/') unitdim                                                        #DimMultDiv
-    | unitdim op=('+'|'-') unitdim                                                        #DimSumMin
-    | op=('+'|'-')? '(' unitdim ')'                                                       #DimUnn
-    | op=('+'|'-')? ID                                                                    #DimID
+unitdim returns [DimensionsType unitdimType]: 
+    <assoc=right> unitdim '^' (op=('+'|'-')? INTEGER)   #DimPower
+    | unitdim op=('*'|'/') unitdim                      #DimMultDiv
+    | op=('+'|'-')? '(' unitdim ')'                     #DimUnn
+    | op=('+'|'-')? ID                                  #DimID
     ;
 
 /*

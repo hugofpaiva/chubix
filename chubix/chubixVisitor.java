@@ -55,19 +55,17 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCallFunction(chubixParser.CallFunctionContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code assignVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Visit a parse tree produced by {@link chubixParser#assignment}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignVar(chubixParser.AssignVarContext ctx);
+	T visitAssignment(chubixParser.AssignmentContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code defineVar}
-	 * labeled alternative in {@link chubixParser#assignment}.
+	 * Visit a parse tree produced by {@link chubixParser#declAssig}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDefineVar(chubixParser.DefineVarContext ctx);
+	T visitDeclAssig(chubixParser.DeclAssigContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link chubixParser#declare}.
 	 * @param ctx the parse tree
@@ -265,13 +263,6 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDimUnn(chubixParser.DimUnnContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code DimSumMin}
-	 * labeled alternative in {@link chubixParser#unitdim}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDimSumMin(chubixParser.DimSumMinContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code DimMultDiv}
 	 * labeled alternative in {@link chubixParser#unitdim}.

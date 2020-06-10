@@ -45,4 +45,8 @@ public class DimensionsType extends Type {
     public String getUnit(){
         return defaultUnit;
     }
+
+    public HashMap<String, Double>  getUnit(){
+        return defaultUnit;
+    }
 }
