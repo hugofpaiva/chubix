@@ -1,3 +1,4 @@
+
 import java.util.HashMap;
 
 public class DimensionsType extends Type {
@@ -34,10 +35,14 @@ public class DimensionsType extends Type {
     @Override public boolean isNumeric() {
         return true;
     }
-
-    public boolean conformsTo(Type other) {
-        return other.name().equals(this.name());
+    
+    @Override public boolean isDimensional() {
+        return true;
     }
+
+    //  public boolean conformsTo(Type other) {
+    //      return other.name().equals(this.name());
+    //  }
 
     public void addUnit(HashMap<String,Integer> unit, Double value) {
         assert unit != null;

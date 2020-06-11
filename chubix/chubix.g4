@@ -75,7 +75,7 @@ type returns[Type res]:
 expr returns[Type exprType, String varName]:
       sign=('+'|'-') expr                                         #signExpr
     | <assoc=right> e1=expr '^' e2=expr                           #powExpr
-    | e1=expr op=('*' | '/' | '%' | '//') e2=expr                 #multDivRestExpr
+    | e1=expr op=('*' | '/') e2=expr                              #multDivRestExpr
     | e1=expr op=('+' | '-') e2=expr                              #addSubExpr
     | e1=expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') e2=expr  #conditionalExpr
     | '(' expr ')'                                                #parenExpr

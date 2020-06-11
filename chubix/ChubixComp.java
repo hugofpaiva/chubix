@@ -65,8 +65,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //FEITO
    @Override public ST visitAssignment(chubixParser.AssignmentContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-
-      res.add("var", ctx.ID().getText());
+      
+      res.add("var", ctx.expr().varName);
       res.add("inst",visit(ctx.expr()).render());
       res.add("value",ctx.expr().varName);     
       return res;
@@ -77,7 +77,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       res.add("type", ctx.declare().type().getText());
       
-      res.add("var", ctx.declare().ID().getText());
+      res.add("var", ctx.expr().varName);
       
       res.add("inst", visit(ctx.expr()).render());
       res.add("value", ctx.expr().varName);
@@ -89,7 +89,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitDeclare(chubixParser.DeclareContext ctx) {
       ST res = templates.getInstanceOf("declaration");
 
-      res.add("type", ctx.type().getText());
+      
+      res.add("type", newVar());
       res.add("var", ctx.ID().getText());
 
       return res;
@@ -240,6 +241,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("type","Double");
       res.add("var",ctx.varName);
+      //ir buscar ao mapa a variavel correspondente
       res.add("value",ctx.ID().getText()+ctx.op.getText());
    
       return res;
@@ -303,6 +305,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("var", ctx.varName);
       res.add("type","Double");
+      // ver a variavel q tem este id;
       res.add("value",ctx.ID().getText());
       return res;
    }
