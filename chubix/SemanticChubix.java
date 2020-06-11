@@ -175,7 +175,16 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDimensionType(chubixParser.DimensionTypeContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = true;
+      String id = ctx.ID().getText();
+      if (!dimensionsParser.dimTable.containsKey(id)) {
+         res = false;
+      }
+      
+      if (res)
+         ctx.res = dimensionsParser.dimTable.get(id);
+      
+      return res;
    }
 
    @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) {
@@ -186,8 +195,13 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
+      Boolean res = visit(ctx.e1) && checkNumericType(ctx, ctx.e1.exprType) &&
+                    visit(ctx.e2) && checkNumericType(ctx, ctx.e2.exprType);
       
-      return visitChildren(ctx);
+      if (res)
+         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType);
+      
+      return res;
    }
 
    @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) {
@@ -230,7 +244,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
-      return visitChildren(ctx);
+      return visitChildren(ctx); // porquê ID?
    }
 
    @Override public Boolean visitSignExpr(chubixParser.SignExprContext ctx) {
@@ -241,7 +255,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = visit(ctx.e1) && checkNumericType(ctx, ctx.e1.exprType) &&
+                    visit(ctx.e2) && checkNumericType(ctx, ctx.e2.exprType);
+      if (res)
+         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType);
+      return res;
    }
 
    @Override public Boolean visitPowExpr(chubixParser.PowExprContext ctx) {
@@ -253,7 +271,17 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitConditionalExpr(chubixParser.ConditionalExprContext ctx) {
-      return visitChildren(ctx);
+      Boolean res = visit(ctx.e1) && visit(ctx.e2);
+      
+      if (!ctx.e1.exprType.conformsTo(ctx.e1.exprType)) {
+         ErrorHandling.printError(ctx, "Incomparable types: " + ctx.e1.exprType + " and " + ctx.e2.exprType);
+         res = false;
+      }
+      
+      if (res)
+         ctx.exprType = booleanType;
+       
+      return res;     
    }
 
    @Override public Boolean visitIdExpr(chubixParser.IdExprContext ctx) {
@@ -374,23 +402,26 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    private Type fetchType(Type t1, Type t2) {
       Type res = null;
+      
       if (t1.isNumeric() && t2.isNumeric())
       {
-         if ("real".equals(t1.name()))
+         if ("double".equals(t1.name()))
             res = t1;
-         else if ("real".equals(t2.name()))
+         else if ("double".equals(t2.name()))
             res = t2;
          else
             res = t1;
       }
       else if ("boolean".equals(t1.name()) && "boolean".equals(t2.name()))
          res = t1;
+      else if ("string".equals(t1.name()) && "string".equals(t2.name()))
+         res = t1;
       return res;
    }
 
-   private Boolean checkUnit(String unit){
-      // veryfy if 
-      // print error if unit doesnt exist I guess...
-      return true;
-   }
+   //private Boolean checkUnit(String unit){
+   //   // veryfy if 
+   //   // print error if unit doesnt exist I guess...
+   //   return true;
+   //}
 }
