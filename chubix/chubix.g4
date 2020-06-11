@@ -69,7 +69,7 @@ type returns[Type res]:
 	| 'Double'			#doubleType
 	| 'Boolean'			#boolType
 	| 'String'			#strType
-  | ID            #dimensionType
+  	| ID            		#dimensionType
 	;
 
 expr returns[Type exprType, String varName]:
