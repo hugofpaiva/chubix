@@ -175,6 +175,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDimensionType(chubixParser.DimensionTypeContext ctx) {
+      for (dimensionsParser.)
       return visitChildren(ctx);
    }
 
@@ -230,7 +231,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
-      return visitChildren(ctx);
+      if (!chubixParser.symbolTable.containsKey(ctx.ID().getText())) {
+         ErrorHandling.printError(ctx, "Variable \""+ctx.ID().getText()+"\" does not exists!");
+         return false;
+      ctx.exprType = chubixParser.symbolTable.get(ctx.ID().getText()).type();
+      return true;
    }
 
    @Override public Boolean visitSignExpr(chubixParser.SignExprContext ctx) {
@@ -253,7 +258,17 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitConditionalExpr(chubixParser.ConditionalExprContext ctx) {
-      return visitChildren(ctx);
+      Boolean res= visit(ctx.e1) && visit(ctx.e2) && checkNumericType(ctx, ctx.e1.exprType) && checkNumericType(ctx, ctx.e2.exprType);
+      Type e1 =ctx.e1.type;
+      Type e2 =ctx.e2.type;
+      if(!res){
+         return false;
+      }
+      if (!e1.conformsTo(e2))
+         ErrorHandling.printError(ctx, "Expressions type  \""+ctx.e1.getText()+"\" does not conform to \""+ctx.e2.getText()+"\" type!");
+         return false;
+      ctx.exprType = booleanType;
+      return res;
    }
 
    @Override public Boolean visitIdExpr(chubixParser.IdExprContext ctx) {
