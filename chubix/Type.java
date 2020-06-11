@@ -17,6 +17,10 @@ public abstract class Type {
 	public boolean isNumeric() {
 		return false;
 	}
+	
+	public boolean isDimensional() {
+		return false;
+	}
 
 	@Override
 	public String toString() {
