@@ -21,7 +21,7 @@ dim : 'dim' ID '(' ID ':' (type) ')'      #PrimitiveDim
     | 'dim' ID '(' (ID ':')? unitdim ')'  #RelativeDim
     ;
 
-unit : 'unit' ID '('  ID  ':' expr ')';
+unit : 'unit' ID '(' ID ':' expr ')';
 
 expr:  
       sign=('+'|'-') e=expr             #ExprSign
@@ -32,7 +32,7 @@ expr:
     | ID                                #ExprID
     | INTEGER                           #ExprInt
     | DOUBLE                            #ExprDouble
-    ;
+    ; 
 
 unitdim:
       <assoc=right> unitdim '^' ( sign=('+'|'-')? INTEGER )       #DimPower

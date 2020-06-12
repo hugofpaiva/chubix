@@ -32,13 +32,30 @@ public class DimensionsType extends Type {
         return false;
     }
 
-    @Override public boolean isNumeric() {
+    public Double getUnitConv(HashMap<String,Integer> unit){    
+        // for (HashMap<String,Integer> val : units.values()) {
+        //     if (val.equals(unit))
+        //         return true;
+        // }
+        for (Integer id : units.keySet()) {
+            if (val.equals(unit))
+                return true;
+        }
+        return false;
+    }
+
+    @
         return true;
     }
     
     @Override public boolean isDimensional() {
         return true;
+getConvUnit    }
+
+    @Override public boolean isNumeric() {
+        return true;
     }
+    
 
     //  public boolean conformsTo(Type other) {
     //      return other.name().equals(this.name());
