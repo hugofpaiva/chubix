@@ -1,4 +1,4 @@
-public class Symbol{
+public class Symbol {
     private final String name;                  // var_x
     private Type type;                    // Integer or DimType
     private Value value;                        // 2

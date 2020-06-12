@@ -14,17 +14,25 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //FEITO
    @Override public ST visitMain(chubixParser.MainContext ctx) {
       ST res = templates.getInstanceOf("module");
-      res.add("inst", visit(ctx.instList()).render());   
+
+      res.add("insts", visit(ctx.instList()).render());
+
+      Iterator<chubixParser.FunctionContext> listfunc = ctx.function().iterator();
+      while (listfunc.hasNext()) {
+         res.add("functions", visit(listfunc.next()).render());
+      }
+
       return res;
    }
 
    //FEITO
    @Override public ST visitInstList(chubixParser.InstListContext ctx) {
       ST res = templates.getInstanceOf("insts");
-      Iterator<chubixParser.InstructionContext> list = ctx.instruction().iterator();
-      while (list.hasNext()) {
-         res.add("inst", visit(list.next()).render());
+      Iterator<chubixParser.InstructionContext> listinst = ctx.instruction().iterator();
+      while (listinst.hasNext()) {
+         res.add("insts", visit(listinst.next()).render());
       }
+
       return res;
    }
 
@@ -100,16 +108,19 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("cond");
       res.add("instif", visit(ctx.expr()).render());
       res.add("var",ctx.expr().varName);
-      res.add("inst",visit(ctx.instList()).render());  
+      res.add("trueInst",visit(ctx.trueSL).render());  
+      if(ctx.falseSL != null){
+         res.add("falseInst",visit(ctx.falseSL).render());  
+      }
       return res;
    }
 
    @Override public ST visitConditionalElse(chubixParser.ConditionalElseContext ctx) {
-      return visitChildren(ctx);
+      return visit(ctx.conditional());
    }
 
    @Override public ST visitInstElse(chubixParser.InstElseContext ctx) {
-      return visitChildren(ctx);
+      return visit(ctx.instList());
    }
    //ta mal por causa do chico
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
@@ -182,7 +193,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       res.add("inst", visit(ctx.e1).render());
       res.add("inst", visit(ctx.e2).render());
-      res.add("type", "Double");
+      res.add("type", ctx.e1.exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());
@@ -207,7 +218,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.BOOLEAN().getText());
       return res;
    }
-   //TRATAR TIPOS
+   //Meter nextInt e cenas do tipo de acordo com o tipo da expr
    @Override public ST visitInputExpr(chubixParser.InputExprContext ctx) {
       ctx.varName = newVar();
       ST res = templates.getInstanceOf("input");
@@ -235,14 +246,14 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("value",ctx.STRING().getText());
       return res;
    }
-   //Tratar tipos
+   //Tratar tipos isto deve de estar mal
    @Override public ST visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
-      res.add("type","Double");
+      res.add("type",ctx.exprType.getJavaType());
       res.add("var",ctx.varName);
-      //ir buscar ao mapa a variavel correspondente
-      res.add("value",ctx.ID().getText()+ctx.op.getText());
+      String id = chubixParser.symbolTable.get(ctx.ID().getText()).varName();
+      res.add("value",id+ctx.op.getText());
    
       return res;
    }
@@ -252,21 +263,21 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
       res.add("inst", visit(ctx.expr()).render());
-      res.add("type", "Double");
+      res.add("type", ctx.expr().exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", 0);
       res.add("op", ctx.sign.getText());
       res.add("e2", ctx.expr().varName);
       return res;
    }
-
+   // Verificar a cena dos tipos
    @Override public ST visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) {
       ST res = templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
 
       res.add("inst", visit(ctx.e1).render());
       res.add("inst", visit(ctx.e2).render());
-      res.add("type", "Double");
+      res.add("type", ctx.e1.exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());
@@ -280,7 +291,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("inst",visit(ctx.e1).render());
       res.add("inst",visit(ctx.e2).render());
-      res.add("type","Double");
+      res.add("type",ctx.e1.exprType.getJavaType());
       res.add("var",ctx.varName);
       res.add("e1",ctx.e1.varName);
       res.add("e2",ctx.e2.varName);
@@ -295,6 +306,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("type", "Boolean");
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
+      // se for string tem de ser .equals()
+      //if(ctx.e1.exprType.type().equals("String")){
+
+      //}
+
       res.add("op", ctx.op.getText());
       res.add("e2", ctx.e2.varName);
       return res;
@@ -304,9 +320,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
       res.add("var", ctx.varName);
-      res.add("type","Double");
-      // ver a variavel q tem este id;
-      res.add("value",ctx.ID().getText());
+      res.add("type",ctx.exprType.getJavaType());
+      res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
       return res;
    }
 

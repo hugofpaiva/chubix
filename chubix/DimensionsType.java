@@ -74,4 +74,8 @@ public class DimensionsType extends Type {
     public void setUnit(HashMap<String,Integer> unit){
         this.defaultUnit=unit;
     }
+    
+    public String getJavaType(){
+		return this.dimType.getJavaType();
+	}       
 }

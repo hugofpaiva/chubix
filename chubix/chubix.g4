@@ -9,9 +9,9 @@ grammar chubix;
   import java.util.HashMap;
 }
 
-main: instList EOF;
+main: (function? ';')* instList EOF;
 
-instList: (instruction? ';')* ;
+instList: (instruction? ';')*;
 
 instruction:  print 
             | assignment
@@ -22,7 +22,6 @@ instruction:  print
             | whileLoop
             | declare
             | callFunction
-            | function
             | returnFunc
             | declAssig
             ;

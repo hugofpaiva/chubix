@@ -31,27 +31,30 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       
       Symbol symb = visit(ctx.unitdim());
       DimensionsType relDim = (DimensionsType) symb.type();
-      Type type = relDim.getType();
-      
+
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
-         if (dimensionsType.getUnits().containsKey(relDim)) {
-            ErrorHandling.printError(ctx, "Unit \""+relDim+"\" already defined.");
+         if (dimensionsType.containsUnit(relDim.getUnit())) {
+            ErrorHandling.printError(ctx, "Unit \""+mapToString(relDim.getUnit())+"\" already defined.");
             return null;
          }
       }
 
+      Type type = relDim.getType();
+      
       if (ctx.ID(1)!=null) {
-         String unit = ctx.ID(1).getText();
+         String newUnit = ctx.ID(1).getText();
+         HashMap<String, Integer> unit = new HashMap<>();
+         unit.put(newUnit,1);
          
          for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
-            if (dimensionsType.getUnits().containsKey(unit)) {
-               ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
+            if (dimensionsType.containsUnit(unit)) {
+               ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
                return null;
             }
          }
-         
-         DimensionsType newRelDim = new DimensionsType(dim, unit, type);
-         newRelDim.getUnits().put(relDim.getUnit(), 1.0);   // add default unit to dim
+
+         DimensionsType newRelDim = new DimensionsType(dim, unit, type); // add default
+         newRelDim.addUnit(relDim.getUnit(), 1.0); // add the new 
 
          dimensionsParser.dimTable.put(dim, newRelDim);  //add dim to map dimTable
       } else{
@@ -64,63 +67,61 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitPrimitiveDim(dimensionsParser.PrimitiveDimContext ctx) {
       String dim = ctx.ID(0).getText();
-      String unit = ctx.ID(1).getText();
+      String newUnit = ctx.ID(1).getText();
+      HashMap<String, Integer> unit = new HashMap<>();
+      unit.put(newUnit,1);
       Type type = ctx.type().res;
       
-      if (dimensionsParser.dimTable.containsKey(dim))
-      {
+      if (dimensionsParser.dimTable.containsKey(dim)) {
          ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.");
          return null;
       }
+      
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
-         if (dimensionsType.getUnits().containsKey(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
+         if (dimensionsType.containsUnit(unit)) {
+            ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
             return null;
-         }
-      }     
-      dimensionsParser.dimTable.put(dim, new DimensionsType(dim, unit, type));  //add dim to map dimTable
-
-      for (Map.Entry dimensionsType : dimensionsParser.dimTable.entrySet()){
-         System.out.println(dimensionsType.getKey());
-         System.out.println("\ndefault Unit of dim : "+ ((DimensionsType) dimensionsType.getValue()).getUnit()+"\n");
-         for (Map.Entry unit_dim : ((DimensionsType) dimensionsType.getValue()).getUnits().entrySet()){
-            System.out.println(unit_dim.getKey()+" value : "+ unit_dim.getValue()+"\n");
-         }
-         System.out.println("-------------------------------------");
+         } 
       }
-
+      dimensionsParser.dimTable.put(dim, new DimensionsType(dim, unit, type));  //add dim to map dimTable
       return null;
    }
 
    @Override public Symbol visitUnit(dimensionsParser.UnitContext ctx) {
       String dim = ctx.ID(0).getText();
 
-      if (!dimensionsParser.dimTable.containsKey( dim ))
-      {
-         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" already defined.");
-         // sys exit
+      if (!dimensionsParser.dimTable.containsKey( dim )) {
+         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" not defined.");
          return null;
       }
 
       Type dimType = dimensionsParser.dimTable.get(dim);
 
-      String unit = ctx.ID(1).getText();
+      String newUnit = ctx.ID(1).getText();
+      HashMap<String, Integer> unit = new HashMap<>();
+      unit.put(newUnit,1);
 
-      Symbol sym = visit(ctx.expr()); // returns the value of the unit
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
+         if (dimensionsType.containsUnit(unit)) {
+            ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
+            return null;
+         } 
+      }
+
+      Symbol sym = visit(ctx.expr());
+      Type dim = 
+
+      if (!dimensionsParser.dimTable.containsKey( dim.name()) )) {
+         ErrorHandling.printError(ctx, "Dimension \""+ dim +"\" not defined.");
+         return null;
+      }
 
       Double convert_value = sym.value().doubleValue();
 
+      dimensionsParser.dimTable.get(dim).addUnit(unit, convert_value);
+
       
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
-         if (dimensionsType.getUnits().containsKey(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+unit+"\" already defined.");
-            return null;
-         }
-      }
-
-      dimensionsParser.dimTable.get(dim).getUnits().put(unit, convert_value);
-
-      return visitChildren(ctx);
+      return null;
    }
 
 
@@ -282,6 +283,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitExprID(dimensionsParser.ExprIDContext ctx) {
       String unit = ctx.ID().getText();
+
       // check if ID exists
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
          if (dimensionsType.getUnits().containsKey(unit)) {
@@ -295,44 +297,33 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       return null;
    }
 
-   @Override public Symbol visitDimSign(dimensionsParser.DimSignContext ctx) {
-       if (ctx.sign.getText().equals("-")) {
-         Symbol sym = visitChildren(ctx);
-         sym.value().setDoubleValue(-sym.value().doubleValue());
-         return sym;
-      }
-      return visitChildren(ctx);
-   }
-   
    @Override public Symbol visitDimPower(dimensionsParser.DimPowerContext ctx) {
-      Symbol v1 = visit(ctx.unitdim(0));
-      Symbol resSym;
-      String n;
-      if (ctx.unitdim(1)!=null) {
-         Symbol v2 = visit(ctx.unitdim(1));
-         Type resType = null;
-         
-         String unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
-         resType = getExistingDimType(unit);
-         if (resType == null)
-            resType = new DimensionsType("", unit, new DoubleType());
-         resSym = new Symbol(resType, new DoubleValue(1.0));
-         resSym.setDim(resType.name()); 
-
-         return resSym;
-      } else if (ctx.DOUBLE()!=null) {  
-         n = ctx.DOUBLE().getText();    
-      } else {
-         n = ctx.INTEGER().getText();
-      }
+      Symbol s1 = visit(ctx.unitdim());
       Type resType = null;
-      String unit = ((DimensionsType) v1.type()).getUnit()+"^"+n;
-      resType = getExistingDimType(unit);
-      if (resType == null)
-         resType = new DimensionsType("", unit, new DoubleType());
-      resSym = new Symbol(resType, new DoubleValue(1.0));
-      resSym.setDim(resType.name());
-      return resSym;
+
+      DimensionsType dim1 = (DimensionsType) s1.type();
+      HashMap<String,Integer> map1 = dim1.getUnit();
+
+      int i;
+      if (ctx.sign != null)
+         i = Integer.parseInt(ctx.sign.getText()+ctx.INTEGER().getText());
+      else
+         i = Integer.parseInt(ctx.INTEGER().getText());
+
+      if(i==0){
+         ErrorHandling.printError(ctx, "Power of 0 is not possible when defining a unit");
+         return null;
+      }
+
+      map1.forEach((k, v) -> {
+         map1.put(k, (int) Math.pow(map1.get(k), i));
+      });
+
+      dim1.setUnit(map1);
+
+      Symbol resSymb = new Symbol(dim1, new DoubleValue(1.0));
+
+      return resSymb;
    }
 
    @Override public Symbol visitDimUnn(dimensionsParser.DimUnnContext ctx) {
@@ -340,56 +331,88 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
    }
 
    @Override public Symbol visitDimMultDiv(dimensionsParser.DimMultDivContext ctx) {
-      String op = ctx.op.getText();
-      Symbol v1 = visit(ctx.unitdim(0));
-      Symbol v2 = visit(ctx.unitdim(1));
+      Symbol s1 = visit(ctx.unitdim(0));
+      Symbol s2 = visit(ctx.unitdim(1));
       Type resType = null;
 
-      String unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType) v2.type()).getUnit();
-      if (v1.dim().equals(v2.dim())) {
-         switch (op) {
-            case "*":
-               resType = getExistingDimType(unit);
-               if (resType == null)
-                  resType = new DimensionsType("", unit, new DoubleType());
-               break;
-            case "/":
-               resType = new DoubleType();
-               break;
-         }
-      } else {        
-         resType = getExistingDimType(unit);
-         if (resType == null)
-            resType = new DimensionsType("", unit, new DoubleType());
-      }
+      DimensionsType dim1 = (DimensionsType) s1.type();
+      DimensionsType dim2 = (DimensionsType) s2.type();
+      HashMap<String,Integer> map1 = dim1.getUnit();
+      HashMap<String,Integer> map2 = dim2.getUnit();
 
-      if (((DimensionsType) v1.type()).getType().name().equals("integer") || ((DimensionsType) v2.type()).getType().name().equals("integer"))
-         ((DimensionsType) resType).setType(new IntegerType());
-      Symbol resSymb = new Symbol(resType, new DoubleValue(1.0));
-      resSymb.setDim(resType.name());
+      switch(ctx.op.getText()){
+         case "*":
+            //Merge maps
+            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
+            map1.forEach((k, v) -> {
+               map2.putIfAbsent(k, v);
+            });
+            map2.values().removeIf(f -> f == 0f);
+
+            dim2.setUnit(map2);
+            break;
+         case "/":
+            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
+            map1.forEach((k, v) -> {
+               map2.putIfAbsent(k, v);
+            });
+            map2.values().removeIf(f -> f == 0f);                                
+            dim2.setUnit(map2);
+            break;
+      }
+   
+      if ( (dim1.getType().name().equals("integer")) || (dim2.getType().name().equals("integer")) )
+        dim2.setType(new IntegerType());
+      
+      Symbol resSymb = new Symbol(dim2, new DoubleValue(1.0));
       return resSymb;
    }
 
    @Override public Symbol visitDimID(dimensionsParser.DimIDContext ctx) {
       String dim = ctx.ID().getText();
       // check if ID exists
-      
       for (String dimName : dimensionsParser.dimTable.keySet()){
          if (dimName.equals(dim)) {
             Symbol temp = new Symbol(dimensionsParser.dimTable.get(dimName), new DoubleValue(1.0));
-            temp.setDim(dim);
             return temp;
          }
       }
-      ErrorHandling.printError(ctx, "Dimensions \""+dim+"\" not defined.");
+      ErrorHandling.printError(ctx, "Dimension \""+dim+"\" not defined.");
       return null;
    }
 
-   public Type getExistingDimType(String unit) {
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
-         if (dimensionsType.getUnits().containsKey(unit)) {
-           return dimensionsType;
-         }
-      }
-      return null;
+   private DimensionsType checkUnit(HashMap<String,Integer> map){
+     for (DimensionsType dimType : dimensionsParser.dimTable.values()) {
+         if (dimType.containsUnit(map))
+            return dimType;
+     }
+     return null;
    }
+
+   private Type fetchType(Type t1, Type t2) {
+      Type res = null;
+      
+      if (t1.isNumeric() && t2.isNumeric())
+      {
+         if ("double".equals(t1.name()))
+            res = t1;
+         else if ("double".equals(t2.name()))
+            res = t2;
+         else
+            res = t1;
+      }
+      else if ("boolean".equals(t1.name()) && "boolean".equals(t2.name()))
+         res = t1;
+      else if ("string".equals(t1.name()) && "string".equals(t2.name()))
+         res = t1;
+      return res;
+   }
+
+   public static String mapToString(HashMap<String, Integer> map) {
+        String str = "";
+        for (String unit : map.keySet())
+            str += unit +"^" +map.get(unit) + "*";
+        str = str.substring(0, str.length()-1);
+        return str;
+   }
+}
