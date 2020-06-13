@@ -8,24 +8,24 @@ unit Velocity(mach: 200.0*m/s);
 
 dim Acceleration(Distance/Time^2); # ou   velocity^-2  
 
-# dim Mass(kg: Double);
-# 
-# dim Force(N: Mass*Acceleration);
-# 
-# dim Potential(V: Double);
-# unit Potential(MV: 10.0^6.0*V);
-# 
-# dim Resistence(O: Double);
-# 
-# dim Current(A: Double);
-# 
-# dim Energy(J: Mass/(Distance^2)*Time^-2); #tem erro qql
-# 
-# dim Power(W: Energy/Time);
-# unit Power(KW: W*10.0^3.0);
-# 
-# dim Price(euro : Double);
-# 
-# dim PricePerPowerTime(Price/Power*Time);
-# 
-# dim Charge(C: Double);
+dim Mass(kg: Double);
+
+dim Force(N: Mass*Acceleration);
+
+dim Potential(V: Double);
+unit Potential(MV: 10.0^6.0*V);
+
+dim Resistence(O: Double);
+
+dim Current(A: Double);
+
+dim Energy(J: Mass/(Distance^2)*Time^-2);
+
+dim Power(W: Energy/Time);
+unit Power(KW: W*10.0^3.0);
+
+dim Price(euro : Double);
+
+dim PricePerPowerTime(Price/Power*Time);
+
+dim Charge(C: Double);
