@@ -37,17 +37,16 @@
 # Resultado: distancia percorrida
 
 #Resolução:
-import ../tests/dimensions/dimensionsExamples;
+import ../tests/dimensions/dimensionsExamples.ubi;
 
 Mass m = 5 [kg];
+Time t = 5[s];            #input("Insira o tempo",Time) [s];
+Velocity v0 = 5[m/s];     #input("Insira a velocidade inicial",Velocity) [m/s];
+Force f = 5 [kg*m*s^-2];  #input("Insira a intensidade da força, em Newton",Force) [N];
 
-#Time t =  input("Insira o tempo") [s];
-#Force f = input("Insira a intensidade da força, em Newton") [N];
-#Velocity v0 = input("Insira a velocidade inicial") [m/s];
+Accelaration a = f / m;
 
-#Accelaration a = f / m;
-
-#Distance res = v0 * t + (a*t^2)/2;
+Distance res = v0 * t;
 
 print("Distancia percorrida: ");
 print(res);

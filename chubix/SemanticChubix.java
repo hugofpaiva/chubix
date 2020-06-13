@@ -12,6 +12,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final BooleanType booleanType = new BooleanType();
    private final StringType stringType = new StringType();
    private final DimensionsType dimensionType = new DimensionsType("", new HashMap<>(), new DoubleType());
+   private  dimensionsParser dimensionsParser;
    
    @Override public Boolean visitMain(chubixParser.MainContext ctx) {
       return visitChildren(ctx);
@@ -19,7 +20,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    @Override public Boolean visitImportDim(chubixParser.ImportDimContext ctx){
       Boolean res = true;
-      String fileName = ctx.FILENAME().getText() ;
+      String fileName = ctx.FILENAME().getText();
       InputStream in_stream = null;
       CharStream input = null;
       try {
@@ -32,30 +33,30 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       if (res) {
          dimensionsLexer lexer = new dimensionsLexer(input);
          CommonTokenStream tokens = new CommonTokenStream(lexer);
-         dimensionsParser parser = new dimensionsParser(tokens);
-         ParseTree tree = parser.main();
+         dimensionsParser = new dimensionsParser(tokens);
+         ParseTree tree = dimensionsParser.main();
    
-         if (parser.getNumberOfSyntaxErrors() == 0) {
+         if (dimensionsParser.getNumberOfSyntaxErrors() == 0) {
             DimSemantic visitor0 = new DimSemantic();
             visitor0.visit(tree);
          }
       }
       return res;
    }
-
+   
    @Override public Boolean visitInstList(chubixParser.InstListContext ctx) {
       return visitChildren(ctx);
    }
-
+   
    @Override public Boolean visitInstruction(chubixParser.InstructionContext ctx) {
       return visitChildren(ctx);
    }
-
+   
    // @Override public Boolean visitPrint(chubixParser.PrintContext ctx) {
-   //    return visitChildren(ctx);
-   // }
-
-   @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
+      //    return visitChildren(ctx);
+      // }
+      
+      @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
       return visitChildren(ctx);
    }
 
@@ -84,6 +85,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
                   ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) sym.type()).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) ctx.expr().exprType).getUnit()));
                   res = false;
                }
+               sym.setValueDefined();
             } else
                sym.setValueDefined();
          }
@@ -92,19 +94,22 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDeclAssig(chubixParser.DeclAssigContext ctx) {
-      Boolean res = visit(ctx.expr()) && visit(ctx.declare());
+      Boolean res = visit(ctx.declare()) && visit(ctx.expr());
+      if (!res)
+         return false;
       String id = ctx.declare().ID().getText();
       Symbol sym = chubixParser.symbolTable.get(id);
       
       if (res) {
          if (!ctx.expr().exprType.conformsTo(sym.type())) {
             ErrorHandling.printError(ctx, "Expression type does not conform to variable \""+id+"\" type!");
-            res = false;
+            return false;
          } else if (sym.type().isDimensional() && ctx.expr().exprType.isDimensional()) {
             if ( !((DimensionsType)sym.type()).getUnit().equals(((DimensionsType) ctx.expr().exprType).getUnit())) {
                ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) sym.type()).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) ctx.expr().exprType).getUnit()));
-               res = false;
+               return false;
             }
+            sym.setValueDefined();
          } else
             sym.setValueDefined();
       }
@@ -112,8 +117,10 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDeclare(chubixParser.DeclareContext ctx) {
-      Boolean res = true;
-      visit(ctx.type());
+      Boolean res =visit(ctx.type());
+      if(!res)
+         return false;
+
       String id = ctx.ID().getText();
 
       if (chubixParser.symbolTable.containsKey(id)) {
@@ -214,7 +221,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = true;
       String id = ctx.ID().getText();
       if (!dimensionsParser.dimTable.containsKey(id)) {
-         res = false;
+         return false;
       }
       
       if (res){
@@ -280,115 +287,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return true;
    }
 
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
-      Boolean res = visit(ctx.type());
-      if (!res)
-         return false;
-      ctx.exprType = ctx.type().res;
-      return true;
-   }// fazer o mesmo para o dimensions
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
-      ctx.exprType = integerType;
-      return true;
-   }
-
-   @Override public Boolean visitBooleanExpr(chubixParser.BooleanExprContext ctx) {
-      ctx.exprType = booleanType;
-      return true;
-   }
-
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
+   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) {
       Boolean res = visit(ctx.type());
       if (!res)
          return false;
@@ -433,6 +332,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          if (ctx.e1.exprType.isDimensional() && ctx.e2.exprType.isDimensional()) {
             HashMap<String,Integer> map1 = ((DimensionsType) ctx.e1.exprType).getUnit();
             HashMap<String,Integer> map2 = ((DimensionsType) ctx.e2.exprType).getUnit();
+
             Type dim = null;
             switch(ctx.op.getText()){
                case "*":
@@ -524,9 +424,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    @Override public Boolean visitIdExpr(chubixParser.IdExprContext ctx) {
       Boolean res = true;
+      
       String id = ctx.ID().getText();
+      System.out.println(id);
       if (!chubixParser.symbolTable.containsKey(id)) {
-         ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exists!");
+         ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
          res = false;
       }
       else {
@@ -608,9 +510,8 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDimID(chubixParser.DimIDContext ctx) {
-      Boolean res = false;
+      Boolean res = true;
       String unit = ctx.ID().getText();
-
       HashMap<String, Integer> unitmap = new HashMap<>();
       unitmap.put(unit, 1);
       

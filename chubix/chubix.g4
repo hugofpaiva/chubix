@@ -105,7 +105,7 @@ Reserved Words : ['print', 'for', 'while', 'break', 'if', 'else', 'return',
 
 BOOLEAN: 'true' | 'false';
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-FILENAME: ('./'|'../')? ID ('/' ID)*?;
+FILENAME: ('./'|'../')? ID ('/' ID)*'.ubi';
 DOUBLE: [0-9]+ '.' [0-9]*;
 INTEGER: [0-9]+;
 STRING: '"' .*? '"';
