@@ -46,7 +46,7 @@ binaryOperation(inst,type,var,e1,op,e2) ::= <<
 
 insert(var)::="<var>;" 
 
-fucnReturn(inst,var) ::= <<
+funcReturn(inst,var) ::= <<
 <if(inst)><insts(inst)><endif>
 return <if(var)><var><endif>;
 >>

@@ -52,7 +52,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
       ST res = templates.getInstanceOf("funcReturn");
       if(ctx.expr()!=null){
-         System.out.print("não é null");
          res.add("inst", visit(ctx.expr()).render());
          res.add("var", ctx.expr().varName);
       }
