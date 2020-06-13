@@ -43,7 +43,14 @@ declaration(type,var,value,inst) ::= <<<if(inst)><insts(inst)><endif>
 binaryOperation(inst,type,var,e1,op,e2) ::= <<
 <declaration(type, var, [e1, " ", op, " ", e2], inst)>
 >>
+
 insert(var)::="<var>;" 
+
+fucnReturn(inst,var) ::= <<
+<if(inst)><insts(inst)><endif>
+return <if(var)><var><endif>;
+>>
+
 powerExpr(type,var,e1,e2,inst) ::="<declaration(type,var,[\"Math.pow(\", e1, \", \", e2, \")\"],inst)>"
 
 cond(instif, var, trueInst, falseInst) ::= <<

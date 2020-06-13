@@ -21,34 +21,32 @@ dim : 'dim' ID '(' ID ':' (type) ')'      #PrimitiveDim
     | 'dim' ID '(' (ID ':')? unitdim ')'  #RelativeDim
     ;
 
-unit : 'unit' ID '('  ID  ':' expr ')';
+unit : 'unit' ID '(' ID ':' expr ')';
 
-expr :  
+expr:  
       sign=('+'|'-') e=expr             #ExprSign
     | <assoc=right> expr '^' expr       #ExprPower
     | expr op=('*'|'/') expr            #ExprMultDiv
     | expr op=('+'|'-') expr            #ExprSumMin
     | '(' expr ')'                      #ExprUnn
     | ID                                #ExprID
-    | INTEGER                           #ExprInt
     | DOUBLE                            #ExprDouble
-    ;
+    ; 
 
 unitdim:
-      sign=('+'|'-') e=unitdim                                                                      #DimSign
-    | <assoc=right> unitdim '^' ( unitdim | sign=('+'|'-')? INTEGER | sign=('+'|'-')? DOUBLE)       #DimPower
-    | unitdim op=('*'|'/') unitdim                                                                  #DimMultDiv
-    | '(' unitdim  ')'                                                                              #DimUnn
-    | ID                                                                                            #DimID
+      <assoc=right> unitdim '^' ( sign=('+'|'-')? INTEGER )       #DimPower
+    | unitdim op=('*'|'/') unitdim                                #DimMultDiv
+    | '(' unitdim  ')'                                            #DimUnn
+    | ID                                                          #DimID
     ;
 
 type returns[Type res]:
 	  'Integer'			{$res = new IntegerType();}
-	| 'Double'			{$res = new DoubleType();}    
+	| 'Double'			{$res = new DoubleType();}
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INTEGER : ('+'|'-')? [0-9]+;        // remover ??
+INTEGER: ('+'|'-')? [0-9]+;
 DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n' -> skip;

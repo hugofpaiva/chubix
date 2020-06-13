@@ -21,8 +21,8 @@ public class dimensionsMain {
          if (parser.getNumberOfSyntaxErrors() == 0) {
             // print LISP-style tree:
             // System.out.println(tree.toStringTree(parser));
-            DimSemantic visitor0 = new DimSemantic();
-            visitor0.visit(tree);
+            DimSemantic d = new DimSemantic();
+            d.visit(tree);
          }
       }
       catch(IOException e) {

@@ -73,13 +73,6 @@ public interface dimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExprSumMin(dimensionsParser.ExprSumMinContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ExprInt}
-	 * labeled alternative in {@link dimensionsParser#expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitExprInt(dimensionsParser.ExprIntContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code ExprMultDiv}
 	 * labeled alternative in {@link dimensionsParser#expr}.
 	 * @param ctx the parse tree
@@ -135,13 +128,6 @@ public interface dimensionsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDimID(dimensionsParser.DimIDContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code DimSign}
-	 * labeled alternative in {@link dimensionsParser#unitdim}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDimSign(dimensionsParser.DimSignContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link dimensionsParser#type}.
 	 * @param ctx the parse tree

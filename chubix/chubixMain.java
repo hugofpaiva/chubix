@@ -2,6 +2,7 @@ import java.io.IOException;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.stringtemplate.v4.*;
+
 public class chubixMain {
    public static void main(String[] args) {
       try {
@@ -20,7 +21,13 @@ public class chubixMain {
          ParseTree tree = parser.main();
          if (parser.getNumberOfSyntaxErrors() == 0) {
             // print LISP-style tree:
-            // System.out.println(tree.toStringTree(parser));
+            // System.out.println(tree.toStringTree(parser))
+            //ErrorHandling eh = new ErrorHandling();
+            //DimSemantic dim = new DimSemantic();
+            //dim.visit(tree);
+            //if (ErrorHandling.error())
+              // System.out.println("Erros: " + ErrorHandling.errorCount());
+               
             //SemanticChubix visitor0 = new SemanticChubix();
             //visitor0.visit(tree);
             ChubixComp compiler = new ChubixComp();

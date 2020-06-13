@@ -4,6 +4,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ErrorHandling
 {
+   protected static PrintStream logFile = out; // default
+   protected static int errorCount = 0;
+   protected static int warningCount = 0;
    /**
     * Log a new line.
     */
@@ -275,8 +278,6 @@ public class ErrorHandling
       printMessage(ctx.getStart().getLine(), text, type);
    }
 
-   protected static PrintStream logFile = out; // default
-   protected static int errorCount = 0;
-   protected static int warningCount = 0;
+   
 }
 

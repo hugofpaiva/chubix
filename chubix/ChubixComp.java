@@ -15,11 +15,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitMain(chubixParser.MainContext ctx) {
       ST res = templates.getInstanceOf("module");
 
-      res.add("insts", visit(ctx.instList()).render());
+      res.add("inst", visit(ctx.instList()).render());
 
       Iterator<chubixParser.FunctionContext> listfunc = ctx.function().iterator();
       while (listfunc.hasNext()) {
-         res.add("functions", visit(listfunc.next()).render());
+         res.add("func", visit(listfunc.next()).render());
       }
 
       return res;
@@ -30,7 +30,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("insts");
       Iterator<chubixParser.InstructionContext> listinst = ctx.instruction().iterator();
       while (listinst.hasNext()) {
-         res.add("insts", visit(listinst.next()).render());
+         res.add("inst", visit(listinst.next()).render());
       }
 
       return res;
@@ -50,14 +50,21 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("funcReturn");
+      if(ctx.expr()!=null){
+         System.out.print("não é null");
+         res.add("inst", visit(ctx.expr()).render());
+         res.add("var", ctx.expr().varName);
+      }
+      return res;
    }
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
       ST res = templates.getInstanceOf("function");
       //type name args inst
       visit(ctx.ret_type);
-      res.add("type",ctx.ret_type.res);
+      //res.add("type",ctx.ret_type.res);
+      res.add("type","String");
       res.add("name",ctx.func_name.getText());
       for(int i=0;i<ctx.declare().size();i++){
          res.add("args",visit(ctx.declare(i)).render());
@@ -320,8 +327,10 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
       res.add("var", ctx.varName);
-      res.add("type",ctx.exprType.getJavaType());
-      res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
+      //res.add("type",ctx.exprType.getJavaType());
+      //res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
+      res.add("value",ctx.ID().getText());
+      res.add("type", "Double");
       return res;
    }
 

@@ -28,7 +28,7 @@ instruction:  print
 
 print: 'print' '(' (expr)? ')';
 
-returnFunc: {insideFunc > 0}? 'return' (expr)?;
+returnFunc: {insideFunc > 0}? 'return' expr?;
 
 function: {insideFunc==0}? {insideFunc++;} 
           'function' ret_type=type func_name=ID '(' (declare (',' declare)*)? ')' '{' instList '}'

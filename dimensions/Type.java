@@ -17,10 +17,17 @@ public abstract class Type {
 	public boolean isNumeric() {
 		return false;
 	}
+	
+	public boolean isDimensional() {
+		return false;
+	}
 
 	@Override
 	public String toString() {
 		return name;
 	}
 
+	public String getJavaType(){
+		return this.name();
+	}
 }

@@ -5,9 +5,9 @@ public class DimensionsType extends Type {
     //private HashMap<String, Double> units;
     private Integer id = 0; 
     private Type dimType;
-    private HashMap<Integer, HashMap<String,Integer>> units; // ID : [["m" : 1], ["s" : -1]]  
-    private HashMap<Integer, Double> unit_conv;                         // ID : 1.0
-    private HashMap<String,Integer> defaultUnit;             // [["m" : 1], ["s" : -1]] 
+    private HashMap<Integer, HashMap<String,Integer>> units = new HashMap<>();; // ID : [["m" : 1], ["s" : -1]]  
+    private HashMap<Integer, Double> unit_conv = new HashMap<>();  ;                         // ID : 1.0
+    private HashMap<String,Integer> defaultUnit = new HashMap<>();             // [["m" : 1], ["s" : -1]] 
 
     public DimensionsType(String name, HashMap<String,Integer> unit, Type dimType) {
         super(name);
@@ -91,7 +91,7 @@ public class DimensionsType extends Type {
     public static String mapToString(HashMap<String, Integer> map) {
         String str = "";
         for (String unit : map.keySet())
-            str += unit +"^" +map.get(unit) + "*";
+            str += unit +"^" + map.get(unit) + "*";
         str = str.substring(0, str.length()-1);
         return str;
     }
