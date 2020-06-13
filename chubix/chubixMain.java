@@ -22,14 +22,14 @@ public class chubixMain {
          if (parser.getNumberOfSyntaxErrors() == 0) {
             // print LISP-style tree:
             // System.out.println(tree.toStringTree(parser))
-            //ErrorHandling eh = new ErrorHandling();
+            ErrorHandling eh = new ErrorHandling();
             //DimSemantic dim = new DimSemantic();
             //dim.visit(tree);
-            //if (ErrorHandling.error())
-              // System.out.println("Erros: " + ErrorHandling.errorCount());
+            SemanticChubix semantic = new SemanticChubix();
+            semantic.visit(tree);
+            if (ErrorHandling.error())
+              System.out.println("Erros: " + ErrorHandling.errorCount());
                
-            //SemanticChubix visitor0 = new SemanticChubix();
-            //visitor0.visit(tree);
             ChubixComp compiler = new ChubixComp();
             ST res =compiler.visit(tree);
             System.out.println(res.render());

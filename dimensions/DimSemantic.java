@@ -120,12 +120,15 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }
 
       Symbol sym = visit(ctx.expr());
-      if(sym ==null){
+      if(sym == null){  
+         return null;
+      }
+      if (!sym.type().isDimensional()) {
+         ErrorHandling.printError(ctx, "Conversion expression must be a unit.");
          return null;
       }
       Type dimUnit = sym.type();
-
-      
+   
       if (!dimType.containsUnit(((DimensionsType) dimUnit).getUnit())) {  
          ErrorHandling.printError(ctx, "Dimension \""+ dimType.name() +"\" and \""+ ctx.expr().getText()+"\" are not compatible.");
          return null;
@@ -359,17 +362,10 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
             dim2.setUnit(map2);
             break;
          case "/":
-            // a = m/s^2
-            // map1 -> {}
-            //System.out.println(DimensionsType.mapToString(map1)); // m^1
-           // System.out.println(DimensionsType.mapToString(map2)); // s^2
-            
             map2.forEach((k, v) -> map2.put(k,-v));
-            map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 - v2));
-
-            map1.values().removeIf(f -> f == 0f);             
-           // System.out.println(DimensionsType.mapToString(map1)); // m^1*s^-2
-
+            map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
+            map1.values().removeIf(f -> f == 0f);
+            
             dim2.setUnit(map1);
             break;
       }

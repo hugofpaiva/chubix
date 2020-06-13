@@ -34,13 +34,13 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          return null;
       }
       DimensionsType relDim = (DimensionsType) symb.type();
-
+      /*
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.containsUnit(relDim.getUnit())) {
             ErrorHandling.printError(ctx, "Unit \""+DimensionsType.mapToString(relDim.getUnit())+"\" already defined.");
             return null;
          }
-      }
+      }*/
 
       Type type = relDim.getType();
       
@@ -337,12 +337,10 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
             dim2.setUnit(map2);
             break;
          case "/":
-            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
-            map1.forEach((k, v) -> {
-               map2.putIfAbsent(k, v);
-            });
-            map2.values().removeIf(f -> f == 0f);                                
-            dim2.setUnit(map2);
+            map2.forEach((k, v) -> map2.put(k,-v));
+            map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 - v2));
+            map1.values().removeIf(f -> f == 0f);                              
+            dim2.setUnit(map1);
             break;
       }
    
