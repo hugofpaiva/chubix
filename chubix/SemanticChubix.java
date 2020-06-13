@@ -61,7 +61,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             
       if (res) {
          if (chubixParser.symbolTable.containsKey(id)) {
-            ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
+            ErrorHandling.printError(ctx, "Variable \""+id+"\" already exists!");
             res = false;
          } else {
             chubixParser.symbolTable.put(id, sym);
@@ -127,7 +127,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          }
       } else
          return res;
-      visit(ctx.instList());
+      visit(ctx.instList()); // ignores result on purpose (to avoid override of all visit*)!
       return res;
    }
 
@@ -142,7 +142,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       } else{
          return res;
       }
-      visit(ctx.condSL);
+      visit(ctx.condSL); // ignores result on purpose (to avoid override of all visit*)!
       return res;
    }
 
@@ -187,7 +187,25 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return res;
    }
 
-   @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) {
+  
+
+   @Override public Boolean visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
+      Boolean res = visit(ctx.e1) && visit(ctx.e2);
+      if (res) {
+         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType);
+         if (ctx.e1.exprType.isDimensional() && ctx.e2.exprType.isDimensional()) {
+            if (ctx.e1.exprType.conformsTo(ctx.e2.exprType))            // e para dimensions sem o nome? mudar para getUnit() == getUnit()
+               ctx.exprType = ctx.e1.exprType;
+            else{
+               ErrorHandling.printError(ctx, "Cannot add different dimensions!");
+               return false;
+            }
+         }
+      }
+      return res;
+   }
+
+   @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) {  // e se ele associar um double a um dimType inteiro? é cagativo?
       ctx.exprType = doubleType;
       if (ctx.unitdim() != null) {
          ctx.exprType = checkUnit(ctx.unitdim().unitdimType.getUnit());
@@ -199,23 +217,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return true;
    }
 
-   @Override public Boolean visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
-      Boolean res = visit(ctx.e1) && visit(ctx.e2);
-      if (res) {
-         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType);
-         if (ctx.e1.exprType.isDimensional() && ctx.e2.exprType.isDimensional()) {
-            if (ctx.e1.exprType.conformsTo(ctx.e2.exprType))
-               ctx.exprType = ctx.e1.exprType;
-            else{
-               ErrorHandling.printError(ctx, "Cannot add different dimensions!");
-               return false;
-            }
-         }
-      }
-      return res;
-   }
-
-   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) {
+   @Override public Boolean visitIntegerExpr(chubixParser.IntegerExprContext ctx) { // done i guess
       ctx.exprType = integerType;
       if (ctx.unitdim() != null) {
          ctx.exprType = checkUnit(ctx.unitdim().unitdimType.getUnit());
@@ -232,9 +234,8 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return true;
    }
 
-   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) {
+   @Override public Boolean visitInputExpr(chubixParser.InputExprContext ctx) { // pq nao meter na gram para integer, string e double. é ez
       if (ctx.unitdim() != null) {
-         // associar o dimension type ao ctx
          Type dim = checkUnit(ctx.unitdim().unitdimType.getUnit());
          if (dim==null){
             ErrorHandling.printError(ctx, "Dimension \"" + ctx.unitdim().getText() + "\" does not exist!");
@@ -262,23 +263,23 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return true;
    }
 
-   @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {
+   @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) {  //nao precisamos ver se contém, já é feito no visit ID
       if (!chubixParser.symbolTable.containsKey(ctx.ID().getText())) {
          ErrorHandling.printError(ctx, "Variable \""+ctx.ID().getText()+"\" does not exists!");
          return false;
       }
-      ctx.exprType = chubixParser.symbolTable.get(ctx.ID().getText()).type();
+      ctx.exprType = chubixParser.symbolTable.get(ctx.ID().getText()).type();          // é verificar o res do visit e fazer isto
       return true;
    }
 
-   @Override public Boolean visitSignExpr(chubixParser.SignExprContext ctx) {
+   @Override public Boolean visitSignExpr(chubixParser.SignExprContext ctx) { // done
       Boolean res = visit(ctx.expr()) && checkNumericType(ctx, ctx.expr().exprType);
       if (res) 
          ctx.exprType = ctx.expr().exprType;
       return res;
    }
 
-   @Override public Boolean visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) {
+   @Override public Boolean visitMultDivRestExpr(chubixParser.MultDivRestExprContext ctx) { // parece estar a dar se aquele map tiver bem
       Boolean res = visit(ctx.e1) && checkNumericType(ctx, ctx.e1.exprType) && 
                     visit(ctx.e2) && checkNumericType(ctx, ctx.e2.exprType);
       if (res) {
@@ -298,7 +299,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
                   map1.forEach((k, v) -> {
                      map2.putIfAbsent(k, v);
                   });
-                  map2.values().removeIf(f -> f == 0f);
+                  map2.values().removeIf(f -> f == 0f);             
                   break;
             }
             Type dim = checkUnit(map2);
@@ -316,23 +317,32 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = visit(ctx.e1) && checkNumericType(ctx, ctx.e1.exprType) &&
                     visit(ctx.e2) && checkNumericType(ctx, ctx.e2.exprType) && (!ctx.e2.exprType.isDimensional());
       if (res)
-         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType);
-      return res;
+         ctx.exprType = fetchType(ctx.e1.exprType, ctx.e2.exprType); // fetchType nao funciona para dimensoes
+
+      return res;                                                  
    }
 
    @Override public Boolean visitConditionalExpr(chubixParser.ConditionalExprContext ctx) {
       Boolean res = visit(ctx.e1) && visit(ctx.e2);
+      String op = ctx.op.getText();
       
-      if (!ctx.e1.exprType.conformsTo(ctx.e1.exprType)) {
+      if (!ctx.e1.exprType.conformsTo(ctx.e1.exprType)) {      
          ErrorHandling.printError(ctx, "Incomparable types: " + ctx.e1.exprType + " and " + ctx.e2.exprType);
          res = false;
       }
       
-      if  (ctx.e1.exprType == stringType && ctx.e2.exprType == stringType && (ctx.op.getText().equals("==") || ctx.op.getText().equals("!="))){
-         ErrorHandling.printError(ctx, "Incomparable types: " + ctx.e1.exprType + " and " + ctx.e2.exprType);
+      if  (ctx.e1.exprType == stringType && ctx.e2.exprType == stringType && !(op.equals("==")) && !(op.equals("!="))){
+         ErrorHandling.printError(ctx, "Incomparable types: " + ctx.e1.exprType + " and " + ctx.e2.exprType);           
          return false;
       }
 
+      if (ctx.e1.exprType.isDimensional() && ctx.e2.exprType.isDimensional()) {
+         if ( !((DimensionsType)ctx.e1.exprType).getUnit().equals(((DimensionsType) ctx.e2.exprType).getUnit())) {
+            ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) ctx.e1.exprType).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) ctx.e2.exprType).getUnit()));
+            res = false;
+         }
+      }
+      
       if (res)
          ctx.exprType = booleanType;
        
@@ -352,7 +362,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             ErrorHandling.printError(ctx, "Variable \""+id+"\" not defined!");
             res = false;
          }
-         // declaration
          else
             ctx.exprType = sym.type();
       }
@@ -380,7 +389,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       HashMap<String,Integer> map1 = dim1.getUnit();
 
       map1.forEach((k, v) -> {
-         map1.put(k, (int) Math.pow(map1.get(k), i));
+         map1.put(k, (int) map1.get(k)*i);
       });
 
       dim1.setUnit(map1);
@@ -393,9 +402,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    // @Override public Boolean visitDimUnn(chubixParser.DimUnnContext ctx) {
    //    return visitChildren(ctx);
    // }
-   
-
-
 
    @Override public Boolean visitDimMultDiv(chubixParser.DimMultDivContext ctx) {
       Boolean res =  visit(ctx.unitdim(0)) &&  visit(ctx.unitdim(1));
@@ -418,11 +424,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             dim2.setUnit(map2);
             break;
          case "/":
-             map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
+            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
             map1.forEach((k, v) -> {
                map2.putIfAbsent(k, v);
             });
-            map2.values().removeIf(f -> f == 0f);
+            map2.values().removeIf(f -> f == 0f);     
             dim2.setUnit(map2);
             break;
       }
@@ -438,12 +444,14 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       HashMap<String, Integer> unitmap = new HashMap<>();
       unitmap.put(unit, 1);
       
-      // for (DimensionsType dimType : dimensionParser.dimTable) {//dimensionParser n tá na pasta
-      //    if (dimType.containsUnit(unitmap)){
-      //       ctx.unitdimType = dimType;
-      //       res = true;
-      //    }
-      // }
+      for (DimensionsType dimType : dimensionParser.dimTable) {//dimensionParser n tá na pasta
+         if (dimType.containsUnit(unitmap)){
+            HashMap<String, Integer> unit = new HashMap<>();
+            unit.putAll(dimType.getUnit());
+            ctx.unitdimType = new DimensionsType("", unit, dimType.getType());   
+            res = true;
+         }
+      }
       
       if (!res)
          ErrorHandling.printError(ctx, "There is no dimension with that unit!");
@@ -480,8 +488,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    private DimensionsType checkUnit(HashMap<String,Integer> map){
      for (DimensionsType dimType : dimensionsParser.dimTable.values()) {
-         if (dimType.containsUnit(map))
-            return dimType;
+         if (dimType.containsUnit(map)){
+            HashMap<String, Integer> unit = new HashMap<>();
+            unit.putAll(dimType.getUnit());
+            return new DimensionsType("", unit, dimType.getType());
+         }
      }
      return null;
    }

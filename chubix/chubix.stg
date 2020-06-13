@@ -6,6 +6,13 @@ typeValue ::= [
     default    : "null"
 ]
 
+scanner ::= [
+    "Integer"  : "sc.nextInt()",
+    "Double"   : "sc.nextDouble()",
+    "String"   : "sc.nextLine()",
+    default   : "null"
+]
+
 module(name,inst,func) ::= <<
 import java.util.Scanner;
 

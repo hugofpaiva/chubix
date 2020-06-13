@@ -79,20 +79,20 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //FEITO
    @Override public ST visitAssignment(chubixParser.AssignmentContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-      
-      res.add("var", ctx.expr().varName);
+      //chubixParser.symbolTable.get(ctx.ID().getText()).setVarName() = ctx.varName;
+      String varName = chubixParser.symbolTable.get(ctx.ID().getText()).varName();
+      res.add("var", varName);
       res.add("inst",visit(ctx.expr()).render());
-      res.add("value",ctx.expr().varName);     
+      res.add("value", ctx.expr().varName);     
       return res;
    }
    //Tratar tipos
    @Override public ST visitDeclAssig(chubixParser.DeclAssigContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-
-      res.add("type", ctx.declare().type().getText());
-      
-      res.add("var", ctx.expr().varName);
-      
+      String varName = newVar();
+      chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
+      res.add("type", ctx.declare().type().res);
+      res.add("var", varName);
       res.add("inst", visit(ctx.expr()).render());
       res.add("value", ctx.expr().varName);
 
@@ -102,10 +102,10 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //TRATAR TIPOS
    @Override public ST visitDeclare(chubixParser.DeclareContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-
-      
-      res.add("type", newVar());
-      res.add("var", ctx.ID().getText());
+      String varName = newVar();
+      chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
+      res.add("type", ctx.type().res);
+      res.add("var", varName);
 
       return res;
    }
@@ -199,7 +199,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       res.add("inst", visit(ctx.e1).render());
       res.add("inst", visit(ctx.e2).render());
-      res.add("type", ctx.e1.exprType.getJavaType());
+      res.add("type", ctx.exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());
@@ -325,13 +325,15 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitIdExpr(chubixParser.IdExprContext ctx) {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
+      
       res.add("var", ctx.varName);
       //res.add("type",ctx.exprType.getJavaType());
-      //res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
-      res.add("value",ctx.ID().getText());
-      res.add("type", "Double");
+      res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
+      //res.add("value",ctx.ID().getText());
+      res.add("type", ctx.exprType.getJavaType());
       return res;
    }
+   
 
    @Override public ST visitDimPower(chubixParser.DimPowerContext ctx) {
       return visitChildren(ctx);

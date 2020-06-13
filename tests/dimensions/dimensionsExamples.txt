@@ -29,3 +29,4 @@ dim Price(euro : Double);
 dim PricePerPowerTime(Price/Power*Time);
 
 dim Charge(C: Double);
+
