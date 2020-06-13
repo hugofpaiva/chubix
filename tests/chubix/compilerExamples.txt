@@ -44,12 +44,12 @@ Time t = 5[s];            #input("Insira o tempo",Time) [s];
 Velocity v0 = 5[m/s];     #input("Insira a velocidade inicial",Velocity) [m/s];
 Force f = 5 [kg*m*s^-2];  #input("Insira a intensidade da força, em Newton",Force) [N];
 
-Accelaration a = f / m;
+Acceleration a = f / m; # f = kg*a   f = kg*m*s^-2  m   m*s^-2
 
-Distance res = v0 * t;
+# Distance res = v0 * t;
 
 print("Distancia percorrida: ");
-print(res);
+# print(res);
 #
 #
 ####Exemplo 2

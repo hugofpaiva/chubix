@@ -104,6 +104,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       visit(ctx.type());
       String varName = newVar();
+      System.out.println(ctx.ID().getText());
       chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
       res.add("type", ctx.type().res);
       res.add("var", varName);
@@ -331,8 +332,13 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("type", ctx.exprType.getJavaType());
       return res;
    }
-   
 
+   @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) {
+      ST res = visit(ctx.expr());
+      ctx.varName = ctx.expr().varName;
+      return res;
+   }
+   
    @Override public ST visitDimPower(chubixParser.DimPowerContext ctx) {
       return visitChildren(ctx);
    }

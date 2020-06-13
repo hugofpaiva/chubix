@@ -117,17 +117,17 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitDeclare(chubixParser.DeclareContext ctx) {
-      Boolean res =visit(ctx.type());
+      Boolean res = visit(ctx.type());
       if(!res)
          return false;
 
       String id = ctx.ID().getText();
-
       if (chubixParser.symbolTable.containsKey(id)) {
          ErrorHandling.printError(ctx, "Variable \""+id+"\" already declared!");
          res = false;
-      } else
+      } else {
          chubixParser.symbolTable.put(id, new Symbol(id, ctx.type().res));
+      }
       return res;
    }
 
@@ -220,7 +220,9 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    @Override public Boolean visitDimensionType(chubixParser.DimensionTypeContext ctx) {
       Boolean res = true;
       String id = ctx.ID().getText();
+
       if (!dimensionsParser.dimTable.containsKey(id)) {
+         ErrorHandling.printError(ctx, "qq cena id: " + id);
          return false;
       }
       
@@ -330,28 +332,35 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       if (res) {
          
          if (ctx.e1.exprType.isDimensional() && ctx.e2.exprType.isDimensional()) {
-            HashMap<String,Integer> map1 = ((DimensionsType) ctx.e1.exprType).getUnit();
+            HashMap<String,Integer> map1 = ((DimensionsType) ctx.e1.exprType).getUnit(); ////// VER ISTO
             HashMap<String,Integer> map2 = ((DimensionsType) ctx.e2.exprType).getUnit();
 
             Type dim = null;
             switch(ctx.op.getText()){
                case "*":
-                  map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
-                  map1.forEach((k, v) -> { map2.putIfAbsent(k, v); });
-                  map2.values().removeIf(f -> f == 0f);
-                  dim = checkUnit(map2);
+                  map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
+                  map2.forEach((k, v) -> { map1.putIfAbsent(k, v); });
+                  map1.values().removeIf(f -> f == 0f);
+                  dim = checkUnit(map1);
                   break;
                case "/":
+                  System.out.println("op1: " + DimensionsType.mapToString(map1));
+                  System.out.println("op2: " + DimensionsType.mapToString(map2));
+
                   map2.forEach((k, v) -> map2.put(k,-v));
-                  map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 - v2));
+                  map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
                   map1.values().removeIf(f -> f == 0f);          
                   dim = checkUnit(map1);
+                  //   f =  s^-2*kg^1*m^1
+                  // 
+                  System.out.println("ans: " + DimensionsType.mapToString(map1));
+               
                   break;
             }
             if (dim != null)
                ctx.exprType = dim;
             else
-               ctx.exprType = new DimensionsType("", map2, fetchType(((DimensionsType) ctx.e1.exprType).getType(), ((DimensionsType) ctx.e2.exprType).getType()));
+               ctx.exprType = new DimensionsType("", map1, fetchType(((DimensionsType) ctx.e1.exprType).getType(), ((DimensionsType) ctx.e2.exprType).getType()));
          } else if (ctx.e1.exprType.isDimensional()) {
             ctx.exprType = ctx.e1.exprType;
          } else if (ctx.e2.exprType.isDimensional()) {
@@ -490,22 +499,25 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       switch(ctx.op.getText()){
          case "*":
             //Merge maps
-            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
+            // [m : 1 , s:-2]
+            map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2)); // m*kg*s^-2
             map1.forEach((k, v) -> {
-               map2.putIfAbsent(k, v);
+               map2.putIfAbsent(k, v); //
             });
             map2.values().removeIf(f -> f == 0f);
 
             dim2.setUnit(map2);
             break;
          case "/":
+            
             map2.forEach((k, v) -> map2.put(k,-v));
             map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
             map1.values().removeIf(f -> f == 0f);  
             dim2.setUnit(map1);
+
             break;
       }
-      ctx.unitdimType = dim1;
+      ctx.unitdimType = dim2;
       return res;
    }
 
