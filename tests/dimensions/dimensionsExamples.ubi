@@ -17,7 +17,7 @@ unit Potential(MV: 10.0^6.0*V);
 
 dim Resistence(O: Double);
 
-dim Current(A: Double);
+dim Current(A: Potential/Resistence);
 
 dim Energy(J: Mass/(Distance^2)*Time^-2);
 

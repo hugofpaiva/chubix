@@ -91,7 +91,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       String varName = newVar();
       visit(ctx.declare());
       chubixParser.symbolTable.get(ctx.declare().ID().getText()).setVarName(varName);
-      res.add("type", ctx.declare().type().res.name());
+      System.out.println("-> " + ctx.declare().type().res.name());
+      if (!ctx.declare().type().res.isDimensional())
+         res.add("type", ctx.declare().type().res.name());
+      else    
+         res.add("type", ((DimensionsType) ctx.declare().type().res).getType().name());
       res.add("var", varName);
       res.add("inst", visit(ctx.expr()).render());
       res.add("value", ctx.expr().varName);
@@ -285,7 +289,10 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       res.add("inst", visit(ctx.e1).render());
       res.add("inst", visit(ctx.e2).render());
-      res.add("type", ctx.exprType.getJavaType());
+      if(ctx.op.getText().equals("/")){
+         res.add("type", "Double");
+      }else
+         res.add("type", ctx.exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());
@@ -299,7 +306,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("inst",visit(ctx.e1).render());
       res.add("inst",visit(ctx.e2).render());
-      res.add("type",ctx.e1.exprType.getJavaType());
+      res.add("type","Double");
       res.add("var",ctx.varName);
       res.add("e1",ctx.e1.varName);
       res.add("e2",ctx.e2.varName);
@@ -313,14 +320,26 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("inst", visit(ctx.e2).render());
       res.add("type", "Boolean");
       res.add("var", ctx.varName);
-      res.add("e1", ctx.e1.varName);
-      // se for string tem de ser .equals()
-      //if(ctx.e1.exprType.type().equals("String")){
-
-      //}
-
-      res.add("op", ctx.op.getText());
-      res.add("e2", ctx.e2.varName);
+      
+      if (ctx.op.getText().equals("==") || ctx.op.getText().equals("!=")){
+         if(ctx.e1.exprType.name().equals("string") && ctx.e2.exprType.name().equals("string")){
+            if(ctx.op.getText().equals("!="))
+               res.add("e1", "!"+ctx.e1.varName);
+            else
+               res.add("e1", ctx.e1.varName);
+            res.add("op", ".equals(");
+            res.add("e2", ctx.e2.varName+")");
+         }else {
+            res.add("e1", ctx.e1.varName);
+            res.add("op", ctx.op.getText());
+            res.add("e2", ctx.e2.varName);
+         }
+       }else {
+         res.add("e1", ctx.e1.varName);
+         res.add("op", ctx.op.getText());
+         res.add("e2", ctx.e2.varName);
+       }
+      
       return res;
    }
 

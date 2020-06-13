@@ -46,40 +46,51 @@ Force f = 5 [kg*m*s^-2];  #input("Insira a intensidade da força, em Newton",For
 
 Acceleration a = f / m; # f = kg*a   f = kg*m*s^-2  m   m*s^-2
 
-# Distance res = v0 * t;
+Distance res = v0 * t +(a*t^2)/2;
 
 print("Distancia percorrida: ");
-# print(res);
+print(res);
+
+String x = "Ola";
+String y = "Adeus";
+if(y==x){
+    print(x);
+};
+
+
+###Exemplo 2
+# Um circuito elétrico tem uma resistência de o Ohms e uma fonte de tensão de v Volts
+# Diminuindo a intensidade de corrente para 1/2,1/4...1/32 e mantendo a mesma tensão
+# Pretende-se descobrir o valor em Ohms da nova resistência a aplicar em cada caso
+# Pedir ao user:
+#     Tensão (Potential)
+#     Resistencia (Resistence)
 #
-#
-####Exemplo 2
-## Um circuito elétrico tem uma resistência de o Ohms e uma fonte de tensão de v Volts
-## Diminuindo a intensidade de corrente para 1/2,1/4...1/32 e mantendo a mesma tensão
-## Pretende-se descobrir o valor em Ohms da nova resistência a aplicar em cada caso
-## Pedir ao user:
-##     Tensão (Potential)
-##     Resistencia (Resistence)
-##
-## Resultado: Nova Resistencia
-#
-##Resolução:
-#
-#Potential U =  input("Insira a tensão de corrente em volts") [V];
-#Resistence R = input("Insira a intensidade da força, em Newton") [O];
-#
-#taxa = 1/2;
-#Current I = U/R;
-#
-#while(taxa>=1/32){
-#    Resistence res = U/(taxa*I);
-#    print("Taxa: ");
-#    print(taxa);
-#    print("Nova Resistência: ");;;;
-#    print(res);
-#    taxa = taxa / 2;
-#};
-#
-#
+# Resultado: Nova Resistencia
+
+#Resolução:
+
+Potential U =  input("Insira a tensão de corrente em volts", Potential) [V];
+Resistence R = input("Insira a intensidade da força, em Newton", Resistence) [O];
+
+Double taxa = 1/2;
+Current I = U/R;  # V / O  {'A' : 1, 'V/O' : 1}
+
+Distance d = v0*t;
+print(d);
+
+Resistence result = U/taxa*I^-1 [V];  # V/A  V1 V-1 R-1
+
+  
+while(taxa>=1/32){
+    print("Taxa: ");
+    print(taxa);
+    print("Nova Resistência: ");
+    print(result);
+    taxa = taxa / 2;
+};
+
+
 ####Exemplo 3
 ##   Determine a energia consumida mensalmente por um chuveiro elétrico
 ## de potência 4000W em uma residência onde vivem quatro pessoas que tomam,
@@ -90,15 +101,15 @@ print("Distancia percorrida: ");
 ##
 ## Resultado: Energia
 #
-#Power P = input("Insira a potência: ") [kW];
-#Time T = input("Insira o tempo da duração de 1 banho: ") [h];
+#Power P = input("Insira a potência: ", Power) [kW];
+#Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
 #
 ## Da equação da energia consumida temos que E = P x Δt
 ## Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
 ##   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
 #
 #Energy E = P * 8 * T * 30;
-#
+#>
 #print("Energia consumida: ");
 #print(E);
 #
@@ -112,7 +123,7 @@ print("Distancia percorrida: ");
 #
 ## Resolução:
 #
-#PricePerPowerTime p = input("Preço por kWh: ") [euros/(kW*h)];
+#PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euros/(kW*h)];
 #
 #Price p_mensal = p * E;
 #

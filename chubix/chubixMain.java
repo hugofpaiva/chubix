@@ -34,6 +34,7 @@ public class chubixMain {
               
             ChubixComp compiler = new ChubixComp();
             ST res =compiler.visit(tree);
+            res.add("name", "Output");
             System.out.println(res.render());
          }
       }

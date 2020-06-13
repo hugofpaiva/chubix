@@ -49,10 +49,6 @@ public class DimensionsType extends Type {
     }
     
 
-    //  public boolean conformsTo(Type other) {
-    //      return other.name().equals(this.name());
-    //  }
-
     public void addUnit(HashMap<String,Integer> unit, Double value) {
         assert unit != null;
         assert value != null;
@@ -92,7 +88,11 @@ public class DimensionsType extends Type {
         String str = "";
         for (String unit : map.keySet())
             str += unit +"^" + map.get(unit) + "*";
-        str = str.substring(0, str.length()-1);
+        if (str.length() != 0)
+            str = str.substring(0, str.length()-1);
+        else 
+            System.out.println("TÁ VAZIO :O");
+     
         return str;
     }
 }

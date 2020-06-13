@@ -52,11 +52,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return visitChildren(ctx);
    }
    
-   // @Override public Boolean visitPrint(chubixParser.PrintContext ctx) {
-      //    return visitChildren(ctx);
-      // }
+   @Override public Boolean visitPrint(chubixParser.PrintContext ctx) {
+      return visitChildren(ctx);
+   }
       
-      @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
+   @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
       return visitChildren(ctx);
    }
 
@@ -98,7 +98,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       if (!res)
          return false;
       String id = ctx.declare().ID().getText();
-      Symbol sym = chubixParser.symbolTable.get(id);
+      Symbol sym = chubixParser.symbolTable.get(id);  // Current I -> A = U / R -> V/O 
       
       if (res) {
          if (!ctx.expr().exprType.conformsTo(sym.type())) {
@@ -222,20 +222,18 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       String id = ctx.ID().getText();
 
       if (!dimensionsParser.dimTable.containsKey(id)) {
-         ErrorHandling.printError(ctx, "qq cena id: " + id);
+         ErrorHandling.printError(ctx, "Dimension \"" + id + "\" does not exist.");
          return false;
       }
       
       if (res){
          HashMap<String, Integer> unit = new HashMap<>();
-         unit.putAll(dimensionsParser.dimTable.get(id).getUnit());
-         ctx.res = new DimensionsType("",unit, dimensionsParser.dimTable.get(id).getType()); 
+         unit.putAll(dimensionsParser.dimTable.get(id).getUnit());  // .is
+         ctx.res = new DimensionsType("", unit, dimensionsParser.dimTable.get(id).getType()); 
       }
       
       return res;
    }
-
-  
 
    @Override public Boolean visitAddSubExpr(chubixParser.AddSubExprContext ctx) {
       Boolean res = visit(ctx.e1) && visit(ctx.e2);
@@ -339,13 +337,12 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             switch(ctx.op.getText()){
                case "*":
                   map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
-                  map2.forEach((k, v) -> { map1.putIfAbsent(k, v); });
-                  map1.values().removeIf(f -> f == 0f);
+                  map1.values().removeIf(f -> f == 0f);    
                   dim = checkUnit(map1);
                   break;
                case "/":
-                  System.out.println("op1: " + DimensionsType.mapToString(map1));
-                  System.out.println("op2: " + DimensionsType.mapToString(map2));
+                  // System.out.println("op1: " + DimensionsType.mapToString(map1));
+                  // System.out.println("op2: " + DimensionsType.mapToString(map2));
 
                   map2.forEach((k, v) -> map2.put(k,-v));
                   map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
@@ -353,7 +350,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
                   dim = checkUnit(map1);
                   //   f =  s^-2*kg^1*m^1
                   // 
-                  System.out.println("ans: " + DimensionsType.mapToString(map1));
+                  // System.out.println("ans: " + DimensionsType.mapToString(map1));
                
                   break;
             }
@@ -435,7 +432,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = true;
       
       String id = ctx.ID().getText();
-      System.out.println(id);
       if (!chubixParser.symbolTable.containsKey(id)) {
          ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
          res = false;
@@ -501,9 +497,9 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             //Merge maps
             // [m : 1 , s:-2]
             map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2)); // m*kg*s^-2
-            map1.forEach((k, v) -> {
-               map2.putIfAbsent(k, v); //
-            });
+            // map1.forEach((k, v) -> {
+            //    map2.putIfAbsent(k, v); //
+            // });
             map2.values().removeIf(f -> f == 0f);
 
             dim2.setUnit(map2);

@@ -228,16 +228,16 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          switch (op) {
             case "*":
                map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
-               map1.forEach((k, v) -> {
-                  map2.putIfAbsent(k, v);
-               });
+               // map1.forEach((k, v) -> {
+               //    map2.putIfAbsent(k, v);
+               // });
                map2.values().removeIf(f -> f == 0f);
 
                resSymb = new Symbol(new DimensionsType("", map2, new DoubleType()), new DoubleValue(s1.value().doubleValue() * s2.value().doubleValue()));
                return resSymb;
             case "/":
                map2.forEach((k, v) -> map2.put(k,-v));
-               map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 - v2));
+               map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
 
                map1.values().removeIf(f -> f == 0f);
 
@@ -347,9 +347,9 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          case "*":
             //Merge maps
             map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
-            map1.forEach((k, v) -> {
-               map2.putIfAbsent(k, v);
-            });
+            // map1.forEach((k, v) -> {
+            //    map2.putIfAbsent(k, v);
+            // });
             map2.values().removeIf(f -> f == 0f);
 
             dim2.setUnit(map2);

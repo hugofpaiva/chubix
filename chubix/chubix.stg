@@ -53,7 +53,7 @@ declaration(type,var,value,inst) ::= <<<if(inst)><insts(inst)><endif>
 >>
 
 binaryOperation(inst,type,var,e1,op,e2) ::= <<
-<declaration(type, var, [e1, " ", op, " ", e2], inst)>
+<declaration(type, var, [e1, op, e2], inst)>
 >>
 
 insert(var)::="<var>;" 
