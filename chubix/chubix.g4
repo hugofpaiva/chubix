@@ -81,9 +81,9 @@ expr returns[Type exprType, String varName]:
     | e1=expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') e2=expr  #conditionalExpr
     | '(' expr ')'                                                #parenExpr
     | ID op=('++' | '--')                                         #doubleSumMin
-    | 'input' '(' STRING? ')' ('['unitdim']')?                    #inputExpr
-    | DOUBLE ('['unitdim']')?                                     #doubleExpr
-    | INTEGER ('['unitdim']')?                                    #integerExpr
+    | 'input' '(' (STRING ',')? type')'                           #inputExpr
+    | DOUBLE                                                      #doubleExpr
+    | INTEGER                                                     #integerExpr
     | expr '['unitdim']'                                          #exprConvUnit
     | BOOLEAN                                                     #booleanExpr
     | ID                                                          #idExpr
@@ -105,7 +105,7 @@ Reserved Words : ['print', 'for', 'while', 'break', 'if', 'else', 'return',
 
 BOOLEAN: 'true' | 'false';
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-FILENAME: [a-zA-Z_][a-zA-Z_0-9]*'.';
+FILENAME: ('./'|'../')? ID ('/' ID)*?;
 DOUBLE: [0-9]+ '.' [0-9]*;
 INTEGER: [0-9]+;
 STRING: '"' .*? '"';
