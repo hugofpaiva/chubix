@@ -30,7 +30,6 @@ expr:
     | expr op=('+'|'-') expr            #ExprSumMin
     | '(' expr ')'                      #ExprUnn
     | ID                                #ExprID
-    | INTEGER                           #ExprInt
     | DOUBLE                            #ExprDouble
     ; 
 
@@ -47,7 +46,7 @@ type returns[Type res]:
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INTEGER : ('+'|'-')? [0-9]+;        // remover ??
+INTEGER: ('+'|'-')? [0-9]+;
 DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? '\n' -> skip;

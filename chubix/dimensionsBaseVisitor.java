@@ -83,13 +83,6 @@ public class dimensionsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implem
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExprInt(dimensionsParser.ExprIntContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitExprMultDiv(dimensionsParser.ExprMultDivContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

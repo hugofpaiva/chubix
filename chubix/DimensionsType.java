@@ -33,24 +33,16 @@ public class DimensionsType extends Type {
     }
 
     public Double getUnitConv(HashMap<String,Integer> unit){    
-        // for (HashMap<String,Integer> val : units.values()) {
-        //     if (val.equals(unit))
-        //         return true;
-        // }
         for (Integer id : units.keySet()) {
-            if (val.equals(unit))
-                return true;
+            if (this.units.get(id).equals(unit))
+                return unit_conv.get(id);
         }
-        return false;
+        return 0.0;
     }
 
-    @
-        return true;
-    }
-    
     @Override public boolean isDimensional() {
         return true;
-getConvUnit    }
+   }
 
     @Override public boolean isNumeric() {
         return true;
@@ -94,5 +86,13 @@ getConvUnit    }
     
     public String getJavaType(){
 		return this.dimType.getJavaType();
-	}       
+	}
+
+    public static String mapToString(HashMap<String, Integer> map) {
+        String str = "";
+        for (String unit : map.keySet())
+            str += unit +"^" +map.get(unit) + "*";
+        str = str.substring(0, str.length()-1);
+        return str;
+    }
 }

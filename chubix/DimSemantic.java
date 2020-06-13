@@ -30,11 +30,14 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }
       
       Symbol symb = visit(ctx.unitdim());
+      if(symb==null){
+         return null;
+      }
       DimensionsType relDim = (DimensionsType) symb.type();
 
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.containsUnit(relDim.getUnit())) {
-            ErrorHandling.printError(ctx, "Unit \""+mapToString(relDim.getUnit())+"\" already defined.");
+            ErrorHandling.printError(ctx, "Unit \""+DimensionsType.mapToString(relDim.getUnit())+"\" already defined.");
             return null;
          }
       }
@@ -48,7 +51,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
          
          for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
             if (dimensionsType.containsUnit(unit)) {
-               ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
+               ErrorHandling.printError(ctx, "Unit \""+DimensionsType.mapToString(unit)+"\" already defined.");
                return null;
             }
          }
@@ -79,7 +82,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.containsUnit(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
+            ErrorHandling.printError(ctx, "Unit \""+DimensionsType.mapToString(unit)+"\" already defined.");
             return null;
          } 
       }
@@ -103,16 +106,19 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {
          if (dimensionsType.containsUnit(unit)) {
-            ErrorHandling.printError(ctx, "Unit \""+mapToString(unit)+"\" already defined.");
+            ErrorHandling.printError(ctx, "Unit \""+DimensionsType.mapToString(unit)+"\" already defined.");
             return null;
-         } 
+         }
       }
 
       Symbol sym = visit(ctx.expr());
+      if(sym ==null){
+         return null;
+      }
       Type dimUnit = sym.type();
 
       if (!dimType.containsUnit(((DimensionsType) dimUnit).getUnit())) {  
-         ErrorHandling.printError(ctx, "Dimension \""+ dimType.name() +"\" and \""+ ctx.expr.getText()+"\" are not compatible.");
+         ErrorHandling.printError(ctx, "Dimension \""+ dimType.name() +"\" and \""+ ctx.expr().getText()+"\" are not compatible.");
          return null;
       }
 
@@ -125,6 +131,9 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
    @Override public Symbol visitExprSign(dimensionsParser.ExprSignContext ctx) {
       if (ctx.sign.getText().equals("-")) {
          Symbol sym = visitChildren(ctx);
+         if(sym==null){
+            return null;
+         }
          sym.value().setDoubleValue(-sym.value().doubleValue());
          return sym;
       }
@@ -139,10 +148,6 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       return new Symbol(new DoubleType(), new DoubleValue(Double.parseDouble(ctx.DOUBLE().getText())));
    }
 
-   @Override public Symbol visitExprInt(dimensionsParser.ExprIntContext ctx) {
-      return new Symbol(new DoubleType(), new DoubleValue(Double.parseDouble(ctx.INTEGER().getText())));
-   }
-
    @Override public Symbol visitExprID(dimensionsParser.ExprIDContext ctx) {
       String newUnit = ctx.ID().getText();
       HashMap<String, Integer> unit = new HashMap<>();
@@ -150,8 +155,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
          if (dimensionsType.containsUnit(unit)) {
-            Symbol temp = new Symbol(dimensionsType, new DoubleValue(dimensionsType.getUnits().get(unit)));
-            temp.setDim(dimensionsType.name());
+            Symbol temp = new Symbol(dimensionsType, new DoubleValue(dimensionsType.getUnitConv(unit)));
             return temp;
          }
       }
@@ -161,32 +165,37 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitExprSumMin(dimensionsParser.ExprSumMinContext ctx) {
       String op = ctx.op.getText();
-      Symbol v1 = visit(ctx.expr(0)); 
+      Symbol v1 = visit(ctx.expr(0));
       Symbol v2 = visit(ctx.expr(1));
+      if(v1==null || v2 == null){
+         return null;
+      }
+      Symbol resSymb;
 
-      // semantic check
-      if (!v1.type().conformsTo(v2.type())) {
-         ErrorHandling.printError(ctx, "Units are not compatible.");
+      if (v1.type().isDimensional() && v2.type().isDimensional()){
+         if(!((DimensionsType)v2.type()).getUnit().equals(((DimensionsType) v1.type()).getUnit())){
+            ErrorHandling.printError(ctx, "Dimensions \""+ v1.type().name() +"\" and \""+ v2.type().name()+"\" are not compatible.");
+            return null;
+         }
+         switch (op) {
+            case "+":
+               resSymb = new Symbol(v1.type(), new DoubleValue(v1.value().doubleValue() + v2.value().doubleValue()));
+               return resSymb;
+            case "-":
+               resSymb = new Symbol(v1.type(), new DoubleValue(v1.value().doubleValue() - v2.value().doubleValue()));
+               return resSymb;
+         }
+      } else if (v1.type().isDimensional() || v2.type().isDimensional()) {
+         ErrorHandling.printError(ctx, "Dimensions are not compatible with adimensionals.");
          return null;
       }
 
-      Type resType = new DoubleType(); 
-      if (!v1.dim().equals(""))
-         resType = v1.type();
-
-      Symbol resSymb;
       switch (op) {
          case "+":
-            resSymb = new Symbol(resType, new DoubleValue(v1.value().doubleValue() + v2.value().doubleValue()));
-            if (resType.name().equals("integer") ||  resType.name().equals("double"))
-               return resSymb;          
-            resSymb.setDim(resType.name());
+            resSymb = new Symbol(new DoubleType(), new DoubleValue(v1.value().doubleValue() + v2.value().doubleValue()));
             return resSymb;
          case "-":
-            resSymb = new Symbol(resType,  new DoubleValue(v1.value().doubleValue() - v2.value().doubleValue()));
-            if (resType.name().equals("integer") ||  resType.name().equals("double"))
-               return resSymb;          
-            resSymb.setDim(resType.name());
+            resSymb = new Symbol(new DoubleType(),  new DoubleValue(v1.value().doubleValue() - v2.value().doubleValue()));
             return resSymb;
       }
       return null;
@@ -195,111 +204,85 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
    @Override public Symbol visitExprMultDiv(dimensionsParser.ExprMultDivContext ctx) {
       String op = ctx.op.getText();
+      Symbol s1 = visit(ctx.expr(0));
+      Symbol s2 = visit(ctx.expr(1));
+      if(s1==null || s2==null){
+         return null;
+      }
 
-      Symbol v1 = visit(ctx.expr(0));
-      Symbol v2 = visit(ctx.expr(1));
-
-      Type resType = null;
-      String unit;
-      
-      if (!v1.dim().equals("")) {
-         if (v1.dim().equals(v2.dim())) {
-            unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
-            switch (op) {
-               case "*":
-                  resType = getExistingDimType(unit);
-                  if (resType == null){
-                     ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
-                     return null;
-                  }
-                  break;
-               case "/":
-                  resType = new DoubleType();
-                  break;
-            }
-         } else {
-            if (!v2.dim().equals("")){
-               unit = ((DimensionsType) v1.type()).getUnit()+op+((DimensionsType)v2.type()).getUnit();
-               // check if complex dimension exists    
-               for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()){
-                  if (dimensionsType.getUnits().containsKey(unit)) {
-                     resType = dimensionsType;
-                  }
-               }
-               if (resType == null){
-                  ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
-                  return null; 
-               }
-            } else
-               resType = v1.type();
-         }
-      } else
-         resType = new DoubleType();  
-
-
+      Type resType = new DoubleType();
       Symbol resSymb;
+      
+      if (s1.type().isDimensional() && s2.type().isDimensional()){
+         HashMap<String,Integer> map1 = ((DimensionsType) s1.type()).getUnit();
+         HashMap<String,Integer> map2 = ((DimensionsType) s2.type()).getUnit();
+         switch (op) {
+            case "*":
+               map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2));
+               map1.forEach((k, v) -> { map2.putIfAbsent(k, v); });
+               map2.values().removeIf(f -> f == 0f);
+               
+               resSymb = new Symbol(new DimensionsType("", map2, new DoubleType()), new DoubleValue(s1.value().doubleValue() * s2.value().doubleValue()));
+               return resSymb;
+            case "/":
+               map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 - v2));
+               map1.forEach((k, v) -> {
+                  map2.putIfAbsent(k, v);
+               });
+               map2.values().removeIf(f -> f == 0f);
+               resSymb = new Symbol(new DimensionsType("", map2, new DoubleType()), new DoubleValue(s1.value().doubleValue() / s2.value().doubleValue()));
+               return resSymb;
+         }
+      } else if (s1.type().isDimensional()) {
+         resType = s1.type();
+      } else if (s2.type().isDimensional()) {
+         resType = s2.type();
+      }
+      
       switch (op) {
-         case "*":
-            resSymb = new Symbol(resType,  new DoubleValue(v1.value().doubleValue() * v2.value().doubleValue()));
-            if (resType.name().equals("integer") ||  resType.name().equals("double"))
-               return resSymb;          
-            resSymb.setDim(resType.name());
+         case "*":            
+            resSymb = new Symbol(resType, new DoubleValue(s1.value().doubleValue() * s2.value().doubleValue()));
             return resSymb;
          case "/":
-            if (v2.value().doubleValue()==0.0){
-               ErrorHandling.printError(ctx, "Can't divide by zero.");
-               return null;
-            }
-            resSymb = new Symbol(resType,  new DoubleValue(v1.value().doubleValue() / v2.value().doubleValue()));
-            if (resType.name().equals("integer") ||  resType.name().equals("double"))
-               return resSymb;          
-            resSymb.setDim(resType.name());
+            resSymb = new Symbol(resType, new DoubleValue(s1.value().doubleValue() / s2.value().doubleValue()));
             return resSymb;
       }
+      
       return null;
    }
 
    @Override public Symbol visitExprPower(dimensionsParser.ExprPowerContext ctx) {
       Symbol v1 = visit(ctx.expr(0));
       Symbol v2 = visit(ctx.expr(1));
-
-      Type resType = null;
-      Symbol resSymb;
-      String unit;
-      if (!v1.dim().equals("")){
-         if (v1.dim().equals(v2.dim())) {
-            unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
-            resType = getExistingDimType(unit);
-            if (resType == null){
-               ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
-               return null;
-            }
-         } else {
-            if (!v2.dim().equals("")){
-               unit = ((DimensionsType) v1.type()).getUnit()+"^"+((DimensionsType)v2.type()).getUnit();
-               resType = getExistingDimType(unit);
-               if (resType == null){
-                  ErrorHandling.printError(ctx, "Dimension with the unit \""+unit+"\" does not exist.");
-                  return null;
-               }
-            } else
-               resType = v1.type();
-         }
-         resSymb = new Symbol(resType, new DoubleValue(Math.pow(v1.value().doubleValue(),v2.value().doubleValue())));
-         resSymb.setDim(resType.name());
-      } else {
-         resType = new DoubleType();
-         resSymb = new Symbol(resType, new DoubleValue(Math.pow(v1.value().doubleValue(),v2.value().doubleValue())));
+      if(v1==null || v2==null){
+         return null;
       }
+      
+      if (v2.type().isDimensional()){
+         ErrorHandling.printError(ctx, "Cannot calculate expressions to the power of a Dimension.");
+         return null;
+      } else if (v1.type().isDimensional()){
+         DimensionsType dim1 = ((DimensionsType) v1.type());
+         HashMap<String,Integer> map1 = dim1.getUnit();
 
-      return resSymb;
+         map1.forEach((k, v) -> {
+            map1.put(k, (int) Math.pow(map1.get(k), (int) v2.value().doubleValue()));
+         });
+         
+         dim1.setUnit(map1);
+
+         return new Symbol(dim1, v1.value());
+      }
+      v1.setValue(new DoubleValue(Math.pow(v1.value().doubleValue(), v2.value().doubleValue())));
+      return v1;
    }
-
 
    @Override public Symbol visitDimPower(dimensionsParser.DimPowerContext ctx) {
       Symbol s1 = visit(ctx.unitdim());
       Type resType = null;
-
+      if(s1==null){
+         return null;
+      }
       DimensionsType dim1 = (DimensionsType) s1.type();
       HashMap<String,Integer> map1 = dim1.getUnit();
 
@@ -333,7 +316,10 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       Symbol s1 = visit(ctx.unitdim(0));
       Symbol s2 = visit(ctx.unitdim(1));
       Type resType = null;
-
+      if(s1==null || s2==null){
+         return null;
+      }
+      
       DimensionsType dim1 = (DimensionsType) s1.type();
       DimensionsType dim2 = (DimensionsType) s2.type();
       HashMap<String,Integer> map1 = dim1.getUnit();
@@ -378,40 +364,5 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }
       ErrorHandling.printError(ctx, "Dimension \""+dim+"\" not defined.");
       return null;
-   }
-
-   private DimensionsType checkUnit(HashMap<String,Integer> map){
-     for (DimensionsType dimType : dimensionsParser.dimTable.values()) {
-         if (dimType.containsUnit(map))
-            return dimType;
-     }
-     return null;
-   }
-
-   private Type fetchType(Type t1, Type t2) {
-      Type res = null;
-      
-      if (t1.isNumeric() && t2.isNumeric())
-      {
-         if ("double".equals(t1.name()))
-            res = t1;
-         else if ("double".equals(t2.name()))
-            res = t2;
-         else
-            res = t1;
-      }
-      else if ("boolean".equals(t1.name()) && "boolean".equals(t2.name()))
-         res = t1;
-      else if ("string".equals(t1.name()) && "string".equals(t2.name()))
-         res = t1;
-      return res;
-   }
-
-   public static String mapToString(HashMap<String, Integer> map) {
-        String str = "";
-        for (String unit : map.keySet())
-            str += unit +"^" +map.get(unit) + "*";
-        str = str.substring(0, str.length()-1);
-        return str;
    }
 }

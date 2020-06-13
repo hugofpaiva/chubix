@@ -127,18 +127,6 @@ public class dimensionsBaseListener implements dimensionsListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExprInt(dimensionsParser.ExprIntContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExprInt(dimensionsParser.ExprIntContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExprMultDiv(dimensionsParser.ExprMultDivContext ctx) { }
 	/**
 	 * {@inheritDoc}

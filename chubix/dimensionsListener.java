@@ -111,18 +111,6 @@ public interface dimensionsListener extends ParseTreeListener {
 	 */
 	void exitExprSumMin(dimensionsParser.ExprSumMinContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code ExprInt}
-	 * labeled alternative in {@link dimensionsParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterExprInt(dimensionsParser.ExprIntContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code ExprInt}
-	 * labeled alternative in {@link dimensionsParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitExprInt(dimensionsParser.ExprIntContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code ExprMultDiv}
 	 * labeled alternative in {@link dimensionsParser#expr}.
 	 * @param ctx the parse tree
