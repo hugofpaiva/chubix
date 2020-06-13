@@ -27,9 +27,11 @@ public class chubixMain {
             //dim.visit(tree);
             SemanticChubix semantic = new SemanticChubix();
             semantic.visit(tree);
-            if (ErrorHandling.error())
+            if (ErrorHandling.error()){
               System.out.println("Erros: " + ErrorHandling.errorCount());
-               
+              System.exit(1);
+            }
+              
             ChubixComp compiler = new ChubixComp();
             ST res =compiler.visit(tree);
             System.out.println(res.render());

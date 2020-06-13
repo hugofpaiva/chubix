@@ -1,8 +1,13 @@
 typeValue ::= [
     "Integer"  : "int",
-    "Double"     : "double",
+    "integer"  : "int",
+    "Double"   : "double",
     "Boolean"  : "boolean",
     "String"   : "String",
+    "double"   : "double",
+    "boolean"  : "boolean",
+    "string"   : "String",
+    "int"      : "int",
     default    : "null"
 ]
 

@@ -28,6 +28,6 @@ public abstract class Type {
 	}
 
 	public String getJavaType(){
-		return this.name();
+		return this.name;
 	}
 }

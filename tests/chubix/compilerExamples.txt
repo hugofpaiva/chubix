@@ -1,5 +1,31 @@
 ########## Linguagem Compilada ##########
 
+#function void evalIMC(IMC imc){
+#    if (imc<16) {
+#        print("You are severely underweight.");
+#    } else if (imc<=19.9) {
+#        print("You are underweight.");
+#    } else if (imc<=24.9) {
+#        print("You have a healthy weight.");
+#    }else if (imc<=29.9) {
+#        print("You are overweight.");
+#    }else if (imc<=39.9) {
+#        print("You are obese.");
+#    }else if (imc>40) {
+#        print("You are morbidly obese.");
+#    };
+#};
+
+#function Energy CalcCinetica(Mass m, Velocity v) {
+#    Energy ec = 0.5*m*v^2;
+#    return ec;
+#};
+
+#function IMC getIMC(Mass m, Distance height){
+#    IMC imc = m/height^2;
+#    return imc;
+#};
+
 ###Exemplo 1
 # Determinar distanca percorrida por uma massa de 5kg em t segundos
 # Pedir ao user:
@@ -113,11 +139,6 @@ Accelaration g = 10[m/(s^2)];
 Velocity v = 0[m/s];
 Energy ec;
 
-function Energy CalcCinetica(Mass m, Velocity v) {
-    Energy ec = 0.5*m*v^2;
-    return ec;
-};
-
 
 for (Integer i = 0; i<=60; i=i+10){
     v = v+i*g;
@@ -142,36 +163,18 @@ print(c);
 #b)
 
 #Número de eletrões = carga / |carga por eletrão|
-Double numero_eletroes = c / +(1.602*10^-19) [C];
-
+#Double numero_eletroes = c / +(1.602*10^-19) [C];
 
 
 ###Exemplo 6
 #  Calcular e avaliar o valor de IMC do utilizador
 
-function IMC getIMC(Mass m, Distance height){
-    IMC imc = m/height^2;
-    return imc;
-};
 
-function void evalIMC(IMC imc){
-    if (imc<16) {
-        print("You are severely underweight.");
-    } else if (imc<=19.9) {
-        print("You are underweight.");
-    } else if (imc<=24.9) {
-        print("You have a healthy weight.");
-    }else if (imc<=29.9) {
-        print("You are overweight.");
-    }else if (imc<=39.9) {
-        print("You are obese.");
-    }else if (imc>40) {
-        print("You are morbidly obese.");
-    };
-};
+
 
 Mass m = input("Insert your weight in kg: ") [kg];
 Distance height = input("Insert your height in meters: ") [m];
 
 IMC imc = getIMC(m,height);
 evalIMC(imc);
+#teste

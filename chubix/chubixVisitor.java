@@ -31,6 +31,12 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitInstruction(chubixParser.InstructionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link chubixParser#importDim}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitImportDim(chubixParser.ImportDimContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link chubixParser#print}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -193,6 +199,13 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParenExpr(chubixParser.ParenExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code exprConvUnit}
+	 * labeled alternative in {@link chubixParser#expr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprConvUnit(chubixParser.ExprConvUnitContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code functionExpr}
 	 * labeled alternative in {@link chubixParser#expr}.

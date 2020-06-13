@@ -40,6 +40,16 @@ public interface chubixListener extends ParseTreeListener {
 	 */
 	void exitInstruction(chubixParser.InstructionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link chubixParser#importDim}.
+	 * @param ctx the parse tree
+	 */
+	void enterImportDim(chubixParser.ImportDimContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link chubixParser#importDim}.
+	 * @param ctx the parse tree
+	 */
+	void exitImportDim(chubixParser.ImportDimContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link chubixParser#print}.
 	 * @param ctx the parse tree
 	 */
@@ -315,6 +325,18 @@ public interface chubixListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParenExpr(chubixParser.ParenExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprConvUnit}
+	 * labeled alternative in {@link chubixParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprConvUnit(chubixParser.ExprConvUnitContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprConvUnit}
+	 * labeled alternative in {@link chubixParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprConvUnit(chubixParser.ExprConvUnitContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code functionExpr}
 	 * labeled alternative in {@link chubixParser#expr}.

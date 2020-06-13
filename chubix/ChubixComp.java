@@ -89,8 +89,9 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitDeclAssig(chubixParser.DeclAssigContext ctx) {
       ST res = templates.getInstanceOf("declaration");
       String varName = newVar();
-      chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
-      res.add("type", ctx.declare().type().res);
+      visit(ctx.declare());
+      chubixParser.symbolTable.get(ctx.declare().ID().getText()).setVarName(varName);
+      res.add("type", ctx.declare().type().res.name());
       res.add("var", varName);
       res.add("inst", visit(ctx.expr()).render());
       res.add("value", ctx.expr().varName);
@@ -101,6 +102,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //TRATAR TIPOS
    @Override public ST visitDeclare(chubixParser.DeclareContext ctx) {
       ST res = templates.getInstanceOf("declaration");
+      visit(ctx.type());
       String varName = newVar();
       chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
       res.add("type", ctx.type().res);

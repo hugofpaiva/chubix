@@ -9,7 +9,7 @@ grammar chubix;
   import java.util.HashMap;
 }
 
-main: (function? ';')* instList EOF;
+main: (importDim? ';')* (function? ';')* instList EOF ;
 
 instList: (instruction? ';')*;
 
@@ -26,13 +26,15 @@ instruction:  print
             | declAssig
             ;
 
+importDim: 'import' FILENAME;
+
 print: 'print' '(' (expr)? ')';
 
 returnFunc: {insideFunc > 0}? 'return' expr?;
 
-function: {insideFunc==0}? {insideFunc++;} 
+function: {insideFunc==0}? {insideFunc++;}
           'function' ret_type=type func_name=ID '(' (declare (',' declare)*)? ')' '{' instList '}'
-          {insideFunc--;} 
+          {insideFunc--;}
           ;
 
 callFunction: func_name=ID '(' (expr (',' expr)*)? ')' ;
@@ -82,6 +84,7 @@ expr returns[Type exprType, String varName]:
     | 'input' '(' STRING? ')' ('['unitdim']')?                    #inputExpr
     | DOUBLE ('['unitdim']')?                                     #doubleExpr
     | INTEGER ('['unitdim']')?                                    #integerExpr
+    | expr '['unitdim']'                                          #exprConvUnit
     | BOOLEAN                                                     #booleanExpr
     | ID                                                          #idExpr
     | STRING                                                      #stringExpr
@@ -102,10 +105,11 @@ Reserved Words : ['print', 'for', 'while', 'break', 'if', 'else', 'return',
 
 BOOLEAN: 'true' | 'false';
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
+FILENAME: [a-zA-Z_][a-zA-Z_0-9]*'.';
 DOUBLE: [0-9]+ '.' [0-9]*;
 INTEGER: [0-9]+;
 STRING: '"' .*? '"';
 WS: [ \t\r\n]+ -> skip;
-LINE_COMMENT: '#' .*? '\n' -> skip;
+LINE_COMMENT: '#' .*? ('\n'|EOF) -> skip;
 COMMENT: '/*' .*? '*/' -> skip;
 ERROR: .;
