@@ -69,9 +69,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("type", ctx.ret_type.res.name());
       res.add("name",ctx.func_name.getText()); //DEPOIS TEMOS DE VER
       for(int i=0;i<ctx.declare().size();i++){
-         res.add("args",visit(ctx.declare(i)).render());
+         String arg = visit(ctx.declare(i)).render();
+         res.add("args", arg.substring(0, arg.length() - 1));
       }
       res.add("inst",visit(ctx.instList()).render());
+      res.add("inst",visit(ctx.returnFunc()).render());
       chubixParser.current = chubixParser.current.parent();    // up
       return res;
    }

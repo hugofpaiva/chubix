@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final VoidType voidType = new VoidType();
@@ -21,7 +22,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          chubixParser.current = chubixParser.current.parent();   // up
       assert chubixParser.current == chubixParser.global;
 
-      System.out.println(chubixParser.global);
       return true;
    }
 
@@ -98,12 +98,14 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          return false;
       }
 
-      chubixParser.global.addSymbol(idFunc, new Symbol(idFunc, ctx.ret_type.res));
+      Symbol sym = new Symbol(idFunc, new FunctionType(ctx.ret_type.res));
+      chubixParser.global.addSymbol(idFunc, sym);
       chubixParser.current = chubixParser.current.addChild();                       // down
 
-      Iterator<chubixParser.DeclareContext> declareList = ctx.declare().iterator();
-      while (declareList.hasNext())
-         res &= visit(declareList.next());
+      for(int i=0;i<ctx.declare().size();i++){
+         res &= visit(ctx.declare(i));
+         ((FunctionType)sym.type()).addArg(ctx.declare(i).type().res);
+      }
       for (Symbol s : chubixParser.current.symbols().values())
          s.setValueDefined();
 
@@ -124,7 +126,34 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitCallFunction(chubixParser.CallFunctionContext ctx) {
-      return visitChildren(ctx);
+      String id = ctx.func_name.getText();
+      if (!chubixParser.global.symbols().containsKey(id)) {
+         ErrorHandling.printError(ctx, "Function "+id+" does not exist.");
+         return false;
+      }
+      Boolean res = true;
+      ArrayList<Type> func_args = ((FunctionType) chubixParser.global.symbols().get(id).type()).getArgs();
+      if (ctx.expr().size()==func_args.size()){
+         for(int i=0;i<ctx.expr().size();i++){
+            res&=visit(ctx.expr(i));
+            if(!res)
+               return false;
+            if (!ctx.expr(i).exprType.conformsTo(func_args.get(i))) {
+               ErrorHandling.printError(ctx, "Cannot match argument passed to function "+id+".");
+               res = false;
+            } else if (ctx.expr(i).exprType.isDimensional() && func_args.get(i).isDimensional()) {
+               if ( !((DimensionsType) func_args.get(i)).getUnit().equals(((DimensionsType) ctx.expr(i).exprType).getUnit())) {
+                  ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) ctx.expr(i).exprType).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) func_args.get(i)).getUnit()));
+                  res = false;
+               }
+            }
+         }
+      } else {
+         ErrorHandling.printError(ctx, "Number of arguments do not match.");
+         return false;
+      }
+
+      return res;
    }
 
    @Override public Boolean visitAssignment(chubixParser.AssignmentContext ctx) {
@@ -156,7 +185,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = visit(ctx.declare()) && visit(ctx.expr());     
       if (!res)
          return false;
-         
+
       String id = ctx.declare().ID().getText();
 
       Symbol sym = chubixParser.current.lookup(id);
@@ -378,11 +407,19 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitFunctionExpr(chubixParser.FunctionExprContext ctx) {
-      if (chubixParser.global.symbols().containsKey(ctx.func_name))  //maybe not necessary due to all type verifications should return false with fetchtype etc...
-                                                                                                                                                                                                                                                                                                                            
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-                                                                                                                        
-      return visitChildren(ctx);
+      Boolean res=visit(ctx.callFunction());
+      if (!res)
+         return false;
+      String id = ctx.callFunction().func_name.getText();
+      Type type = ((FunctionType)chubixParser.global.symbols().get(id).type()).getType();
+      if (type.name().equals("void")) {
+         ErrorHandling.printError(ctx, "Expression cannot be void");
+         return false;
+      }
+      
+      ctx.exprType= type;
+                                                                                                                       
+      return res;
    }
 
    @Override public Boolean visitStringExpr(chubixParser.StringExprContext ctx) {

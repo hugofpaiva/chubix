@@ -199,10 +199,10 @@ print(eletroes);
 #  Calcular e avaliar o valor de IMC do utilizador
 
 
-Mass weight = input("Insert your weight in kg: ", String) [kg];
+Mass weight = input("Insert your weight in kg: ", Mass) [kg];
 Distance height = input("Insert your height in meters: ", Distance) [m];
 
 
 #IMC imc = getIMC(m,height);
-#evalIMC(imc);
+#evalIMC(weight/height^2);
 ##teste

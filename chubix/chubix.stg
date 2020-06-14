@@ -100,7 +100,7 @@ functions(func) ::= <<
 //passar o tipo de dados dos args
 function(type, name, args, inst) ::= << 
     
-    public static <type> <name> (<if(args)><args;separator=","> <endif>){
+    public static <type> <name> (<if(args)><args; separator=","> <endif>){
         <insts(inst)>
     }
 >>
