@@ -8,6 +8,8 @@ typeValue ::= [
     "boolean"  : "boolean",
     "string"   : "String",
     "int"      : "int",
+    "void"     : "void",
+    "Void"     : "void",
     default    : "null"
 ]
 
@@ -99,8 +101,7 @@ functions(func) ::= <<
 
 //passar o tipo de dados dos args
 function(type, name, args, inst) ::= << 
-    
-    public static <type> <name> (<if(args)><args; separator=","> <endif>){
+    public static <typeValue.(type)> <name> (<if(args)><args; separator=", "><endif>){
         <insts(inst)>
     }
 >>
