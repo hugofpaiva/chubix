@@ -3,7 +3,8 @@ grammar chubix;
 @parser::members{
   int insideLoop = 0;
   int insideFunc = 0;
-  public static final HashMap<String, Symbol> symbolTable = new HashMap<String, Symbol>();
+  public static final SymbolTable global = new SymbolTable();
+  public static SymbolTable current = new SymbolTable();
 }
 @parser::header{
   import java.util.HashMap;
@@ -22,7 +23,6 @@ instruction:  print
             | whileLoop
             | declare
             | callFunction
-            | returnFunc
             | declAssig
             ;
 
@@ -30,10 +30,10 @@ importDim: 'import' FILENAME;
 
 print: 'print' '(' (expr)? ')';
 
-returnFunc: {insideFunc > 0}? 'return' expr?;
+returnFunc returns[Type ret]: 'return' expr? ';';
 
-function: {insideFunc==0}? {insideFunc++;}
-          'function' ret_type=(type|'void') func_name=ID '(' (declare (',' declare)*)? ')' '{' instList '}'
+function: {insideFunc==0}? {insideFunc++;}  
+          'function' ret_type=type func_name=ID '(' (declare (',' declare)*)? ')' '{' instList returnFunc '}'
           {insideFunc--;}
           ;
 
@@ -66,11 +66,12 @@ breakLoop: {insideLoop > 0}? 'break';
 continueLoop: {insideLoop > 0}? 'continue';
            
 type returns[Type res]:
-	  'Integer'			#intType
-	| 'Double'			#doubleType
-	| 'Boolean'			#boolType
-	| 'String'			#strType
-  | ID            #dimensionType
+	  'Integer'			            #intType
+	| 'Double'			            #doubleType
+	| 'Boolean'			            #boolType
+	| 'String'			            #strType
+  | {insideFunc > 0}? 'Void'  #voidType
+  | ID                        #dimensionType
 	;
 
 expr returns[Type exprType, String varName]:

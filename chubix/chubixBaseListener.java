@@ -282,6 +282,18 @@ public class chubixBaseListener implements chubixListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterVoidType(chubixParser.VoidTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitVoidType(chubixParser.VoidTypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDimensionType(chubixParser.DimensionTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}

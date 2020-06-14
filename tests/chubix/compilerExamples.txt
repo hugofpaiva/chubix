@@ -1,3 +1,4 @@
+import ../tests/dimensions/dimensionsExamples.ubi;
 
 
 ########## Linguagem Compilada ##########
@@ -18,10 +19,11 @@
 #    };
 #};
 
-#function Energy CalcCinetica(Mass m, Velocity v) {
-#    Energy ec = 0.5*m*v^2;
-#    return ec;
-#};
+function Energy CalcCinetica(Velocity v, Mass m ) {
+    #print(1);
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
 
 #function IMC getIMC(Mass m, Distance height){
 #    IMC imc = m/height^2;
@@ -39,7 +41,6 @@
 # Resultado: distancia percorrida
 
 #Resolução:
-import ../tests/dimensions/dimensionsExamples.ubi;
 
 Mass m = 5 [kg];
 Time t = 5[s];            #input("Insira o tempo",Time) [s];
@@ -54,12 +55,12 @@ Estupido asd = (2[h]/1[c]) [s/c];
 Distance res = v0 * t +(a*t^2)/2;
 
 
-print(asd); 
+#print(asd); 
 
 
 
-print("Distancia percorrida: ");
-print(res);
+#print("Distancia percorrida: ");
+#print(res);
 
 String x = "Ola";
 String y = "Adeus";
@@ -90,7 +91,7 @@ Current I = U/R;  # V / O  {'A' : 1, 'V/O' : 1}
 Distance d = v0*t;
 
 print(d);
-  
+
 while(taxa>=1.0/32.0){
     print("Taxa: ");
     Resistence result = (U/taxa*I^-1) [O];
@@ -118,10 +119,10 @@ Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
 # Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
 #   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
 
-Energy E = P * 8 * T * 30;
+#Energy E = P * 8 * T * 30;
 
-print("Energia consumida: ");
-print(E);
+#print("Energia consumida: ");
+#print(E);
 
 ###Exemplo 3.1
 #   Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro.
@@ -133,15 +134,15 @@ print(E);
 #
 # Resolução:
 
-PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euro/(KW*h)];
+#PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euro/(KW*h)];
 
-Price p_mensal = p * E;
+#Price p_mensal = p * E;
 
-if (p_mensal < 30[euro]){
-    print("Não conseguem gastar menos de 30");
-} else {
-    print("Conseguem gastar menos de 30");
-};
+#if (p_mensal < 30[euro]){
+#    print("Não conseguem gastar menos de 30");
+#} else {
+#    print("Conseguem gastar menos de 30");
+#};
 
 
 ####Exemplo 4 
@@ -154,17 +155,17 @@ if (p_mensal < 30[euro]){
 ##Resolução:
 #
 #
-Mass m1 = input("Insira a massa do objeto em kg",Mass) [kg] ;
-Acceleration g = 10 [m*s^-2];
-Velocity v = 0[m/s];
-Energy ec;
+#Mass m1 = input("Insira a massa do objeto em kg",Mass) [kg] ;
+#Acceleration g = 10 [m*s^-2];
+#Velocity v = 0[m/s];
+#Energy ec;
 
 
-for (Integer i = 0; i<=60; i=i+10){
-    v = v+i[s]*g;
+#for (Integer i = 0; i<=60; i=i+10){
+#    v = v+i[s]*g;
 #    ec = CalcCinetica(m,v);
 #    print(ec); 
-};
+#};
 
 ###Exemplo 5
 #  Uma corrente de 5,0 A atravessa um fio durante 4,0 min. 
@@ -174,27 +175,27 @@ for (Integer i = 0; i<=60; i=i+10){
 
 #a)
 
-Current cur = 5 [A];
-Time time = 4*60 [s];
+#Current cur = 5 [A];
+#Time time = 4*60 [s];
 
 #Visto que a Intensidade = carga / intervalo de tempo
-Charge ch = cur*time ;
+#Charge ch = cur*time ;
 
-print(ch);
+#print(ch);
 
 #b)
 
 #Número de eletrões = carga / |carga por eletrão|
-Double eletroes = ch / (1.602*10^-19)[C];
+#Double eletroes = ch / (1.602*10^-19)[C];
 
-print(eletroes);
+#print(eletroes);
 
 ###Exemplo 6
 #  Calcular e avaliar o valor de IMC do utilizador
 
 
-Mass weight = input("Insert your weight in kg: ", String) [kg];
-Distance height = input("Insert your height in meters: ", Distance) [m];
+#Mass weight = input("Insert your weight in kg: ", String) [kg];
+#Distance height = input("Insert your he8iight in meters: ", Distance) [m];
 
 #IMC imc = getIMC(m,height);
 #evalIMC(imc);

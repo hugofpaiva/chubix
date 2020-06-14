@@ -1,9 +1,9 @@
 public class Symbol{
-    private final String name;                  // var_x
+    private final String name;                  // throw
     private Type type;                    // Integer or DimType
     private Value value;                        // 2
     private boolean valueDefined;               // true
-    private String varName;                     // ?
+    private String varName;                     //v1
     private String unit;                        // m
     private String dimName = "";               // Distancia
     

@@ -60,11 +60,9 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
       ST res = templates.getInstanceOf("function");
-      //type name args inst
       visit(ctx.ret_type);
-      //res.add("type",ctx.ret_type.res);
-      res.add("type","String");
-      res.add("name",ctx.func_name.getText());
+      res.add("type", ctx.ret_type.res.name());
+      res.add("name",ctx.func_name.getText()); //DEPOIS TEMOS DE VER
       for(int i=0;i<ctx.declare().size();i++){
          res.add("args",visit(ctx.declare(i)).render());
       }
@@ -107,7 +105,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       visit(ctx.type());
       String varName = newVar();
-      System.out.println(ctx.ID().getText());
       chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
       if (!ctx.type().res.isDimensional())
          res.add("type", ctx.type().res.name());
@@ -236,8 +233,17 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitInputExpr(chubixParser.InputExprContext ctx) {
       ctx.varName = newVar();
       ST res = templates.getInstanceOf("input");
-      res.add("value",ctx.STRING().getText());
-      res.add("type", "String");
+      visit(ctx.type());
+
+      if (ctx.STRING() != null)
+        res.add("value", ctx.STRING().getText());
+
+      if (!ctx.type().res.isDimensional())
+         res.add("type", ctx.type().res.name());
+      else    
+         res.add("type", ((DimensionsType) ctx.type().res).getType().name());
+
+      res.add("typescan", ctx.type().res.getJavaType());
       res.add("var", ctx.varName);
       return res;
    }

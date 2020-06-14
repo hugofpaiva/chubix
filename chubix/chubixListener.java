@@ -242,6 +242,18 @@ public interface chubixListener extends ParseTreeListener {
 	 */
 	void exitStrType(chubixParser.StrTypeContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code voidType}
+	 * labeled alternative in {@link chubixParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void enterVoidType(chubixParser.VoidTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code voidType}
+	 * labeled alternative in {@link chubixParser#type}.
+	 * @param ctx the parse tree
+	 */
+	void exitVoidType(chubixParser.VoidTypeContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code dimensionType}
 	 * labeled alternative in {@link chubixParser#type}.
 	 * @param ctx the parse tree

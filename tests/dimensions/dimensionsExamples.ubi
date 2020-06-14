@@ -23,7 +23,7 @@ dim Resistence(O: Double);
 
 dim Current(A: Potential/Resistence);
 
-dim Energy(J: Mass/(Distance^2)*Time^-2);
+dim Energy(J: Mass*(Distance^2)*Time^-2);
 
 dim Power(W: Energy/Time);
 unit Power(KW: W*10.0^3.0);

@@ -17,7 +17,7 @@ stat: dim
     | unit
     ;
 
-dim : 'dim' ID '(' ID ':' type ')'      #PrimitiveDim
+dim : 'dim' ID '(' ID ':' type ')'        #PrimitiveDim
     | 'dim' ID '(' (ID ':')? unitdim ')'  #RelativeDim
     ;
 

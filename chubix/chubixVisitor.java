@@ -151,6 +151,13 @@ public interface chubixVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStrType(chubixParser.StrTypeContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code voidType}
+	 * labeled alternative in {@link chubixParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVoidType(chubixParser.VoidTypeContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code dimensionType}
 	 * labeled alternative in {@link chubixParser#type}.
 	 * @param ctx the parse tree

@@ -15,7 +15,11 @@ scanner ::= [
     "Integer"  : "sc.nextInt()",
     "Double"   : "sc.nextDouble()",
     "String"   : "sc.nextLine()",
-    default   : "null"
+    "integer"  : "sc.nextInt()",
+    "double"   : "sc.nextDouble()",
+    "string"   : "sc.nextLine()",
+    "int"      : "sc.nextInt()",
+    default    : "sc.nextLine()"
 ]
 
 module(name,inst,func) ::= <<
@@ -41,13 +45,11 @@ print(inst, value) ::= <<
 System.out.println(<value>);
 >>
 
-// Input
-input(value, type, var,inst) ::= <<
-System.out.println(<value>);
-<declaration(typeValue.(type), var, "sc.nextLine()", inst)>
+input(value, type, var, typescan, inst) ::= <<
+<if(value)>System.out.println(<value>);<endif>
+<declaration(type, var, scanner.(typescan), inst)>
 >>
 
-// Declaration serve para o declaration e para o assign
 declaration(type,var,value,inst) ::= <<<if(inst)><insts(inst)><endif>
 <if(type)><typeValue.(type)><endif> <var><if(value)> = <value><endif>;
 >>
