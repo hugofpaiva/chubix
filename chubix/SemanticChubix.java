@@ -13,7 +13,9 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final StringType stringType = new StringType();
    private final DimensionsType dimensionType = new DimensionsType("", new HashMap<>(), new DoubleType());
    private  dimensionsParser dimensionsParser;
-   
+   private Type returnType;
+
+
    @Override public Boolean visitMain(chubixParser.MainContext ctx) {
       return visitChildren(ctx);
    }
@@ -57,10 +59,24 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
       
    @Override public Boolean visitReturnFunc(chubixParser.ReturnFuncContext ctx) {
+      if(ctx.expr()==null && Type){
+
+      }
+   
+
       return visitChildren(ctx);
    }
 
    @Override public Boolean visitFunction(chubixParser.FunctionContext ctx) {
+      if(!visit(ctx.type())) return false;
+      
+      returnType = ctx.type().res;
+
+      if(!visit(ctx.instList())) return false;
+      
+
+      
+
       return visitChildren(ctx);
    }
 
