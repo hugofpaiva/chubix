@@ -15,10 +15,14 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    private final DimensionsType dimensionType = new DimensionsType("", new HashMap<>(), new DoubleType());
    private  dimensionsParser dimensionsParser;
    
+   @Override public Boolean visitMain(chubixParser.MainContext ctx) { 
+      visitChildren(ctx);
+      if(ctx.instList()!=null)
+         chubixParser.current = chubixParser.current.parent();   // up
+      assert chubixParser.current == chubixParser.global;
 
-
-   @Override public Boolean visitMain(chubixParser.MainContext ctx) {
-      return visitChildren(ctx);
+      System.out.println(chubixParser.global);
+      return true;
    }
 
    @Override public Boolean visitImportDim(chubixParser.ImportDimContext ctx){
@@ -49,14 +53,14 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    @Override public Boolean visitInstList(chubixParser.InstListContext ctx) {
       Boolean res = true;
-      if(chubixParser.current.parent()==null){
-         chubixParser.current = chubixParser.current.addChild();   
-      }
+      if(chubixParser.current.parent()==null)
+         chubixParser.current = chubixParser.current.addChild();   // down
       
       Iterator<chubixParser.InstructionContext> instList = ctx.instruction().iterator();
       while (instList.hasNext()) {
          res &= visit(instList.next());
       }
+
       return res;
    }
    
@@ -127,6 +131,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = visit(ctx.expr());
       String id = ctx.ID().getText();
       Symbol sym;
+      System.out.println(id);
       if (res) {
          if ((sym=chubixParser.current.lookup(id)) == null) {
             ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
@@ -207,21 +212,24 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return visit(ctx.conditional());
    }
 
+   
+
    @Override public Boolean visitInstElse(chubixParser.InstElseContext ctx) {
-      chubixParser.current = chubixParser.current.addChild();      // down
+      chubixParser.current = chubixParser.current.addChild();        // down
       Boolean res = visit(ctx.instList());
-      chubixParser.current = chubixParser.current.parent();  // up
+      chubixParser.current = chubixParser.current.parent();          // up
       return res;
    }
 
    @Override public Boolean visitForLoop(chubixParser.ForLoopContext ctx) {
       // 'for' '(' declAssig|var=assignment ';' varBreak= expr ';' varInc=assignment ')' '{' instList '}'
       Boolean res;
+      chubixParser.current = chubixParser.current.addChild();        // down 
       if (ctx.declAssig()!=null)
          res = visit(ctx.declAssig());
       else
          res = visit(ctx.var);
-
+       
       res = res && visit(ctx.varBreak) && visit(ctx.varInc);
 
       if(res){
@@ -232,11 +240,13 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       } else
          return res;
       visit(ctx.instList()); // ignores result on purpose (to avoid override of all visit*)!
+      chubixParser.current = chubixParser.current.parent();          // up
       return res;
    }
 
    @Override public Boolean visitWhileLoop(chubixParser.WhileLoopContext ctx) {
       //whileLoop : 'while' '(' expr ')' '{' condSL=instList '}';
+      chubixParser.current = chubixParser.current.addChild();        // down 
       Boolean res = visit(ctx.expr());
       if(res){
          if(!ctx.expr().exprType.conformsTo(booleanType)){
@@ -247,6 +257,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          return res;
       }
       visit(ctx.condSL); // ignores result on purpose (to avoid override of all visit*)!
+      chubixParser.current = chubixParser.current.parent();          // up
       return res;
    }
 
@@ -367,6 +378,10 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    }
 
    @Override public Boolean visitFunctionExpr(chubixParser.FunctionExprContext ctx) {
+      if (chubixParser.global.symbols().containsKey(ctx.func_name))  //maybe not necessary due to all type verifications should return false with fetchtype etc...
+                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                                                        
       return visitChildren(ctx);
    }
 
@@ -377,7 +392,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
 
    @Override public Boolean visitDoubleSumMin(chubixParser.DoubleSumMinContext ctx) { 
       Boolean res = visit(ctx.ID());    
-      ctx.exprType = chubixParser.symbolTable.get(ctx.ID().getText()).type();          
+      ctx.exprType = chubixParser.current.lookup(ctx.ID().getText()).type();          
       return res;
    }
 
@@ -503,25 +518,16 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
    @Override public Boolean visitIdExpr(chubixParser.IdExprContext ctx) {
       String id = ctx.ID().getText();
       Symbol sym;
-      if (insideFunction.equals("")){
-         if (!chubixParser.symbolTable.containsKey(id)) {
+         if ((sym = chubixParser.current.lookup(id)) == null) {
             ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
             return false;
-         }
-         sym = chubixParser.symbolTable.get(id);
-      } else{
-         if (!((FunctionType) chubixParser.symbolTable.get(insideFunction).type()).getSymbolTable().containsKey(id)) {
-            ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
-            return false;
-         }
-         sym = ((FunctionType) chubixParser.symbolTable.get(insideFunction).type()).getSymbolTable().get(id);
-      }
+         }sym = chubixParser.current.lookup(id);
+    
       if (!sym.valueDefined()) {
          ErrorHandling.printError(ctx, "Variable \""+id+"\" not defined!");
          return false;
       } else
          ctx.exprType = sym.type();
-      
       return true;
    }
 

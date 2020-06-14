@@ -111,7 +111,7 @@ public class chubixParser extends Parser {
 	  int insideLoop = 0;
 	  int insideFunc = 0;
 	  public static final SymbolTable global = new SymbolTable();
-	  public static SymbolTable current = new SymbolTable();
+	  public static SymbolTable current = global;
 
 	public chubixParser(TokenStream input) {
 		super(input);

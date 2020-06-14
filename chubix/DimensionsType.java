@@ -1,5 +1,7 @@
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
 public class DimensionsType extends Type {
     //private HashMap<String, Double> units;
@@ -84,15 +86,41 @@ public class DimensionsType extends Type {
 		return this.dimType.getJavaType();
 	}
 
-    public static String mapToString(HashMap<String, Integer> map) {
+    public static String mapToString(HashMap<String, Integer> map) { // chico, velocity é m/s^-1??????????? print de merda
         String str = "";
-        for (String unit : map.keySet())
-            str += unit +"^" + map.get(unit) + "*";
-        if (str.length() != 0)
+        ArrayList<String> pos = new ArrayList<>();
+        ArrayList<String> neg = new ArrayList<>();
+        for (Entry<String, Integer> entry : map.entrySet()) {
+        	Integer exp = entry.getValue();
+            String newUnit = exp!=1 ? entry.getKey()+"^"+exp :  entry.getKey();
+            
+            if (exp > 0)
+            	pos.add(newUnit);
+        	else
+        		neg.add(newUnit);
+        }
+        if (pos.size()>0) {
+	        if (pos.size()>1)
+	        	str+="(";
+	    	for (String unit : pos)
+	    		str+=unit+"*";
+	
+	        str = str.substring(0, str.length()-1);
+	        if (pos.size()>1)
+	        	str+=")";
+        } else
+        	str+="1";
+        
+        if (neg.size()>0) {
+        	str+="/";
+        	if (neg.size()>1)
+            	str+="(";
+        	for (String unit : neg)
+        		str+=unit+"*";
             str = str.substring(0, str.length()-1);
-        else 
-            System.out.println("TÁ VAZIO :O");
-     
+        	if (neg.size()>1)
+            	str+=")";
+        }
         return str;
     }
 }

@@ -123,7 +123,7 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }
 
       Symbol sym = visit(ctx.expr());
-      if(sym == null){  
+      if(sym == null) {
          return null;
       }
       if (!sym.type().isDimensional()) {
@@ -138,6 +138,10 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       }
 
       Double convert_value = sym.value().doubleValue();
+      if (convert_value==0) {  
+         ErrorHandling.printError(ctx, "Cannot add a unit with value 0.");
+         return null;
+      }
       dimensionsParser.dimTable.get(dim).addUnit(unit, convert_value);
       return null;
    }

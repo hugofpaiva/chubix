@@ -13,20 +13,23 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    
    //FEITO
    @Override public ST visitMain(chubixParser.MainContext ctx) {
+      chubixParser.current = chubixParser.global;
       ST res = templates.getInstanceOf("module");
-
-      res.add("inst", visit(ctx.instList()).render());
-
+      
       Iterator<chubixParser.FunctionContext> listfunc = ctx.function().iterator();
       while (listfunc.hasNext()) {
          res.add("func", visit(listfunc.next()).render());
       }
-
+      res.add("inst", visit(ctx.instList()).render());
+      
       return res;
    }
 
    //FEITO
    @Override public ST visitInstList(chubixParser.InstListContext ctx) {
+      if(chubixParser.current.parent()==null)
+         chubixParser.current = chubixParser.current.down();      // down
+      
       ST res = templates.getInstanceOf("insts");
       Iterator<chubixParser.InstructionContext> listinst = ctx.instruction().iterator();
       while (listinst.hasNext()) {
@@ -59,6 +62,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
+      chubixParser.current = chubixParser.current.down();      // down
+      //System.out.println(chubixParser.current.down());
       ST res = templates.getInstanceOf("function");
       visit(ctx.ret_type);
       res.add("type", ctx.ret_type.res.name());
@@ -67,6 +72,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
          res.add("args",visit(ctx.declare(i)).render());
       }
       res.add("inst",visit(ctx.instList()).render());
+      chubixParser.current = chubixParser.current.parent();    // up
       return res;
    }
 
@@ -77,7 +83,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    //FEITO
    @Override public ST visitAssignment(chubixParser.AssignmentContext ctx) {
       ST res = templates.getInstanceOf("declaration");
-      String varName = chubixParser.symbolTable.get(ctx.ID().getText()).varName();
+      String varName = chubixParser.current.lookup(ctx.ID().getText()).varName();
       res.add("var", varName);
       res.add("inst",visit(ctx.expr()).render());
       res.add("value", ctx.expr().varName);     
@@ -88,7 +94,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       String varName = newVar();
       visit(ctx.declare());
-      chubixParser.symbolTable.get(ctx.declare().ID().getText()).setVarName(varName);
+      chubixParser.current.lookup(ctx.declare().ID().getText()).setVarName(varName);
       if (!ctx.declare().type().res.isDimensional())
          res.add("type", ctx.declare().type().res.name());
       else    
@@ -105,10 +111,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       visit(ctx.type());
       String varName = newVar();
-      chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
+      System.out.println("ola " + chubixParser.current.lookup(ctx.ID().getText()).name());
+      chubixParser.current.lookup(ctx.ID().getText()).setVarName(varName);
       if (!ctx.type().res.isDimensional())
          res.add("type", ctx.type().res.name());
-      else    
+      else
          res.add("type", ((DimensionsType) ctx.type().res).getType().name());
       res.add("var", varName);
 
@@ -116,10 +123,12 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitConditional(chubixParser.ConditionalContext ctx) {
+      chubixParser.current = chubixParser.current.down();      // down
       ST res = templates.getInstanceOf("cond");
       res.add("instif", visit(ctx.expr()).render());
       res.add("var",ctx.expr().varName);
       res.add("trueInst",visit(ctx.trueSL).render());  
+      chubixParser.current = chubixParser.current.parent();    // up
       if(ctx.falseSL != null){
          res.add("falseInst",visit(ctx.falseSL).render());  
       }
@@ -131,10 +140,14 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitInstElse(chubixParser.InstElseContext ctx) {
-      return visit(ctx.instList());
+      chubixParser.current = chubixParser.current.down();      // down
+      ST res = visit(ctx.instList());
+      chubixParser.current = chubixParser.current.parent();    // up
+      return res;
    }
    //ta mal por causa do chico
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
+      chubixParser.current = chubixParser.current.down();      // down
       ST res = templates.getInstanceOf("whileLoop");
       if(ctx.var!=null)
          res.add("instfor", visit(ctx.var).render());
@@ -144,15 +157,18 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("var",ctx.varBreak.varName);
       res.add("instafter",visit(ctx.instList()).render());
       res.add("instafter", visit(ctx.varInc).render());
+      chubixParser.current = chubixParser.current.parent();    // up
       return res;
    }
 
    @Override public ST visitWhileLoop(chubixParser.WhileLoopContext ctx) {
+      chubixParser.current = chubixParser.current.down();      // down
       ST res = templates.getInstanceOf("whileLoop");
 
       res.add("instbefore",visit(ctx.expr()).render());
       res.add("var", ctx.expr().varName);
       res.add("instafter",visit(ctx.instList()).render());
+      chubixParser.current = chubixParser.current.parent();    // up
       return res;  
    }
 
@@ -272,7 +288,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ctx.varName = newVar();
       res.add("type",ctx.exprType.getJavaType());
       res.add("var",ctx.varName);
-      String id = chubixParser.symbolTable.get(ctx.ID().getText()).varName();
+      String id = chubixParser.current.lookup(ctx.ID().getText()).varName();
       res.add("value",id+ctx.op.getText());
    
       return res;
@@ -353,7 +369,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
       res.add("var", ctx.varName);
-      res.add("value",chubixParser.symbolTable.get(ctx.ID().getText()).varName());
+      res.add("value",chubixParser.current.lookup(ctx.ID().getText()).varName());
       res.add("type", ctx.exprType.getJavaType());
       return res;
    }

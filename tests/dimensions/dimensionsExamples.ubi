@@ -34,3 +34,4 @@ dim PricePerPowerTime(Price/(Power*Time));
 
 dim Charge(C: Current*Time);
 
+dim IMC(imc : Mass/Distance^2);

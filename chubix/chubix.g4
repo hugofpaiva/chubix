@@ -4,7 +4,7 @@ grammar chubix;
   int insideLoop = 0;
   int insideFunc = 0;
   public static final SymbolTable global = new SymbolTable();
-  public static SymbolTable current = new SymbolTable();
+  public static SymbolTable current = global;
 }
 @parser::header{
   import java.util.HashMap;
