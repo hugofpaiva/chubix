@@ -1,3 +1,5 @@
+
+
 ########## Linguagem Compilada ##########
 
 #function void evalIMC(IMC imc){
@@ -44,9 +46,17 @@ Time t = 5[s];            #input("Insira o tempo",Time) [s];
 Velocity v0 = 5[m/s];     #input("Insira a velocidade inicial",Velocity) [m/s];
 Force f = 5 [kg*m*s^-2];  #input("Insira a intensidade da força, em Newton",Force) [N];
 
-Acceleration a = f / m; # f = kg*a   f = kg*m*s^-2  m   m*s^-2
+Acceleration a = f / m;
+Counter c = 2 [c];
+Estupido asd = (2[h]/1[c]) [s/c];
+
 
 Distance res = v0 * t +(a*t^2)/2;
+
+
+print(asd); 
+
+
 
 print("Distancia percorrida: ");
 print(res);
@@ -76,14 +86,14 @@ Resistence R = input("Insira a intensidade da força, em Newton", Resistence) [O
 Double taxa = 1/2;
 Current I = U/R;  # V / O  {'A' : 1, 'V/O' : 1}
 
+
 Distance d = v0*t;
+
 print(d);
-
-Resistence result = U/taxa*I^-1 [V];  # V/A  V1 V-1 R-1
-
   
-while(taxa>=1/32){
+while(taxa>=1.0/32.0){
     print("Taxa: ");
+    Resistence result = (U/taxa*I^-1) [O];
     print(taxa);
     print("Nova Resistência: ");
     print(result);
@@ -91,49 +101,49 @@ while(taxa>=1/32){
 };
 
 
-####Exemplo 3
-##   Determine a energia consumida mensalmente por um chuveiro elétrico
-## de potência 4000W em uma residência onde vivem quatro pessoas que tomam,
-## diariamente, 2 banhos de 15 min.
-## Pedir ao user:
-##     Potência (Power)
-##     Tempo (Time)
-##
-## Resultado: Energia
+###Exemplo 3
+#   Determine a energia consumida mensalmente por um chuveiro elétrico
+# de potência 4000W em uma residência onde vivem quatro pessoas que tomam,
+# diariamente, 2 banhos de 15 min.
+# Pedir ao user:
+#     Potência (Power)
+#     Tempo (Time)
 #
-#Power P = input("Insira a potência: ", Power) [kW];
-#Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
+# Resultado: Energia
+
+Power P = input("Insira a potência: ", Power) [KW];
+Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
+
+# Da equação da energia consumida temos que E = P x Δt
+# Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
+#   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
+
+Energy E = P * 8 * T * 30;
+
+print("Energia consumida: ");
+print(E);
+
+###Exemplo 3.1
+#   Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro.
+# Sabendo que o preço per kWh é de 0.14810 euros, conseguem alcançar este objetivo?
+# Pedir ao user:
+#       Preço per kWh (PricePerKWH)
+# 
+# Resultado: Preço
 #
-## Da equação da energia consumida temos que E = P x Δt
-## Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
-##   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
-#
-#Energy E = P * 8 * T * 30;
-#>
-#print("Energia consumida: ");
-#print(E);
-#
-####Exemplo 3.1
-##   Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro.
-## Sabendo que o preço per kWh é de 0.14810 euros, conseguem alcançar este objetivo?
-## Pedir ao user:
-##       Preço per kWh (PricePerKWH)
-## 
-## Resultado: Preço
-#
-## Resolução:
-#
-#PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euros/(kW*h)];
-#
-#Price p_mensal = p * E;
-#
-#if (p_mensal > 30) {
-#    print("Não conseguem gastar menos de 30");
-#} else {
-#    print("Conseguem gastar menos de 30");
-#};
-#
-#
+# Resolução:
+
+PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euro/(KW*h)];
+
+Price p_mensal = p * E;
+
+if (p_mensal < 30[euro]){
+    print("Não conseguem gastar menos de 30");
+} else {
+    print("Conseguem gastar menos de 30");
+};
+
+
 ####Exemplo 4 
 ##   Calcular o a Energia cinetica em intervalos de 10s no primeiro minuto do movimento de queda livre. 
 ##   Considere que a velocidade inicial é 0m/s e que a aceleração gravitica é 10m/s^2 e que não existem 
@@ -144,47 +154,49 @@ while(taxa>=1/32){
 ##Resolução:
 #
 #
-#Mass m = input("Insira a massa do objeto em kg") [kg] ;
-#Accelaration g = 10[m/(s^2)];
-#Velocity v = 0[m/s];
-#Energy ec;
-#
-#
-#for (Integer i = 0; i<=60; i=i+10){
-#    v = v+i*g;
+Mass m1 = input("Insira a massa do objeto em kg",Mass) [kg] ;
+Acceleration g = 10 [m*s^-2];
+Velocity v = 0[m/s];
+Energy ec;
+
+
+for (Integer i = 0; i<=60; i=i+10){
+    v = v+i[s]*g;
 #    ec = CalcCinetica(m,v);
 #    print(ec); 
-#};
-#
-####Exemplo 5
-##  Uma corrente de 5,0 A atravessa um fio durante 4,0 min. 
-##  Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
-#
-##Resolução:
-#
-##a)
-#
-#Current i = 5 [A];
-#Time t = 4*60 [s];
-##Visto que a Intensidade = carga / intervalo de tempo
-#Charge c = 5*4*60 [C];
-#print(c);
-#
-##b)
-#
-##Número de eletrões = carga / |carga por eletrão|
-##Double numero_eletroes = c / +(1.602*10^-19) [C];
-#
-#
-####Exemplo 6
-##  Calcular e avaliar o valor de IMC do utilizador
-#
-#
-#
-#
-#Mass m = input("Insert your weight in kg: ") [kg];
-#Distance height = input("Insert your height in meters: ") [m];
-#
+};
+
+###Exemplo 5
+#  Uma corrente de 5,0 A atravessa um fio durante 4,0 min. 
+#  Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
+
+#Resolução:
+
+#a)
+
+Current cur = 5 [A];
+Time time = 4*60 [s];
+
+#Visto que a Intensidade = carga / intervalo de tempo
+Charge ch = cur*time ;
+
+print(ch);
+
+#b)
+
+#Número de eletrões = carga / |carga por eletrão|
+Double eletroes = ch / (1.602*10^-19)[C];
+
+print(eletroes);
+
+###Exemplo 6
+#  Calcular e avaliar o valor de IMC do utilizador
+
+
+Mass weight = input("Insert your weight in kg: ", String) [kg];
+Distance height = input("Insert your height in meters: ", Distance) [m];
+
 #IMC imc = getIMC(m,height);
 #evalIMC(imc);
 ##teste
+/**/

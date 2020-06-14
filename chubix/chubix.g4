@@ -74,21 +74,21 @@ type returns[Type res]:
 	;
 
 expr returns[Type exprType, String varName]:
-      sign=('+'|'-') expr                                         #signExpr
+      expr '['unitdim']'                                          #exprConvUnit
     | <assoc=right> e1=expr '^' e2=expr                           #powExpr
+    | sign=('+'|'-') expr                                         #signExpr
     | e1=expr op=('*' | '/') e2=expr                              #multDivRestExpr
     | e1=expr op=('+' | '-') e2=expr                              #addSubExpr
     | e1=expr op=('==' | '!=' | '<' | '>' | '>=' | '<=') e2=expr  #conditionalExpr
     | '(' expr ')'                                                #parenExpr
     | ID op=('++' | '--')                                         #doubleSumMin
     | 'input' '(' (STRING ',')? type')'                           #inputExpr
-    | DOUBLE                                                      #doubleExpr
-    | INTEGER                                                     #integerExpr
-    | expr '['unitdim']'                                          #exprConvUnit
     | BOOLEAN                                                     #booleanExpr
     | ID                                                          #idExpr
     | STRING                                                      #stringExpr
     | callFunction                                                #functionExpr
+    | DOUBLE                                                      #doubleExpr
+    | INTEGER                                                     #integerExpr
     ;
 
 unitdim returns [DimensionsType unitdimType]: 

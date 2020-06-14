@@ -358,10 +358,8 @@ public class dimensionsParser extends Parser {
 				match(ID);
 				setState(36);
 				match(T__3);
-				{
 				setState(37);
 				type();
-				}
 				setState(38);
 				match(T__4);
 				}

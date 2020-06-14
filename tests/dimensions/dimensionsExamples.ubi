@@ -1,7 +1,11 @@
-dim Distance(m: Double);
 
+dim Counter(c : Integer);
 dim Time(s: Integer);
 unit Time(h: 3600.0*s);
+dim Estupido(sc:Time/Counter);
+dim Distance(m: Double);
+
+
 
 dim Velocity(Distance/Time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
 unit Velocity(mach: 200.0*m/s);
@@ -26,7 +30,7 @@ unit Power(KW: W*10.0^3.0);
 
 dim Price(euro : Double);
 
-dim PricePerPowerTime(Price/Power*Time);
+dim PricePerPowerTime(Price/(Power*Time));
 
-dim Charge(C: Double);
+dim Charge(C: Current*Time);
 

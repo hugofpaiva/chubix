@@ -17,7 +17,7 @@ stat: dim
     | unit
     ;
 
-dim : 'dim' ID '(' ID ':' (type) ')'      #PrimitiveDim
+dim : 'dim' ID '(' ID ':' type ')'      #PrimitiveDim
     | 'dim' ID '(' (ID ':')? unitdim ')'  #RelativeDim
     ;
 
@@ -49,5 +49,5 @@ ID: [a-zA-Z_][a-zA-Z_0-9]*;
 INTEGER: ('+'|'-')? [0-9]+;
 DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
-LINE_COMMENT: '#' .*? '\n' -> skip;
+LINE_COMMENT: '#' .*? ('\n'|EOF) -> skip;
 ERROR: .;

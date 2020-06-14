@@ -91,7 +91,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       String varName = newVar();
       visit(ctx.declare());
       chubixParser.symbolTable.get(ctx.declare().ID().getText()).setVarName(varName);
-      System.out.println("-> " + ctx.declare().type().res.name());
       if (!ctx.declare().type().res.isDimensional())
          res.add("type", ctx.declare().type().res.name());
       else    
@@ -110,7 +109,10 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       String varName = newVar();
       System.out.println(ctx.ID().getText());
       chubixParser.symbolTable.get(ctx.ID().getText()).setVarName(varName);
-      res.add("type", ctx.type().res);
+      if (!ctx.type().res.isDimensional())
+         res.add("type", ctx.type().res.name());
+      else    
+         res.add("type", ((DimensionsType) ctx.type().res).getType().name());
       res.add("var", varName);
 
       return res;
@@ -289,10 +291,8 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
       res.add("inst", visit(ctx.e1).render());
       res.add("inst", visit(ctx.e2).render());
-      if(ctx.op.getText().equals("/")){
-         res.add("type", "Double");
-      }else
-         res.add("type", ctx.exprType.getJavaType());
+     
+      res.add("type", ctx.exprType.getJavaType());
       res.add("var", ctx.varName);
       res.add("e1", ctx.e1.varName);
       res.add("op", ctx.op.getText());

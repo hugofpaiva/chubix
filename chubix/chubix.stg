@@ -49,7 +49,7 @@ System.out.println(<value>);
 
 // Declaration serve para o declaration e para o assign
 declaration(type,var,value,inst) ::= <<<if(inst)><insts(inst)><endif>
-<if(type)><typeValue.(type)><endif> <var><if(value)> = <value>;<endif>
+<if(type)><typeValue.(type)><endif> <var><if(value)> = <value><endif>;
 >>
 
 binaryOperation(inst,type,var,e1,op,e2) ::= <<

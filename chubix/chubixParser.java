@@ -46,9 +46,9 @@ public class chubixParser extends Parser {
 		return new String[] {
 			null, "';'", "'import'", "'print'", "'('", "')'", "'return'", "'function'", 
 			"','", "'{'", "'}'", "'='", "'if'", "'else'", "'for'", "'while'", "'break'", 
-			"'continue'", "'Integer'", "'Double'", "'Boolean'", "'String'", "'+'", 
-			"'-'", "'^'", "'*'", "'/'", "'=='", "'!='", "'<'", "'>'", "'>='", "'<='", 
-			"'++'", "'--'", "'input'", "'['", "']'"
+			"'continue'", "'Integer'", "'Double'", "'Boolean'", "'String'", "'['", 
+			"']'", "'^'", "'+'", "'-'", "'*'", "'/'", "'=='", "'!='", "'<'", "'>'", 
+			"'>='", "'<='", "'++'", "'--'", "'input'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -533,7 +533,7 @@ public class chubixParser extends Parser {
 			setState(89);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__21) | (1L << T__22) | (1L << T__34) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__24) | (1L << T__25) | (1L << T__36) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
 				setState(88);
 				expr(0);
@@ -592,7 +592,7 @@ public class chubixParser extends Parser {
 			setState(96);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__21) | (1L << T__22) | (1L << T__34) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__24) | (1L << T__25) | (1L << T__36) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
 				setState(95);
 				expr(0);
@@ -755,7 +755,7 @@ public class chubixParser extends Parser {
 			setState(130);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__21) | (1L << T__22) | (1L << T__34) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__3) | (1L << T__24) | (1L << T__25) | (1L << T__36) | (1L << BOOLEAN) | (1L << ID) | (1L << DOUBLE) | (1L << INTEGER) | (1L << STRING))) != 0)) {
 				{
 				setState(122);
 				expr(0);
@@ -1855,7 +1855,7 @@ public class chubixParser extends Parser {
 				setState(204);
 				((SignExprContext)_localctx).sign = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__21 || _la==T__22) ) {
+				if ( !(_la==T__24 || _la==T__25) ) {
 					((SignExprContext)_localctx).sign = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -1864,7 +1864,7 @@ public class chubixParser extends Parser {
 					consume();
 				}
 				setState(205);
-				expr(15);
+				expr(13);
 				}
 				break;
 			case 2:
@@ -1890,7 +1890,7 @@ public class chubixParser extends Parser {
 				setState(211);
 				((DoubleSumMinContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__32 || _la==T__33) ) {
+				if ( !(_la==T__34 || _la==T__35) ) {
 					((DoubleSumMinContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -1906,7 +1906,7 @@ public class chubixParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(212);
-				match(T__34);
+				match(T__36);
 				setState(213);
 				match(T__3);
 				setState(216);
@@ -1929,56 +1929,56 @@ public class chubixParser extends Parser {
 				break;
 			case 5:
 				{
-				_localctx = new DoubleExprContext(_localctx);
+				_localctx = new BooleanExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(221);
-				match(DOUBLE);
+				match(BOOLEAN);
 				}
 				break;
 			case 6:
 				{
-				_localctx = new IntegerExprContext(_localctx);
+				_localctx = new IdExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(222);
-				match(INTEGER);
+				match(ID);
 				}
 				break;
 			case 7:
 				{
-				_localctx = new BooleanExprContext(_localctx);
+				_localctx = new StringExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(223);
-				match(BOOLEAN);
+				match(STRING);
 				}
 				break;
 			case 8:
 				{
-				_localctx = new IdExprContext(_localctx);
+				_localctx = new FunctionExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(224);
-				match(ID);
+				callFunction();
 				}
 				break;
 			case 9:
 				{
-				_localctx = new StringExprContext(_localctx);
+				_localctx = new DoubleExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(225);
-				match(STRING);
+				match(DOUBLE);
 				}
 				break;
 			case 10:
 				{
-				_localctx = new FunctionExprContext(_localctx);
+				_localctx = new IntegerExprContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(226);
-				callFunction();
+				match(INTEGER);
 				}
 				break;
 			}
@@ -2013,11 +2013,11 @@ public class chubixParser extends Parser {
 						((MultDivRestExprContext)_localctx).e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(232);
-						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
+						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						setState(233);
 						((MultDivRestExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__24 || _la==T__25) ) {
+						if ( !(_la==T__26 || _la==T__27) ) {
 							((MultDivRestExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2026,7 +2026,7 @@ public class chubixParser extends Parser {
 							consume();
 						}
 						setState(234);
-						((MultDivRestExprContext)_localctx).e2 = expr(14);
+						((MultDivRestExprContext)_localctx).e2 = expr(13);
 						}
 						break;
 					case 3:
@@ -2035,11 +2035,11 @@ public class chubixParser extends Parser {
 						((AddSubExprContext)_localctx).e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(235);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						setState(236);
 						((AddSubExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__21 || _la==T__22) ) {
+						if ( !(_la==T__24 || _la==T__25) ) {
 							((AddSubExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2048,7 +2048,7 @@ public class chubixParser extends Parser {
 							consume();
 						}
 						setState(237);
-						((AddSubExprContext)_localctx).e2 = expr(13);
+						((AddSubExprContext)_localctx).e2 = expr(12);
 						}
 						break;
 					case 4:
@@ -2057,11 +2057,11 @@ public class chubixParser extends Parser {
 						((ConditionalExprContext)_localctx).e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(238);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
+						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						setState(239);
 						((ConditionalExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29) | (1L << T__30) | (1L << T__31))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__29) | (1L << T__30) | (1L << T__31) | (1L << T__32) | (1L << T__33))) != 0)) ) {
 							((ConditionalExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2070,7 +2070,7 @@ public class chubixParser extends Parser {
 							consume();
 						}
 						setState(240);
-						((ConditionalExprContext)_localctx).e2 = expr(12);
+						((ConditionalExprContext)_localctx).e2 = expr(11);
 						}
 						break;
 					case 5:
@@ -2078,13 +2078,13 @@ public class chubixParser extends Parser {
 						_localctx = new ExprConvUnitContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(241);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
 						setState(242);
-						match(T__35);
+						match(T__21);
 						setState(243);
 						unitdim(0);
 						setState(244);
-						match(T__36);
+						match(T__22);
 						}
 						break;
 					}
@@ -2231,12 +2231,12 @@ public class chubixParser extends Parser {
 				setState(253);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==T__21 || _la==T__22) {
+				if (_la==T__24 || _la==T__25) {
 					{
 					setState(252);
 					((DimUnnContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
-					if ( !(_la==T__21 || _la==T__22) ) {
+					if ( !(_la==T__24 || _la==T__25) ) {
 						((DimUnnContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
@@ -2263,12 +2263,12 @@ public class chubixParser extends Parser {
 				setState(260);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if (_la==T__21 || _la==T__22) {
+				if (_la==T__24 || _la==T__25) {
 					{
 					setState(259);
 					((DimIDContext)_localctx).op = _input.LT(1);
 					_la = _input.LA(1);
-					if ( !(_la==T__21 || _la==T__22) ) {
+					if ( !(_la==T__24 || _la==T__25) ) {
 						((DimIDContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 					}
 					else {
@@ -2305,7 +2305,7 @@ public class chubixParser extends Parser {
 						setState(266);
 						((DimMultDivContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__24 || _la==T__25) ) {
+						if ( !(_la==T__26 || _la==T__27) ) {
 							((DimMultDivContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -2329,12 +2329,12 @@ public class chubixParser extends Parser {
 						setState(271);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if (_la==T__21 || _la==T__22) {
+						if (_la==T__24 || _la==T__25) {
 							{
 							setState(270);
 							((DimPowerContext)_localctx).op = _input.LT(1);
 							_la = _input.LA(1);
-							if ( !(_la==T__21 || _la==T__22) ) {
+							if ( !(_la==T__24 || _la==T__25) ) {
 								((DimPowerContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 							}
 							else {
@@ -2420,13 +2420,13 @@ public class chubixParser extends Parser {
 		case 4:
 			return precpred(_ctx, 14);
 		case 5:
-			return precpred(_ctx, 13);
-		case 6:
 			return precpred(_ctx, 12);
-		case 7:
+		case 6:
 			return precpred(_ctx, 11);
+		case 7:
+			return precpred(_ctx, 10);
 		case 8:
-			return precpred(_ctx, 5);
+			return precpred(_ctx, 15);
 		}
 		return true;
 	}
@@ -2462,9 +2462,9 @@ public class chubixParser extends Parser {
 		"\16\24\u00fc\13\24\3\25\3\25\5\25\u0100\n\25\3\25\3\25\3\25\3\25\3\25"+
 		"\5\25\u0107\n\25\3\25\5\25\u010a\n\25\3\25\3\25\3\25\3\25\3\25\3\25\5"+
 		"\25\u0112\n\25\3\25\7\25\u0115\n\25\f\25\16\25\u0118\13\25\3\25\2\4&("+
-		"\26\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(\2\6\3\2\30\31\3\2#$\3"+
-		"\2\33\34\3\2\35\"\2\u0137\2\60\3\2\2\2\4E\3\2\2\2\6S\3\2\2\2\bU\3\2\2"+
-		"\2\nX\3\2\2\2\f_\3\2\2\2\16d\3\2\2\2\20z\3\2\2\2\22\u0088\3\2\2\2\24\u008c"+
+		"\26\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(\2\6\3\2\33\34\3\2%&\3"+
+		"\2\35\36\3\2\37$\2\u0137\2\60\3\2\2\2\4E\3\2\2\2\6S\3\2\2\2\bU\3\2\2\2"+
+		"\nX\3\2\2\2\f_\3\2\2\2\16d\3\2\2\2\20z\3\2\2\2\22\u0088\3\2\2\2\24\u008c"+
 		"\3\2\2\2\26\u0090\3\2\2\2\30\u0093\3\2\2\2\32\u00a3\3\2\2\2\34\u00a5\3"+
 		"\2\2\2\36\u00b6\3\2\2\2 \u00c0\3\2\2\2\"\u00c3\3\2\2\2$\u00cb\3\2\2\2"+
 		"&\u00e5\3\2\2\2(\u0109\3\2\2\2*,\5\b\5\2+*\3\2\2\2+,\3\2\2\2,-\3\2\2\2"+
@@ -2508,35 +2508,35 @@ public class chubixParser extends Parser {
 		"\2\u00c7\u00cc\7\25\2\2\u00c8\u00cc\7\26\2\2\u00c9\u00cc\7\27\2\2\u00ca"+
 		"\u00cc\7)\2\2\u00cb\u00c6\3\2\2\2\u00cb\u00c7\3\2\2\2\u00cb\u00c8\3\2"+
 		"\2\2\u00cb\u00c9\3\2\2\2\u00cb\u00ca\3\2\2\2\u00cc%\3\2\2\2\u00cd\u00ce"+
-		"\b\24\1\2\u00ce\u00cf\t\2\2\2\u00cf\u00e6\5&\24\21\u00d0\u00d1\7\6\2\2"+
+		"\b\24\1\2\u00ce\u00cf\t\2\2\2\u00cf\u00e6\5&\24\17\u00d0\u00d1\7\6\2\2"+
 		"\u00d1\u00d2\5&\24\2\u00d2\u00d3\7\7\2\2\u00d3\u00e6\3\2\2\2\u00d4\u00d5"+
-		"\7)\2\2\u00d5\u00e6\t\3\2\2\u00d6\u00d7\7%\2\2\u00d7\u00da\7\6\2\2\u00d8"+
+		"\7)\2\2\u00d5\u00e6\t\3\2\2\u00d6\u00d7\7\'\2\2\u00d7\u00da\7\6\2\2\u00d8"+
 		"\u00d9\7-\2\2\u00d9\u00db\7\n\2\2\u00da\u00d8\3\2\2\2\u00da\u00db\3\2"+
 		"\2\2\u00db\u00dc\3\2\2\2\u00dc\u00dd\5$\23\2\u00dd\u00de\7\7\2\2\u00de"+
-		"\u00e6\3\2\2\2\u00df\u00e6\7+\2\2\u00e0\u00e6\7,\2\2\u00e1\u00e6\7(\2"+
-		"\2\u00e2\u00e6\7)\2\2\u00e3\u00e6\7-\2\2\u00e4\u00e6\5\20\t\2\u00e5\u00cd"+
+		"\u00e6\3\2\2\2\u00df\u00e6\7(\2\2\u00e0\u00e6\7)\2\2\u00e1\u00e6\7-\2"+
+		"\2\u00e2\u00e6\5\20\t\2\u00e3\u00e6\7+\2\2\u00e4\u00e6\7,\2\2\u00e5\u00cd"+
 		"\3\2\2\2\u00e5\u00d0\3\2\2\2\u00e5\u00d4\3\2\2\2\u00e5\u00d6\3\2\2\2\u00e5"+
 		"\u00df\3\2\2\2\u00e5\u00e0\3\2\2\2\u00e5\u00e1\3\2\2\2\u00e5\u00e2\3\2"+
 		"\2\2\u00e5\u00e3\3\2\2\2\u00e5\u00e4\3\2\2\2\u00e6\u00fa\3\2\2\2\u00e7"+
 		"\u00e8\f\20\2\2\u00e8\u00e9\7\32\2\2\u00e9\u00f9\5&\24\20\u00ea\u00eb"+
-		"\f\17\2\2\u00eb\u00ec\t\4\2\2\u00ec\u00f9\5&\24\20\u00ed\u00ee\f\16\2"+
-		"\2\u00ee\u00ef\t\2\2\2\u00ef\u00f9\5&\24\17\u00f0\u00f1\f\r\2\2\u00f1"+
-		"\u00f2\t\5\2\2\u00f2\u00f9\5&\24\16\u00f3\u00f4\f\7\2\2\u00f4\u00f5\7"+
-		"&\2\2\u00f5\u00f6\5(\25\2\u00f6\u00f7\7\'\2\2\u00f7\u00f9\3\2\2\2\u00f8"+
-		"\u00e7\3\2\2\2\u00f8\u00ea\3\2\2\2\u00f8\u00ed\3\2\2\2\u00f8\u00f0\3\2"+
-		"\2\2\u00f8\u00f3\3\2\2\2\u00f9\u00fc\3\2\2\2\u00fa\u00f8\3\2\2\2\u00fa"+
-		"\u00fb\3\2\2\2\u00fb\'\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fd\u00ff\b\25\1"+
-		"\2\u00fe\u0100\t\2\2\2\u00ff\u00fe\3\2\2\2\u00ff\u0100\3\2\2\2\u0100\u0101"+
-		"\3\2\2\2\u0101\u0102\7\6\2\2\u0102\u0103\5(\25\2\u0103\u0104\7\7\2\2\u0104"+
-		"\u010a\3\2\2\2\u0105\u0107\t\2\2\2\u0106\u0105\3\2\2\2\u0106\u0107\3\2"+
-		"\2\2\u0107\u0108\3\2\2\2\u0108\u010a\7)\2\2\u0109\u00fd\3\2\2\2\u0109"+
-		"\u0106\3\2\2\2\u010a\u0116\3\2\2\2\u010b\u010c\f\5\2\2\u010c\u010d\t\4"+
-		"\2\2\u010d\u0115\5(\25\6\u010e\u010f\f\6\2\2\u010f\u0111\7\32\2\2\u0110"+
-		"\u0112\t\2\2\2\u0111\u0110\3\2\2\2\u0111\u0112\3\2\2\2\u0112\u0113\3\2"+
-		"\2\2\u0113\u0115\7,\2\2\u0114\u010b\3\2\2\2\u0114\u010e\3\2\2\2\u0115"+
-		"\u0118\3\2\2\2\u0116\u0114\3\2\2\2\u0116\u0117\3\2\2\2\u0117)\3\2\2\2"+
-		"\u0118\u0116\3\2\2\2\35+\60\649@ES[bor\u0081\u0084\u009c\u00a3\u00aa\u00cb"+
-		"\u00da\u00e5\u00f8\u00fa\u00ff\u0106\u0109\u0111\u0114\u0116";
+		"\f\16\2\2\u00eb\u00ec\t\4\2\2\u00ec\u00f9\5&\24\17\u00ed\u00ee\f\r\2\2"+
+		"\u00ee\u00ef\t\2\2\2\u00ef\u00f9\5&\24\16\u00f0\u00f1\f\f\2\2\u00f1\u00f2"+
+		"\t\5\2\2\u00f2\u00f9\5&\24\r\u00f3\u00f4\f\21\2\2\u00f4\u00f5\7\30\2\2"+
+		"\u00f5\u00f6\5(\25\2\u00f6\u00f7\7\31\2\2\u00f7\u00f9\3\2\2\2\u00f8\u00e7"+
+		"\3\2\2\2\u00f8\u00ea\3\2\2\2\u00f8\u00ed\3\2\2\2\u00f8\u00f0\3\2\2\2\u00f8"+
+		"\u00f3\3\2\2\2\u00f9\u00fc\3\2\2\2\u00fa\u00f8\3\2\2\2\u00fa\u00fb\3\2"+
+		"\2\2\u00fb\'\3\2\2\2\u00fc\u00fa\3\2\2\2\u00fd\u00ff\b\25\1\2\u00fe\u0100"+
+		"\t\2\2\2\u00ff\u00fe\3\2\2\2\u00ff\u0100\3\2\2\2\u0100\u0101\3\2\2\2\u0101"+
+		"\u0102\7\6\2\2\u0102\u0103\5(\25\2\u0103\u0104\7\7\2\2\u0104\u010a\3\2"+
+		"\2\2\u0105\u0107\t\2\2\2\u0106\u0105\3\2\2\2\u0106\u0107\3\2\2\2\u0107"+
+		"\u0108\3\2\2\2\u0108\u010a\7)\2\2\u0109\u00fd\3\2\2\2\u0109\u0106\3\2"+
+		"\2\2\u010a\u0116\3\2\2\2\u010b\u010c\f\5\2\2\u010c\u010d\t\4\2\2\u010d"+
+		"\u0115\5(\25\6\u010e\u010f\f\6\2\2\u010f\u0111\7\32\2\2\u0110\u0112\t"+
+		"\2\2\2\u0111\u0110\3\2\2\2\u0111\u0112\3\2\2\2\u0112\u0113\3\2\2\2\u0113"+
+		"\u0115\7,\2\2\u0114\u010b\3\2\2\2\u0114\u010e\3\2\2\2\u0115\u0118\3\2"+
+		"\2\2\u0116\u0114\3\2\2\2\u0116\u0117\3\2\2\2\u0117)\3\2\2\2\u0118\u0116"+
+		"\3\2\2\2\35+\60\649@ES[bor\u0081\u0084\u009c\u00a3\u00aa\u00cb\u00da\u00e5"+
+		"\u00f8\u00fa\u00ff\u0106\u0109\u0111\u0114\u0116";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
