@@ -46,7 +46,11 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("print");
       if(ctx.expr()!=null){
          res.add("inst",visit(ctx.expr()).render());
-         res.add("value",ctx.expr().varName);
+         if (ctx.expr().exprType.isDimensional())
+            res.add("value",ctx.expr().varName+"+\" [" + DimensionsType.mapToString(((DimensionsType)ctx.expr().exprType).getUnit())+"]\"");
+         else
+            res.add("value",ctx.expr().varName);
+            
       }
       return res;
    }
@@ -109,7 +113,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       chubixParser.current.lookup(ctx.declare().ID().getText()).setVarName(varName);
       if (!ctx.declare().type().res.isDimensional())
          res.add("type", ctx.declare().type().res.name());
-      else    
+      else 
          res.add("type", ((DimensionsType) ctx.declare().type().res).getType().name());
       res.add("var", varName);
       res.add("inst", visit(ctx.expr()).render());
@@ -383,28 +387,33 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) { // var a = 1[cm]  = 0.01m 
-      ST res = templates.getInstanceOf("binaryOperation");
+      ST res =templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
+      String temp = newVar();
       System.out.println("ola-"+ctx.unitdim().getText()); // ola- km
       double value = 1.0;
       for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {  
          HashMap<String,Integer> unit = ctx.unitdim().unitdimType.getUnit();  // {'km': 1}    <-  [km]
          
          if (dimensionsType.containsUnit(unit)) {  // { {'m': 1} -> 1 ,  {'km': 1} -> 1000}
-            System.out.println("\tconv: " + DimensionsType.mapToString(unit));
+            //System.out.println("\tconv: " + DimensionsType.mapToString(unit));
             value = ctx.unitdim().unitdimType.getUnitConv(unit);
-            System.out.println("\tconv: " + ctx.unitdim().unitdimType.getUnitConv(unit));
+            //System.out.println("\tconv: " + ctx.unitdim().unitdimType.getUnitConv(unit));
          }
       }
       res.add("inst",visit(ctx.expr()).render());
-      res.add("var", ctx.expr().varName);
-      res.add("type", ctx.unitdim().unitdimType.getType());
+      res.add("var", temp);
+      res.add("type", "Double");
       res.add("e1",ctx.expr().varName);
       res.add("op", "/");  // 1 [km] -> 1/0.001 -> 1000m
       res.add("e2", ""+value);
-      ctx.varName = ctx.expr().varName; 
-      
-      return res;  
+      ST dec = templates.getInstanceOf("declaration");
+      String t = ctx.unitdim().unitdimType.getJavaType();
+      dec.add("type",t);
+      dec.add("var",ctx.varName);
+      dec.add("value","("+t+")"+temp);
+      dec.add("inst",res.render());
+      return dec;  
    }                    
    
    @Override public ST visitDimPower(chubixParser.DimPowerContext ctx) {

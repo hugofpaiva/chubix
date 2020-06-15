@@ -171,7 +171,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          } else if (sym.type().isDimensional() && ctx.expr().exprType.isDimensional()) {
             if ( !((DimensionsType)sym.type()).getUnit().equals(((DimensionsType) ctx.expr().exprType).getUnit())) {
                ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) sym.type()).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) ctx.expr().exprType).getUnit()));
-               res = false;
+               return false;
+            }
+            if (((DimensionsType)sym.type()).getType().name().equals("integer") && ((DimensionsType) ctx.expr().exprType).getType().name().equals("double")) {
+               ErrorHandling.printError(ctx, "Cannot convert Double to a Dimension of Integers!");
+               return false;
             }
             sym.setValueDefined();
          } else
@@ -195,6 +199,10 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       } else if (sym.type().isDimensional() && ctx.expr().exprType.isDimensional()) {
          if ( !((DimensionsType)sym.type()).getUnit().equals(((DimensionsType) ctx.expr().exprType).getUnit())) {
             ErrorHandling.printError(ctx, "Incomparable types: " + DimensionsType.mapToString(((DimensionsType) sym.type()).getUnit()) + " and " + DimensionsType.mapToString(((DimensionsType) ctx.expr().exprType).getUnit()));
+            return false;
+         }
+         if (((DimensionsType)sym.type()).getType().name().equals("integer") && ((DimensionsType) ctx.expr().exprType).getType().name().equals("double")) {
+            ErrorHandling.printError(ctx, "Cannot convert Double to a Dimension of Integers!");
             return false;
          }
          sym.setValueDefined();
@@ -351,13 +359,13 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return res;
    }
 
-   @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) {  // e se ele associar um double a um dimType inteiro? é cagativo?
+   @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) { 
       ctx.exprType = doubleType;
       return true;
    }
 
   
-   @Override public Boolean visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) {  // e se ele associar um double a um dimType inteiro? é cagativo?
+   @Override public Boolean visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) {
       Boolean res = visit(ctx.expr()) && visit(ctx.unitdim());
       if (!res)
          return false;
@@ -372,6 +380,11 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             ErrorHandling.printWarning(ctx, "Cast and expression are of the same type.");
          } else {
             ErrorHandling.printError(ctx, "Cannot convert to another Dimension!");
+            return false;
+         }
+      } else {
+         if (ctx.expr().exprType.name().equals("double") && type.getType().name().equals("integer")) {
+            ErrorHandling.printError(ctx, "Cannot convert Double to a Dimension of Integers!");
             return false;
          }
       }

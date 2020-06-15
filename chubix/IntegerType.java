@@ -11,5 +11,8 @@ public class IntegerType extends Type {
       return super.conformsTo(other) || other.name().equals("double");
    }
 
+   @Override public String getJavaType(){
+		return "int";
+	}
 
 }

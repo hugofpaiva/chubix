@@ -123,7 +123,7 @@ public class DimensionsType extends Type {
         	str+="1";
         
         if (neg.size()>0) {
-        	str+=" \u00F7 ";
+        	str+=" / ";
         	if (neg.size()>1)
             	str+="( ";
         	for (String unit : neg)

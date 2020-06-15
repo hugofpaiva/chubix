@@ -6,15 +6,6 @@ import ../tests/dimensions/dimensionsExamples.ubi;
 # PricePerPowerTime pppt = 10 [euro/(KW*h)];    # euro/(W*s) : 1/3600000         euro/(J/s*s) = euro/J : 
 # print(ppt);                                   # (euro*s^2)/(kg*m^-2)
 
-Time t = 5 [h]; # 5*3600 s
-Distance m = 5 [km]; # 5 * 1000 m
-print(m);   # 5000
-Velocity v0 = m / t;
-print(v0);   # 0.2777778
-
-
-
-/*
 function Void evalIMC(IMC imc){
     if (imc<16[imc]) {
         print("You are severely underweight.");
@@ -218,4 +209,3 @@ Distance height = input("Insert your height in meters: ", Distance) [m];
 #IMC imc = getIMC(m,height);
 evalIMC(weight/height^2);
 ##teste
-*/
