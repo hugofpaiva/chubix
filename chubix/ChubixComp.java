@@ -61,10 +61,14 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
       chubixParser.current = chubixParser.current.down();      // down
+      String nvar = newVar();
+      chubixParser.global.symbols().get(ctx.func_name.getText()).setVarName(nvar);
+
       ST res = templates.getInstanceOf("function");
       visit(ctx.ret_type);
       res.add("type", ((FunctionType)chubixParser.global.symbols().get(ctx.func_name.getText()).type()).getType().getJavaType());
-      res.add("name",ctx.func_name.getText()); // DEPOIS TEMOS DE VER
+      res.add("name", nvar);
+
       for(int i=0;i<ctx.declare().size();i++){
          String arg = visit(ctx.declare(i)).render();
          res.add("args", arg.substring(0, arg.length() - 1));
@@ -76,7 +80,15 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitCallFunction(chubixParser.CallFunctionContext ctx) {
-      return visitChildren(ctx);
+
+      ST res = templates.getInstanceOf("callFunction");
+      res.add("name", chubixParser.global.symbols().get(ctx.func_name.getText()).varName());
+      for(int i=0;i<ctx.expr().size();i++){
+         System.out.println(ctx.expr(i));
+         res.add("inst", visit(ctx.expr(i)).render());
+         res.add("args", ctx.expr(i).varName);
+      }
+      return res;
    }
 
   

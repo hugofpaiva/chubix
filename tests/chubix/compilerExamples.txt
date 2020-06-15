@@ -204,5 +204,5 @@ Distance height = input("Insert your height in meters: ", Distance) [m];
 
 
 #IMC imc = getIMC(m,height);
-#evalIMC(weight/height^2);
+evalIMC(weight/height^2);
 ##teste

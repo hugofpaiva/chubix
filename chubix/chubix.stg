@@ -93,7 +93,10 @@ while (true) {
 >>
 
 
-
+callFunction(inst,args,name) ::=<<
+<if(inst)><insts(inst)><endif>
+<name>(<if(args)><args; separator=","><endif>);
+>>
 
 functions(func) ::= <<
 <if(func)> <func; separator="\n\n"><endif>
