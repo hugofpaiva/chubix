@@ -160,7 +160,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       Boolean res = visit(ctx.expr());
       String id = ctx.ID().getText();
       Symbol sym;
-      System.out.println(id);
       if (res) {
          if ((sym=chubixParser.current.lookup(id)) == null) {
             ErrorHandling.printError(ctx, "Variable \""+id+"\" does not exist!");
@@ -363,7 +362,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       if (!res)
          return false;
       DimensionsType type = checkUnit(ctx.unitdim().unitdimType.getUnit());
-      
+      // m ->0.001 
       if (type == null) {
          ErrorHandling.printError(ctx, "Dimension \"" + ctx.unitdim().getText() + "\" does not exist!");
          return false;
@@ -453,27 +452,25 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             HashMap<String,Integer> map2 = new HashMap<String,Integer>();
             map2.putAll(map_2);
 
-            Type dim = null;
+            //Type dim = null;
             switch(ctx.op.getText()) {
                case "*":
                   map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
                   map1.values().removeIf(f -> f == 0f);
-                  dim = checkUnit(map1);
+                 // dim = checkUnit(map1);
                   break;
                case "/":
                   map2.forEach((k, v) -> map2.put(k,-v));
                   map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
                   map1.values().removeIf(f -> f == 0f);          
-                  dim = checkUnit(map1);
+                 // dim = checkUnit(map1);
                   break;
             }
-            if (dim != null)
-               ctx.exprType = dim;
-            else
-               ctx.exprType = new DimensionsType("", map1, fetchType(((DimensionsType) ctx.e1.exprType).getType(), ((DimensionsType) ctx.e2.exprType).getType()));
 
             if (map1.isEmpty())
                ctx.exprType = fetchType(((DimensionsType) ctx.e1.exprType).getType(), ((DimensionsType) ctx.e2.exprType).getType());
+            else
+               ctx.exprType = new DimensionsType("", map1, fetchType(((DimensionsType) ctx.e1.exprType).getType(), ((DimensionsType) ctx.e2.exprType).getType()));
                
          } else if (ctx.e1.exprType.isDimensional()) {
             ctx.exprType = ctx.e1.exprType;
@@ -616,27 +613,22 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       DimensionsType dim2 = ctx.unitdim(1).unitdimType;
       HashMap<String,Integer> map1 = dim1.getUnit();
       HashMap<String,Integer> map2 = dim2.getUnit();
-
+      double value = 0.0;
       switch(ctx.op.getText()){
          case "*":
-            //Merge maps
-            // [m : 1 , s:-2]
+            value = dim1.getUnitConv(map1)*dim2.getUnitConv(map2);
             map1.forEach((k, v) -> map2.merge(k, v, (v1, v2) -> v1 + v2)); // m*kg*s^-2
-            // map1.forEach((k, v) -> {
-            //    map2.putIfAbsent(k, v); //
-            // });
             map2.values().removeIf(f -> f == 0f);
-            dim2.setUnit(map2);
+            ctx.unitdimType = new DimensionsType("", map2, fetchType(dim1.getType(), dim2.getType()), value);
             break;
          case "/":
+            value = dim1.getUnitConv(map1)/dim2.getUnitConv(map2);
             map2.forEach((k, v) -> map2.put(k,-v));
             map2.forEach((k, v) -> map1.merge(k, v, (v1, v2) -> v1 + v2));
-            map1.values().removeIf(f -> f == 0f);  
-            dim2.setUnit(map1);
-
+            map1.values().removeIf(f -> f == 0f);
+            ctx.unitdimType = new DimensionsType("", map1, fetchType(dim1.getType(),dim2.getType()), value);
             break;
       }
-      ctx.unitdimType = dim2;
       return res;
    }
 
@@ -681,12 +673,12 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       return res;
    }
 
-   private DimensionsType checkUnit(HashMap<String,Integer> map){
+   private DimensionsType checkUnit(HashMap<String,Integer> map){ 
      for (DimensionsType dimType : dimensionsParser.dimTable.values()) {
-         if (dimType.containsUnit(map)){
+         if (dimType.containsUnit(map)){ // km 
             HashMap<String, Integer> unit = new HashMap<>();
-            unit.putAll(dimType.getUnit());
-            return new DimensionsType("", unit, dimType.getType());
+            unit.putAll(dimType.getUnit());//m                       // m / km  0.001
+            return new DimensionsType("", unit, dimType.getType(), 1 /dimType.getUnitConv(map));
          }
      }
      return null;

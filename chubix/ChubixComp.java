@@ -1,5 +1,6 @@
 import org.stringtemplate.v4.*;
 import java.util.Iterator;
+import java.util.HashMap;
 
 
 public class ChubixComp extends chubixBaseVisitor<ST> {
@@ -90,7 +91,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       }
       return res;
    }
-
   
    @Override public ST visitAssignment(chubixParser.AssignmentContext ctx) {
       ST res = templates.getInstanceOf("declaration");
@@ -377,16 +377,35 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("declaration");
       ctx.varName = newVar();
       res.add("var", ctx.varName);
-      res.add("value",chubixParser.current.lookup(ctx.ID().getText()).varName());
+      res.add("value", chubixParser.current.lookup(ctx.ID().getText()).varName());
       res.add("type", ctx.exprType.getJavaType());
       return res;
    }
 
-   @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) {
-      ST res = visit(ctx.expr());
-      ctx.varName = ctx.expr().varName;
-      return res;
-   }
+   @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) { // var a = 1[cm]  = 0.01m 
+      ST res = templates.getInstanceOf("binaryOperation");
+      ctx.varName = newVar();
+      System.out.println("ola-"+ctx.unitdim().getText()); // ola- km
+      double value = 1.0;
+      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {  
+         HashMap<String,Integer> unit = ctx.unitdim().unitdimType.getUnit();  // {'km': 1}    <-  [km]
+         
+         if (dimensionsType.containsUnit(unit)) {  // { {'m': 1} -> 1 ,  {'km': 1} -> 1000}
+            System.out.println("\tconv: " + DimensionsType.mapToString(unit));
+            value = ctx.unitdim().unitdimType.getUnitConv(unit);
+            System.out.println("\tconv: " + ctx.unitdim().unitdimType.getUnitConv(unit));
+         }
+      }
+      res.add("inst",visit(ctx.expr()).render());
+      res.add("var", ctx.expr().varName);
+      res.add("type", ctx.unitdim().unitdimType.getType());
+      res.add("e1",ctx.expr().varName);
+      res.add("op", "/");  // 1 [km] -> 1/0.001 -> 1000m
+      res.add("e2", ""+value);
+      ctx.varName = ctx.expr().varName; 
+      
+      return res;  
+   }                    
    
    @Override public ST visitDimPower(chubixParser.DimPowerContext ctx) {
       return visitChildren(ctx);

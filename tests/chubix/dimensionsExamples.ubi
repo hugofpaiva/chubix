@@ -19,14 +19,17 @@ dim Resistence(O: Double);
 
 dim Current(A: Potential/Resistence);
 
-dim Energy(J: Mass/(Distance^2)*Time^-2);
+dim Energy(J: Mass/(Distance^2)*Time^-2); # kg * m^2 * s^-2 
 
-dim Power(W: Energy/Time);
-unit Power(KW: W*10.0^3.0);
+dim Power(W: Energy/Time);      # (kg * m^2 * s^-2) * s^-1  =  kg * m^2 * s^-3
+unit Power(KW: W*10.0^3.0);     
 
-dim Price(euro : Double);
+dim Price(euro : Double);  
 
-dim PricePerPowerTime(Price/Power*Time);
+dim PricePerPowerTime(Price/(Power*Time)); # euro^1 * (kg * m^2 * s^-3)^-1 * s^-1 = euro^1 * kg^-1 * m^-2 * s^2
 
 dim Charge(C: Double);
+
+# 1/(1000*3600) = 1/3600000
+
 

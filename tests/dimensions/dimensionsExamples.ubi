@@ -4,6 +4,7 @@ dim Time(s: Integer);
 unit Time(h: 3600.0*s);
 dim Estupido(sc:Time/Counter);
 dim Distance(m: Double);
+unit Distance(km : 1000.0*m);
 
 
 

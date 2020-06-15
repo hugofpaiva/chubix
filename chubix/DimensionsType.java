@@ -22,6 +22,17 @@ public class DimensionsType extends Type {
         this.dimType = dimType;
     }
 
+    public DimensionsType(String name, HashMap<String,Integer> unit, Type dimType, Double value) {
+        super(name);
+        assert unit != null;
+        assert dimType != null;
+        this.units = new HashMap<>();
+        this.defaultUnit = unit;
+        this.units.put(this.id,unit);
+        this.unit_conv.put(this.id++,value);
+        this.dimType = dimType;
+    }
+
     // public boolean containsUnit(String unit){
     //     return false;
     // }
@@ -92,7 +103,7 @@ public class DimensionsType extends Type {
         ArrayList<String> neg = new ArrayList<>();
         for (Entry<String, Integer> entry : map.entrySet()) {
         	Integer exp = entry.getValue();
-            String newUnit = exp!=1 ? entry.getKey()+"^"+exp :  entry.getKey();
+            String newUnit =( (exp!=1) ? entry.getKey()+"^"+( (exp<0) ? -exp: exp ) :  entry.getKey());
             
             if (exp > 0)
             	pos.add(newUnit);
@@ -101,25 +112,25 @@ public class DimensionsType extends Type {
         }
         if (pos.size()>0) {
 	        if (pos.size()>1)
-	        	str+="(";
+	        	str+="( ";
 	    	for (String unit : pos)
-	    		str+=unit+"*";
+	    		str+=unit+" * ";
 	
-	        str = str.substring(0, str.length()-1);
+	        str = str.substring(0, str.length()-3);
 	        if (pos.size()>1)
-	        	str+=")";
+	        	str+=" )";
         } else
         	str+="1";
         
         if (neg.size()>0) {
-        	str+="/";
+        	str+=" \u00F7 ";
         	if (neg.size()>1)
-            	str+="(";
+            	str+="( ";
         	for (String unit : neg)
-        		str+=unit+"*";
-            str = str.substring(0, str.length()-1);
+        		str+=unit+" * ";
+            str = str.substring(0, str.length()-3);
         	if (neg.size()>1)
-            	str+=")";
+            	str+=" )";
         }
         return str;
     }
