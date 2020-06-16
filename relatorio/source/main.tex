@@ -1,0 +1,406 @@
+\documentclass[10pt,portuguese]{article}
+\usepackage[portuguese]{babel}
+
+\usepackage{fourier}
+\usepackage[bottom]{footmisc}
+
+\usepackage[]{graphicx}
+\usepackage[]{color}
+\usepackage{xcolor}
+\usepackage{alltt}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\setlength{\parskip}{\smallskipamount}
+\setlength{\parindent}{5ex}
+\usepackage{indentfirst}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=auburn,
+    filecolor=magenta,      
+    urlcolor=blue, 
+    urlsize=2em
+}
+
+\usepackage{tabto}
+
+% Set page margins
+\usepackage[top=100pt,bottom=100pt,left=68pt,right=66pt]{geometry}
+
+% Package used for placeholder text
+\usepackage{lipsum}
+
+% Prevents LaTeX from filling out a page to the bottom
+\raggedbottom
+
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+\lstset{language=Java,
+basicstyle=\footnotesize\ttfamily,
+keywordstyle=\color{javapurple}\bfseries,
+stringstyle=\color{javared},
+commentstyle=\color{javagreen},
+morecomment=[s][\color{javadocblue}]{/**}{*/},
+numbers=left,
+numberstyle=\tiny\color{black},
+stepnumber=2,
+numbersep=10pt,
+tabsize=4,
+showspaces=false,
+showstringspaces=false}
+
+
+\usepackage{fancyhdr}
+\fancyhf{} 
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt} 
+\pagestyle{fancy}
+
+\usepackage{titlesec}
+\titleformat{\chapter}
+   {\normalfont\LARGE\bfseries}{\thechapter.}{1em}{}
+\titlespacing{\chapter}{0pt}{50pt}{2\baselineskip}
+
+\usepackage{float}
+\floatstyle{plaintop}
+\restylefloat{table}
+
+\usepackage[tableposition=top]{caption}
+
+
+\definecolor{light-gray}{gray}{0.95}
+
+\renewcommand{\contentsname}{Índice}
+
+\begin{document}
+
+
+\begin{titlepage}
+	\clearpage\thispagestyle{empty}
+	\centering
+	\vspace{2cm}
+
+	
+	{\Large  Compiladores \par}
+	\vspace{0.5cm}
+	{\small Miguel Oliveira e Silva\par
+	Artur Pereira\par}
+	\vspace{4cm}
+	{\huge \textbf{Linguagem para análise dimensional}} \\
+	\vspace{1cm}
+	\vspace{4cm}
+	{\normalsize  \par Bruno Bastos, 93302 \par 
+	Hugo Almeida, 93195 \par
+	José Silva, 93430
+	\par Leandro Silva, 93446 
+	   \par Rui Fernandes, 92952}
+	 
+	\vspace{2cm}
+
+    \includegraphics[scale=0.20]{images/logo_ua.png}
+    
+    \vspace{2cm}
+    
+	{\normalsize DETI \\ 
+		Universidade de Aveiro \par}
+		
+	{\normalsize 16-06-2020 \par}
+	\vspace{2cm}
+		
+	
+	\pagebreak
+
+\end{titlepage}
+\tableofcontents{}
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introdução}
+
+\par Este documento visa descrever e guiar o leitor por todo o processo de desenvolvimento do projeto final da unidade curricular de Compiladores. O trabalho foi desenvolvido pelos estudantes identificados na capa sendo que recorreram maioritariamente á assistência do docente Prof. Dr. Miguel Oliveira e Silva.
+\par Este projeto tem como principal objetivo o desenvolvimento de um compilador assente em duas linguagens, uma para o compilador em si, e outra complementar que auxilia o funcionamento da primeira. Ao longo do desenvolvimento tentou-se ao máximo seguir todas as fases de construção de linguagens de programação.
+\par Foram utilizadas as tarefas e métodos aprendidos nas aulas da unidade curricular, o ANTLR4 e programação em Java.
+\par O grupo decidiu escolher como tema para o projeto, um dos temas sugeridos no guião do trabalho, sendo este o desenvolvimento de uma linguagem de programação para análise Dimensional. Este tema tem por base estender o sistema de tipos de uma linguagem de programação possibilitando a definição de dimensões distintas e interoperáveis, a expressões numéricas. Sendo uma linguagem destas de grande utilidade para problemas de Física ou Química em que existem várias dimensões nas quais é preciso operar, é importante que as operações possíveis façam sentido.
+\par Tendo isto em conta, foi criada uma linguagem de programação principal com as funcionalidades básicas de uma linguagem como Java ou Python com o acrescento de incorporar análise dimensional, servindo de base à construção do compilador. Desenvolveu-se também uma linguagem complementar a esta que permite criar as dimensões e unidades físicas pretendidas pelo utilizador.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Concepção e Definição da Linguagem}
+
+\par Desde o inicio soube-se que o maior desafio seria como criar novas dimensões e unidades, e posteriormente utilizá-las e definir variáveis usando então o sistema de dimensões. Tirando isto na linguagem principal tencionava-se incluir todas as funcionalidades básicas necessárias como instruções iterativas e condicionais, bem como funções, declaração de variáveis e todas as operações matemáticas base.
+\par A sintaxe de criação de dimensões e unidades passou por várias fases no momento de idealização, o objetivo era principalmente que fosse fácil de utilizar e de entender para o utilizador. Segue-se então a evolução da mesma:
+\newline
+\par \textbf{1ª Fase:}
+\begin{itemize}
+    \item create Metro as m;
+    \item create Centímetro as m*10\string^-2;
+\end{itemize}
+\par Este primeiro conceito é obviamente defeituoso, visto que não está a ser criada uma dimensão, mas sim duas unidades e uma relação entre elas, acrescenta-se ainda que deste modo, o centímetro não tem símbolo da unidade, e apenas um símbolo que representa a sua relação ao metro.
+\newline
+\par \textbf{2ª Fase:}
+\begin{itemize}
+    \item new dim distance;
+    \item new unit distance( m : 1 );
+    \item new unit distance( cm : 1/100 );
+\end{itemize}
+\par Nesta segunda fase, separou-se então as criações de dimensões e unidades, criando explicitamente uma dimensão com identificação primeiro, e apenas depois criar unidades para a mesma, sendo que a unidade centímetro tem agora um símbolo, mantendo a sua relação ao metro. Aqui também encontraram-se problemas, por exemplo as unidades apenas se podiam relacionar com uma unidade base passada como \emph{"1"} e faltava também diferenciação entre dados \emph{Integer} e \emph{Double}.
+\newline
+\par \textbf{Sintaxe Final:}
+\begin{itemize}
+    \item dim Distance( m : Double );
+    \item unit Distance( cm : 0.01*m );
+    \item unit Distance( in : 2.54*cm );
+\end{itemize}
+\par Já na sintaxe final, os problemas anteriores foram resolvidos, sendo de notar que achou-se irrelevante a presença do elemento \emph{"new"} antes de cada dimensão e unidade novas, e ainda que optámos por não permitir a declaração de uma dimensão sem que tenha pelo menos a sua unidade base.
+\newline
+\newline
+\par Quanto á sintaxe de definir variáveis de determinadas dimensões e unidades, a evolução foi análoga ao caso anterior, visto que era alterada consoante a sintaxe de criação de dimensões/unidades. Para demonstrar:
+\begin{itemize}
+    \item \textbf{Primeira Fase:} Meter d = 10;
+    \item \textbf{Segunda Fase:} d = 10(m);
+    \item \textbf{Sintaxe Final:} Distance d = 10 [m];
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Linguagem Complementar}
+
+\par As seguintes secções abordam a linguagem complementar destinada a definir as dimensões e unidades que vão ser utilizadas na linguagem principal. Explicam, respectivamente, as bases da implementação em ANTLR4, o funcionamento e sintaxe da linguagem, e ainda a análise semântica desta.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Implementação em ANTLR4}
+
+\par Para o funcionamento desta linguagem, foi implementada a gramática \textbf{\textit{dimensions.g4}}. No que toca ao \textit{parser}, foi criado um mapa que tem como objetivo guardar toda a informação relativa a dimensões e unidades criadas, este auxilia também bastante o processo de análise semântica.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{images/parserdimensions.png}
+\caption{Criação do mapa com a informação relativa às dimensões e unidades criadas}
+\end{figure}
+\par Quanto à gramática em si, trata-se de uma simples lista de instruções que suporta apenas duas, \emph{"dim"} e \emph{"unit"}, usadas para criar dimensões e unidades respetivamente. O funcionamento destas será explicado em detalhe na próxima secção.
+\par 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{images/maindimensions.png}
+\caption{Parte da gramática correspondente à Linguagem Complementar}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\clearpage
+
+\subsection{Funcionamento da Linguagem}
+
+\subsubsection{Criação de nova dimensão}
+\par A criação uma nova dimensão pode ser de raiz ou relativa a outras dimensões:
+
+\begin{itemize}
+    \item \textbf{De raiz:} \textit{dim [nome]([identificador da unidade base] : [tipo de dados])}
+    \item \textbf{Relativa a outras dimensões:} \textit{dim [nome]([operações entre dimensões])}
+\end{itemize}
+
+\par O tipo de dados apenas pode ser \textit{Integer} ou \textit{Double} e as operações entre dimensões apenas suportam a multiplicação ou a divisão, sendo que, no caso de alguma dimensão relativa possuir um tipo de dados \textit{Double}, a nova dimensão a ser criada ficará com este tipo. A unidade base da nova dimensão relativa, será a resultante das operações entre as unidades bases das outras dimensões, suportando também as unidades adicionais destas.
+
+\textbf{Como exemplos de utilização:}
+
+\begin{itemize}
+    \item \textit{dim Distance(m : Integer);}
+    \item \textit{dim Time (s : Double);}
+    \item \textit{dim Velocity(Distance/Time);}
+\end{itemize}
+
+\subsubsection{Criação de nova unidade}
+
+\par A criação uma nova unidade associada a uma dimensão necessita das operações relativas à unidade base:
+
+\begin{itemize}
+    \item \textit{unit [nome da dimensão]([identificador da nova unidade] : [operações relativas a uma unidade da dimensão])}
+\end{itemize}
+
+\textbf{Como exemplos de utilização:}
+
+\begin{itemize}
+    \item \textit{unit Time(h : 3600*s);}
+    \item \textit{unit Velocity(mach: 200*m/s);}
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Análise Semântica}
+
+\par A análise semântica é realizada com o \emph{Visitor} denominado \textbf{\emph{DimSemantic.java}}. Este trata de todas as situações que achámos relevantes controlar para que se mantivesse a integridade da nossa linguagem. Segue-se então a lista de regras semânticas que incluímos:
+\begin{itemize}
+    \item Não é permitida a criação de dimensões ou unidades que já existam, no caso das unidades isto é verdade mesmo que em dimensões distintas.
+    \item Não é permitido criar uma unidade para uma Dimensão não previamente existente.
+    \item Na criação de unidades, a relação que define a mesma não pode incluir unidades pertencentes a outra Dimensão.
+    \item Não é permitido criar unidades cuja definição corresponda ao valor 0. 
+    \item Na criação de unidades, a relação que define a mesma não pode incluir unidades não definidas previamente.
+    \item Dim semantic linha 190 e 202
+    \item Na criação de unidades, não é possível elevar uma expressão a uma unidade nem ao valor 0.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Linguagem Principal}
+
+\par As seguintes secções abordam a linguagem principal do nosso projeto e visam explicar, respectivamente, as bases da implementação em ANTLR4, o funcionamento e sintaxe da linguagem, e ainda a análise semântica desta.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Implementação em ANTLR4}
+
+\par Para o parser foram criadas os contadores \emph{"insideLoop"} e \emph{"insideFunc"}, são efectivamente predicados semânticos relativos a restrições por contexto das instruções iterativas e de funções respectivamente.
+\par Adicionalmente foi criada uma \emph{SymbolTable}, classe que visa guardar e interagir com as variáveis criadas, bem como o alcance (\emph{scope}) delas, assimilando uma estrutura em árvore. Para a mesma árvore de \emph{SymbolTable}s existem duas referências, sendo que a \emph{"global"} serve como referência para a raiz da árvore e trata do alcance global de um programa e a \emph{"current"} para a \emph{SymbolTable} a ser visitada num dado momento. Portanto, vão existir \emph{SymbolTable}s relativas a cada bloco que necessite de variáveis locais (condicionais, iterativos e funções) tendo em conta que a \emph{"current"} será a \emph{SymbolTable} que num dado momento contém as variáveis locais, tendo também acesso ás variáveis de todas as tabelas \emph{"parent"} da mesma.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{images/parserchubix.png}
+\caption{Criação de variáveis auxiliares à gramática e da tabela de símbolos utilizada no processamento da Linguagem Principal}
+\end{figure}
+\par Para exemplificar, sempre que se entra num bloco de código com um scope restrito internamente,
+é efetuado um (\emph{down}), ou seja, 
+\par A gramática em si baseia-se em três partes do símbolo \emph{main}, primeiramente um cabeçalho opcional de \emph{imports} seguido de um bloco opcional de definição de funções e por fim a lista de instruções que constituem o corpo do programa. Para analisar a gramática completa dirija-se ao ficheiro chubix.g4.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{images/mainchubix.png}
+\caption{Parte da gramática correspondente à Linguagem Principal}
+\end{figure}
+
+\par É ainda de mencionar, para futura referência que uma expressão na nossa linguagem pode ser qualquer um dos seguintes:
+\begin{itemize}
+    \item Uma variável.
+	\item Um valor.
+	\item Um input.
+    \item A chamada a uma função.
+	\item Uma variável seguida de incrementação/decrementação.
+	\item A conversão de uma expressão.
+	\item Uma expressão com sinal (+-).
+	\item Uma operação entre expressões, utilizando os operadores aritméticos permitidos (+-*/\string^).
+	\item Uma comparação entre expressões, utilizando os operadores relacionais permitidos (== != < > <= >=).
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{images/expr.png}
+\caption{Implementação em ANTLR4 da expressão}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Funcionamento da Linguagem}
+
+\subsubsection{Importar ficheiros da linguagem complementar}
+\par As instruções de importação que forem necessárias incluir no programa têm de ser efectuadas no inicio do mesmo. É possível importar qualquer ficheiro com terminação \emph{.ubi} através do caminho para o mesmo, relativo ao directório do programa.
+\textbf{Como exemplos de utilização:}
+
+\begin{itemize}
+    \item \textit{import Exemplo.ubi;}
+    \item \textit{import ../dic1/dic2/Example.ubi;}
+\end{itemize}
+
+\subsubsection{Definição de funções}
+\par Todas as funções têm de ser definidas no inicio do programa, mas após as instruções de import, sendo esta a sintaxe a usar:
+
+\par \textit{function <tipo> <nome>(<argumentos>)\{}
+\par \textit{<corpo da função>}
+\par \textit{\};}
+
+\newline
+\par \textbf{Tipo:} O tipo de retorno da função, pode ser qualquer um dos existentes (Integer, Double, String, Boolean), qualquer dimensão criada previamente, ou ainda do tipo Void.
+\par \textbf{Nome:} O nome atribuído á função, tem de começar por uma letra ou underscore.
+\par \textbf{Argumentos:} lista de argumentos da função sob a forma de decla
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Análise Semântica}
+
+\par A análise semântica é realizada com o \emph{Visitor} denominado \emph{SemanticChubix.java}. Este trata de todas as situações que achámos relevantes controlar para que se mantivesse a integridade da nossa linguagem. Segue-se então a lista de regras semânticas que incluímos:
+\begin{itemize}
+    \item Não é permitido criar funções com o mesmo nome.
+    \item O valor de retorno de uma função tem de se conformar ao tipo da mesma.
+    \item Não se pode chamar uma função não definida.
+    \item Os argumentos passados na chamada a uma função tem de se conformar aos tipos, ou dimensões se dimensionais, requeridos pela mesma.
+    \item O numero de argumentos na chamada de uma função tem de ser igual ao numero de argumentos definidos na mesma.
+    \item Não é possível declarar variáveis já existentes no mesmo alcance (\emph{scope}) ou alcances mais abrangentes.
+    \item Para atribuir valor a uma variável esta tem de ser previamente declarada.
+    \item Ao atribuir valor a uma variável, o valor tem de ser do tipo da variável.
+    \item Ao atribuir valor a uma variável dimensional, a sua unidade passada tem de pertencer á dimensão requerida, e o seu valor tem de ser análogo á mesma, havendo excepção se a dimensão for do tipo \emph{double}, e o valor do tipo \emph{integer}.
+    \item Numa instrução condicional é necessário passar uma expressão booleana, o mesmo acontece nas condições de instruções iterativas.
+    \item Não é permitida a soma de valores pertencentes a dimensões distintas.
+    \item É permitida a conversão de expressões numéricas a dimensões, exceptuando se a expressão for do tipo \emph{double} e a dimensão \emph{integer}. 
+    \item Não é permitido converter uma expressão dimensional noutra dimensão.
+    \item Não é permitido chamar uma função do tipo void no contexto de uma expressão.
+    \item Numa expressão não é possível elevar um valor dimensional a um valor não inteiro, ou a zero.
+    \item Ao utilizar operadores relacionais, os elementos a comparar devem ser de tipos análogos.
+    \item Para utilizar uma variável numa expressão, esta deve estar declarada e com valor atribuído.
+\end{itemize}
+
+\clearpage
+
+\section{Geração de Código}
+
+\par Para a compilação e geração de código foi utilizada a ferramenta \textit{String Template} com o objetivo de gerar o código-fonte da linguagem, após a compilação, em \textit{Java}.
+
+\par Terminadas as verificações realizadas na análise semântica, a linguagem procede à compilação através de um visitor, \textit{ChubixComp.java}, onde são introduzidas as instruções passadas pelo utilizador no ficheiro \textit{chubix.stg}, um \textit{STGroupFile} que procede à renderização do \textit{String Template} com o código \textit{Java} final, pronto para ser compilado e executado, de acordo com as regras implementadas pelo grupo.
+
+\par O compilador da linguagem trabalha com o auxílio da tabela de símbolos, preenchida durante a análise semântica, para associar as variáveis criadas durante a compilação com o nome que o utilizador lhes deu, para obter o tipo de dados de variáveis, entre outros. 
+Desta forma, é assegurada a compilação de acordo com as verificações feitas previamente. Ao trabalhar com a tabela de símbolos, todas as instruções passadas ao ficheiro \textit{chubix.stg} permitem a compilação sem erros em Java.
+
+\section{Utilização}
+
+\par De modo a permitir a utilização da linguagem desenvolvida, seguem-se instruções para a sua devida utilização:
+
+\begin{itemize}
+    \item \textbf{1º - Linguagem Complementar}
+    \par Primeiramente é necessário a criação de um ficheiro da linguagem complementar com o formato \textit{.ubi} que permita a definição de Dimensões e das respectivas Unidades de modo a serem utilizadas na Linguagem Principal. 
+    \item \textbf{2º - Linguagem Principal}
+    \par Após a criação do ficheiro para a Linguagem Complementar, é, também, necessário a criação de um para a Linguagem Principal. O ficheiro deverá estar no formato \textit{.ubix} e deve seguir as regras explicadas previamente, nomeadamente a importação do ficheiro relativo à Linguagem Complementar.
+    \item \textbf{3º - Geração do ficheiro Java}
+    \par Com os ficheiros de ambas as linguagens prontos, deve-se executar o \textit{Main} da Linguagem Principal com o nome do ficheiro como argumento:
+    \begin{lstlisting}
+        java -ea chubixMain [ficheiro da Linguagem Principal]
+    \end{lstlisting}
+    \par Após esta execução sem erros, é gerado um ficheiro \textit{.java} com o nome do ficheiro da Linguagem Principal utilizado como argumento.
+    \item \textbf{4º - Compilação e execução}
+    \par Por fim, deve-se compilar o ficheiro \textit{.java} com recurso ao comando \textit{javac} e executá-lo usando o comando \textit{java}. 
+\end{itemize}
+
+\par Em caso de necessidade, existem programas exemplo preparados na secção seguinte.
+
+\clearpage
+
+\section{Programas de Exemplo}
+
+\par Nesta secção serão demonstrados alguns exemplos de utilização da linguagem criada. Os programas de exemplo seguintes encontram-se disponíveis dentro da pasta \textit{/tests} na raíz do repositório sendo que os referentes à Linguagem Complementar encontram-se na pasta \textit{/tests/dimensions} e os referentes à Linguagem Principal em \textit{/tests/chubix}
+
+\subsection{Programas Corretos}
+
+
+
+\subsection{Programas com Erros}
+
+\section{Conclusão}
+
+\section{Contribuições dos autores}
+\par Segue-se a contribuição de cada elemento do grupo:
+\begin{itemize}
+    \item Bruno Bastos -  20\%
+	\item Hugo Almeida - 20\%
+	\item José Silva - 20\%
+    \item Leandro Silva - 20\%
+	\item Rui Fernandes - 20\%
+\end{itemize}
+
+\clearpage
+
+\section{Bibliografia}
+
+\bibliographystyle{plain}
+
+\bibliography{biblist}
+
+\vspace{5mm} %5mm vertical space
+
+[1] Material fornecido pelo docente da disciplina
+
+
+
+\end{document}
+
