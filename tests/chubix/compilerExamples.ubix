@@ -1,5 +1,6 @@
 import ../tests/dimensions/dimensionsExamples.ubi;
 
+
 ########## Linguagem Compilada ##########
 
 # PricePerPowerTime pppt = 10 [euro/(KW*h)];    # euro/(W*s) : 1/3600000         euro/(J/s*s) = euro/J : 
@@ -23,14 +24,15 @@ function Void evalIMC(IMC imc){
 };
 
 function Energy CalcCinetica(Velocity v, Mass  m) {
+    print(1);
     Energy ec = 0.5*m*v^2;
     return ec;
 };
-
 function String Ola(String ola){
     print(ola);
     return ola;
 };
+
 function IMC getIMC(Mass m, Distance height){
     IMC imc = m/height^2;
     return imc;
@@ -65,7 +67,7 @@ res = (10[m])[km]; # 10m     #10 * 1/1000  * 1/1000  = 1.0E-5
 print("Distancia percorrida: ");
 print(res[km]); # 10 000m
 
-/*
+
 String x = "Ola";
 String y = "Adeus";
 if(y==x){
@@ -203,7 +205,6 @@ Mass weight = input("Insert your weight in kg: ", Mass) [kg];
 Distance height = input("Insert your height in meters: ", Distance) [m];
 
 
-#IMC imc = getIMC(m,height);
+IMC imc = getIMC(m,height);
 evalIMC(weight/height^2);
 ##teste
-*/
