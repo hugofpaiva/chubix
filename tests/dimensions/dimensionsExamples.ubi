@@ -1,16 +1,15 @@
 
 dim Counter(c : Integer);
 dim Time(s: Integer);
-unit Time(h: 3600.0*s);
-dim Estupido(sc:Time/Counter);
-dim Distance(m: Double);
-unit Distance(km : 1000.0*m);
+unit Time(h: 3600*s);
 
-dim Temperature(Celsius : Integer);
-unit Temperature(Chico : 15.0 + Celsius);
+dim Estupido(sc:Time/Counter);
+
+dim Distance(m: Double);
+unit Distance(km : 1000*m);
 
 dim Velocity(Distance/Time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
-unit Velocity(mach: 200.0*m/s);
+unit Velocity(mach: 200*m/s);
 
 dim Acceleration(Distance/Time^2); # ou   velocity^-2  
 
@@ -25,7 +24,7 @@ dim Resistence(O: Double);
 
 dim Current(A: Potential/Resistence);
 
-dim Energy(J: Mass*(Distance^2)*Time^-2);
+dim Energy(J: Mass*(Distance^2.5)*Time^-2);
 
 dim Power(W: Energy/Time);
 unit Power(KW: W*10.0^3.0);

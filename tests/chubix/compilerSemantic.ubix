@@ -1,0 +1,83 @@
+import ../tests/dimensions/dimensionsExamples.ubi;
+
+function Random CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 3] Dimension "Random" does not exist.
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+function Energy CalcCinetica(Velocity v, Mass  m) {
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+function Energy CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 13] Function "CalcCinetica" already exists!
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+
+function Void catch(Double x) {
+    print(x);
+    return;
+};
+
+# main
+
+catch(10.0);
+catch();                                                #[ERROR at line 27] Number of arguments do not match.
+CalcCinetica(1 [m], 1 [kg]);                            #[ERROR at line 28] Incomparable types: m and m / s^1
+
+Distance m = 10;                                        #[ERROR at line 30] Expression type does not conform to variable "m" type! 
+       
+Distance m3 = 10[km];                                   #[ERROR at line 32] There is no dimension with that unit!
+
+Distance m2 = 10[m];
+print(m2);
+
+print(m3[m]);                                               
+print(m3[s]);                                           #[ERROR at line 38] Cannot convert to another Dimension!
+
+Time t = 1.2 [s];                                       #[ERROR at line 40] Cannot convert Double to a Dimension of Integers!
+
+print(catch(10.0) + 1);                                 #[ERROR at line 42] Expression cannot be void
+print("ola"*2);                                         #[ERROR at line 43] Cannot fetch a type between "ola" and 2
+
+String name = input("Insert your name",String);
+Distance r=input("Insert distance in km",Distance)[km];
+
+Distance mm = 1[m];
+if(mm>1){                                               #[ERROR at line 49] Incomparable types: mm and 1
+    print("Maior");
+}else{
+    print("Menor");
+};
+
+Double x = 0;
+for (Integer i = 0;i<=2;i=i+1){
+    x = 10;
+    Integer y = i;
+};
+print(y);                                               #[ERROR at line 60] Variable "y" does not exist!
+
+
+Integer i = 0;
+Integer y = 2;
+for (i = 0;i<=2;i=i+1){
+    i = 10;
+    Integer y = i;                                      #[ERROR at line 67] Variable "y" already declared!    
+};
+
+while(1){                                               #[ERROR at line 70] Condition "1" isn't a Boolean expression!
+    print("Not boolean");
+};
+
+while(true) {
+    Double p;
+    print(-"hello");                                    #[ERROR at line 76] Numeric operator applied to a non-numeric operand!
+};
+Double p;                                               #No error
+
+a = 2;
+
+Boolean qwe = p>mm;                                     #[ERROR at line 82] Variable "p" not defined!
+Boolean qwq = 1>mm;                                     #[ERROR at line 83] Incomparable types: 1 and mm

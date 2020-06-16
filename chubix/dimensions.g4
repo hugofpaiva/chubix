@@ -34,7 +34,7 @@ expr:
     ; 
 
 unitdim:
-      <assoc=right> unitdim '^' ( sign=('+'|'-')? INTEGER )       #DimPower
+      <assoc=right> unitdim '^' ( sign=('+'|'-')? DOUBLE )        #DimPower
     | unitdim op=('*'|'/') unitdim                                #DimMultDiv
     | '(' unitdim  ')'                                            #DimUnn
     | ID                                                          #DimID
@@ -46,7 +46,6 @@ type returns[Type res]:
     ;
 
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
-INTEGER: ('+'|'-')? [0-9]+;
 DOUBLE: ('+'|'-')? [0-9]+ ('.' [0-9]+)?;
 WS: [ \t\r\n]+ -> skip;
 LINE_COMMENT: '#' .*? ('\n'|EOF) -> skip;

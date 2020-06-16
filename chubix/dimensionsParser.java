@@ -21,8 +21,8 @@ public class dimensionsParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
-		T__9=10, T__10=11, T__11=12, T__12=13, ID=14, INTEGER=15, DOUBLE=16, WS=17, 
-		LINE_COMMENT=18, ERROR=19;
+		T__9=10, T__10=11, T__11=12, T__12=13, ID=14, DOUBLE=15, WS=16, LINE_COMMENT=17, 
+		ERROR=18;
 	public static final int
 		RULE_main = 0, RULE_statList = 1, RULE_stat = 2, RULE_dim = 3, RULE_unit = 4, 
 		RULE_expr = 5, RULE_unitdim = 6, RULE_type = 7;
@@ -43,7 +43,7 @@ public class dimensionsParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, "ID", "INTEGER", "DOUBLE", "WS", "LINE_COMMENT", "ERROR"
+			null, null, "ID", "DOUBLE", "WS", "LINE_COMMENT", "ERROR"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -796,7 +796,7 @@ public class dimensionsParser extends Parser {
 		public UnitdimContext unitdim() {
 			return getRuleContext(UnitdimContext.class,0);
 		}
-		public TerminalNode INTEGER() { return getToken(dimensionsParser.INTEGER, 0); }
+		public TerminalNode DOUBLE() { return getToken(dimensionsParser.DOUBLE, 0); }
 		public DimPowerContext(UnitdimContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -979,7 +979,7 @@ public class dimensionsParser extends Parser {
 						}
 
 						setState(101);
-						match(INTEGER);
+						match(DOUBLE);
 						}
 						}
 						break;
@@ -1093,7 +1093,7 @@ public class dimensionsParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\25t\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\24t\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\2\3\3\5\3"+
 		"\27\n\3\3\3\7\3\32\n\3\f\3\16\3\35\13\3\3\4\3\4\5\4!\n\4\3\5\3\5\3\5\3"+
 		"\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5\60\n\5\3\5\3\5\3\5\5\5\65\n"+
@@ -1112,7 +1112,7 @@ public class dimensionsParser extends Parser {
 		"\3\2\2\2\61\62\5\16\b\2\62\63\7\7\2\2\63\65\3\2\2\2\64\"\3\2\2\2\64*\3"+
 		"\2\2\2\65\t\3\2\2\2\66\67\7\b\2\2\678\7\20\2\289\7\5\2\29:\7\20\2\2:;"+
 		"\7\6\2\2;<\5\f\7\2<=\7\7\2\2=\13\3\2\2\2>?\b\7\1\2?@\t\2\2\2@H\5\f\7\t"+
-		"AB\7\5\2\2BC\5\f\7\2CD\7\7\2\2DH\3\2\2\2EH\7\20\2\2FH\7\22\2\2G>\3\2\2"+
+		"AB\7\5\2\2BC\5\f\7\2CD\7\7\2\2DH\3\2\2\2EH\7\20\2\2FH\7\21\2\2G>\3\2\2"+
 		"\2GA\3\2\2\2GE\3\2\2\2GF\3\2\2\2HT\3\2\2\2IJ\f\b\2\2JK\7\13\2\2KS\5\f"+
 		"\7\bLM\f\7\2\2MN\t\3\2\2NS\5\f\7\bOP\f\6\2\2PQ\t\2\2\2QS\5\f\7\7RI\3\2"+
 		"\2\2RL\3\2\2\2RO\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\r\3\2\2\2VT\3"+

@@ -20,7 +20,6 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       visitChildren(ctx);
       if(ctx.instList()!=null)
          chubixParser.current = chubixParser.current.parent();   // up
-      assert chubixParser.current == chubixParser.global;
 
       return true;
    }
@@ -376,9 +375,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
          return false;
       }
       if (ctx.expr().exprType.isDimensional()) {
-         if (((DimensionsType) ctx.expr().exprType).getUnit().equals(type.getUnit())){
-            ErrorHandling.printWarning(ctx, "Cast is redundant.");
-         } else {
+         if (!((DimensionsType) ctx.expr().exprType).getUnit().equals(type.getUnit())){
             ErrorHandling.printError(ctx, "Cannot convert to another Dimension!");
             return false;
          }

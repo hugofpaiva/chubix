@@ -46,11 +46,12 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("print");
       if(ctx.expr()!=null){
          res.add("inst",visit(ctx.expr()).render());
-         if (ctx.expr().exprType.isDimensional())
+         if (ctx.expr().exprType.isDimensional()){
             res.add("value",ctx.expr().varName+"+\" [" + DimensionsType.mapToString(((DimensionsType)ctx.expr().exprType).getUnit())+"]\"");
+            
+         }
          else
             res.add("value",ctx.expr().varName);
-            
       }
       return res;
    }
@@ -385,11 +386,12 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       return res;
    }
 
+   
    @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) { 
       ST res =templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
       String temp = newVar();
-      double value = 1.0;  //
+      double value = 1.0; 
       ST a = visit(ctx.expr());
       HashMap<String,Integer> unit = ctx.unitdim().unitdimType.getUnit();  
       if (!ctx.expr().exprType.isDimensional())

@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
 
-
    @Override public Symbol visitRelativeDim(dimensionsParser.RelativeDimContext ctx) {
       String dim = ctx.ID(0).getText();
       
@@ -294,13 +293,17 @@ public class DimSemantic extends dimensionsBaseVisitor<Symbol> {
       map1.putAll(map_1);
 
       int i;
+
+      if (ctx.DOUBLE().getText().indexOf('.') >= 0)
+         ErrorHandling.printWarning(ctx, "Loss of precision when powering to Double.");
+      
       if (ctx.sign != null)
-         i = Integer.parseInt(ctx.sign.getText()+ctx.INTEGER().getText());
+         i = (int) Double.parseDouble(ctx.sign.getText()+ctx.DOUBLE().getText());
       else
-         i = Integer.parseInt(ctx.INTEGER().getText());
+         i = (int) Double.parseDouble(ctx.DOUBLE().getText());
 
       if(i==0){
-         ErrorHandling.printError(ctx, "Power of 0 is not possible when defining a unit");
+         ErrorHandling.printError(ctx, "Power of 0 is not possible when defining a dimension.");
          return null;
       }
 

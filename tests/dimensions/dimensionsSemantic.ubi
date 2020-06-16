@@ -1,0 +1,21 @@
+dim Time(s:Integer);
+
+dim Time2(c:Time);              #[ERROR at line 3] Unit "s" already defined.
+
+unit Time(h: 0 * s);            #[ERROR at line 5] Cannot add a unit with value 0.
+unit Time(s: 12*s);             #[ERROR at line 6] Unit "s" already defined.
+unit Time(h: 1000);             #[ERROR at line 7] Conversion expression must be a unit.
+unit Time(h: s*10);             #[ERROR at line 8 Dimension "Time" and "s^0" are not compatible.
+
+unit Tempo(h : 3600*s);         #[ERROR at line 10] Dimension "Tempo" not defined.
+
+dim Distance(m:Double);
+
+dim Distance(km : Double);      #[ERROR at line 14] Dimension "Distance" already defined.
+
+unit Time(h:3600*m);            #[ERROR at line 16] Dimension "Time" and "3600*m" are not compatible.
+
+unit Distance(cm : 0.01*m);
+unit Distance(in: 2.54*cm);     #No error when refering to a unit which is not the default.
+
+dim Velocity(Distance/Time^0);  #[ERROR at line 21] Power of 0 is not possible when defining a dimension.
