@@ -86,12 +86,26 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitCallFunction(chubixParser.CallFunctionContext ctx) {
-
+      ctx.varName = newVar();
       ST res = templates.getInstanceOf("callFunction");
       res.add("name", chubixParser.global.symbols().get(ctx.func_name.getText()).varName());
-      for(int i=0;i<ctx.expr().size();i++){
-         res.add("inst", visit(ctx.expr(i)).render());
-         res.add("args", ctx.expr(i).varName);
+      
+      
+      if(!((FunctionType)chubixParser.global.symbols().get(ctx.func_name.getText()).type()).getType().getJavaType().equals("void")){
+         ST temp = templates.getInstanceOf("declaration");
+         for(int i=0;i<ctx.expr().size();i++){
+            temp.add("inst", visit(ctx.expr(i)).render());
+            res.add("args", ctx.expr(i).varName);
+         }
+         temp.add("type",((FunctionType)chubixParser.global.symbols().get(ctx.func_name.getText()).type()).getType().getJavaType());
+         temp.add("var",ctx.varName);
+         temp.add("value",res.render());  
+         return temp;
+      }else{
+         for(int i=0;i<ctx.expr().size();i++){
+            res.add("inst", visit(ctx.expr(i)).render());
+            res.add("args", ctx.expr(i).varName);
+         }
       }
       return res;
    }
@@ -285,7 +299,13 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitFunctionExpr(chubixParser.FunctionExprContext ctx) {
-      return visitChildren(ctx);
+      ST res = templates.getInstanceOf("declaration");
+      res.add("inst",visit(ctx.callFunction()).render());
+      ctx.varName = newVar();
+      res.add("type",((FunctionType)chubixParser.global.symbols().get(ctx.callFunction().func_name.getText()).type()).getType().getJavaType());
+      res.add("var",ctx.varName);
+      res.add("value",ctx.callFunction().varName);
+      return res;
    }
 
    @Override public ST visitStringExpr(chubixParser.StringExprContext ctx) {

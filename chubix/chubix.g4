@@ -37,7 +37,7 @@ function: {insideFunc==0}? {insideFunc++;}
           {insideFunc--;}
           ;
 
-callFunction: func_name=ID '(' (expr (',' expr)*)? ')' ;
+callFunction returns [String varName]: func_name=ID '(' (expr (',' expr)*)? ')' ;
 
 assignment: ID '=' expr ;
 

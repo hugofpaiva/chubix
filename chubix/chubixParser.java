@@ -711,6 +711,7 @@ public class chubixParser extends Parser {
 	}
 
 	public static class CallFunctionContext extends ParserRuleContext {
+		public String varName;
 		public Token func_name;
 		public TerminalNode ID() { return getToken(chubixParser.ID, 0); }
 		public List<ExprContext> expr() {
