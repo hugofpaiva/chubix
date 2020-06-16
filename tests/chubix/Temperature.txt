@@ -1,0 +1,7 @@
+import ../tests/dimensions/dimensionsExamples.ubi;
+
+Temperature t = 5 [Celsius];
+Temperature c = 5 [Chico];
+
+print(t);
+print(c);

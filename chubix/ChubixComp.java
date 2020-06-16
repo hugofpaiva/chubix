@@ -27,7 +27,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
 
    @Override public ST visitInstList(chubixParser.InstListContext ctx) {
       if(chubixParser.current.parent()==null)
-         chubixParser.current = chubixParser.current.down();      // down
+         chubixParser.current = chubixParser.current.down(); 
       
       ST res = templates.getInstanceOf("insts");
       Iterator<chubixParser.InstructionContext> listinst = ctx.instruction().iterator();
@@ -41,7 +41,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    @Override public ST visitInstruction(chubixParser.InstructionContext ctx) {
       return visitChildren(ctx);
    }
-   //Tratar tipos
+
    @Override public ST visitPrint(chubixParser.PrintContext ctx) {
       ST res = templates.getInstanceOf("print");
       if(ctx.expr()!=null){
@@ -65,7 +65,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitFunction(chubixParser.FunctionContext ctx) {
-      chubixParser.current = chubixParser.current.down();      // down
+      chubixParser.current = chubixParser.current.down();
       String nvar = newVar();
       chubixParser.global.symbols().get(ctx.func_name.getText()).setVarName(nvar);
 
@@ -80,7 +80,7 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       }
       res.add("inst",visit(ctx.instList()).render());
       res.add("inst",visit(ctx.returnFunc()).render());
-      chubixParser.current = chubixParser.current.parent();    // up
+      chubixParser.current = chubixParser.current.parent();
       return res;
    }
 
@@ -89,7 +89,6 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       ST res = templates.getInstanceOf("callFunction");
       res.add("name", chubixParser.global.symbols().get(ctx.func_name.getText()).varName());
       for(int i=0;i<ctx.expr().size();i++){
-         System.out.println(ctx.expr(i));
          res.add("inst", visit(ctx.expr(i)).render());
          res.add("args", ctx.expr(i).varName);
       }
@@ -138,12 +137,12 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitConditional(chubixParser.ConditionalContext ctx) {
-      chubixParser.current = chubixParser.current.down();      // down
+      chubixParser.current = chubixParser.current.down();     
       ST res = templates.getInstanceOf("cond");
       res.add("instif", visit(ctx.expr()).render());
       res.add("var",ctx.expr().varName);
       res.add("trueInst",visit(ctx.trueSL).render());  
-      chubixParser.current = chubixParser.current.parent();    // up
+      chubixParser.current = chubixParser.current.parent();    
       if(ctx.falseSL != null){
          res.add("falseInst",visit(ctx.falseSL).render());  
       }
@@ -155,14 +154,14 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
    }
 
    @Override public ST visitInstElse(chubixParser.InstElseContext ctx) {
-      chubixParser.current = chubixParser.current.down();      // down
+      chubixParser.current = chubixParser.current.down();     
       ST res = visit(ctx.instList());
-      chubixParser.current = chubixParser.current.parent();    // up
+      chubixParser.current = chubixParser.current.parent();   
       return res;
    }
 
    @Override public ST visitForLoop(chubixParser.ForLoopContext ctx) {
-      chubixParser.current = chubixParser.current.down();      // down
+      chubixParser.current = chubixParser.current.down(); 
       ST res = templates.getInstanceOf("whileLoop");
       if(ctx.var!=null)
          res.add("instfor", visit(ctx.var).render());
@@ -172,18 +171,18 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       res.add("var",ctx.varBreak.varName);
       res.add("instafter",visit(ctx.instList()).render());
       res.add("instafter", visit(ctx.varInc).render());
-      chubixParser.current = chubixParser.current.parent();    // up
+      chubixParser.current = chubixParser.current.parent(); 
       return res;
    }
 
    @Override public ST visitWhileLoop(chubixParser.WhileLoopContext ctx) {
-      chubixParser.current = chubixParser.current.down();      // down
+      chubixParser.current = chubixParser.current.down();  
       ST res = templates.getInstanceOf("whileLoop");
 
       res.add("instbefore",visit(ctx.expr()).render());
       res.add("var", ctx.expr().varName);
       res.add("instafter",visit(ctx.instList()).render());
-      chubixParser.current = chubixParser.current.parent();    // up
+      chubixParser.current = chubixParser.current.parent();  
       return res;  
    }
 
@@ -386,27 +385,26 @@ public class ChubixComp extends chubixBaseVisitor<ST> {
       return res;
    }
 
-   @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) { // var a = 1[cm]  = 0.01m 
+   @Override public ST visitExprConvUnit(chubixParser.ExprConvUnitContext ctx) { 
       ST res =templates.getInstanceOf("binaryOperation");
       ctx.varName = newVar();
       String temp = newVar();
-      System.out.println("ola-"+ctx.unitdim().getText()); // ola- km
-      double value = 1.0;
-      for (DimensionsType dimensionsType : dimensionsParser.dimTable.values()) {  
-         HashMap<String,Integer> unit = ctx.unitdim().unitdimType.getUnit();  // {'km': 1}    <-  [km]
-         
-         if (dimensionsType.containsUnit(unit)) {  // { {'m': 1} -> 1 ,  {'km': 1} -> 1000}
-            //System.out.println("\tconv: " + DimensionsType.mapToString(unit));
-            value = ctx.unitdim().unitdimType.getUnitConv(unit);
-            //System.out.println("\tconv: " + ctx.unitdim().unitdimType.getUnitConv(unit));
-         }
-      }
-      res.add("inst",visit(ctx.expr()).render());
+      double value = 1.0;  //
+      ST a = visit(ctx.expr());
+      HashMap<String,Integer> unit = ctx.unitdim().unitdimType.getUnit();  
+      if (!ctx.expr().exprType.isDimensional())
+         for (DimensionsType dimensionsType : dimensionsParser.dimTable.values())
+            if (dimensionsType.containsUnit(unit)) {  
+               value = ctx.unitdim().unitdimType.getUnitConv(unit);
+               break;
+            }
+      res.add("inst",a.render());
       res.add("var", temp);
       res.add("type", "Double");
       res.add("e1",ctx.expr().varName);
-      res.add("op", "/");  // 1 [km] -> 1/0.001 -> 1000m
+      res.add("op","/");  
       res.add("e2", ""+value);
+      
       ST dec = templates.getInstanceOf("declaration");
       String t = ctx.unitdim().unitdimType.getJavaType();
       dec.add("type",t);

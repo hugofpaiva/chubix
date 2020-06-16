@@ -58,17 +58,16 @@ Acceleration a = f / m;
 Counter c = 2 [c];
 Estupido asd = (2[h]/1[c]) [s/c];
 
-
 Distance res = (v0 * t +(a*t^2)/2)[km];
 
-
 print(asd); 
-
-
+   
+res = (10[m])[km]; # 10m     #10 * 1/1000  * 1/1000  = 1.0E-5
 
 print("Distancia percorrida: ");
-print(res);
+print(res[km]); # 10 000m
 
+/*
 String x = "Ola";
 String y = "Adeus";
 if(y==x){
@@ -209,3 +208,4 @@ Distance height = input("Insert your height in meters: ", Distance) [m];
 #IMC imc = getIMC(m,height);
 evalIMC(weight/height^2);
 ##teste
+*/

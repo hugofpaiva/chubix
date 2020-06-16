@@ -356,7 +356,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
             }
          }
       }
-      return res;
+      return res; // (1+m)/10 ->  m^1 * 10^-1 + 1 * 10^-1
    }
 
    @Override public Boolean visitDoubleExpr(chubixParser.DoubleExprContext ctx) { 
@@ -377,7 +377,7 @@ public class SemanticChubix extends chubixBaseVisitor<Boolean> {
       }
       if (ctx.expr().exprType.isDimensional()) {
          if (((DimensionsType) ctx.expr().exprType).getUnit().equals(type.getUnit())){
-            ErrorHandling.printWarning(ctx, "Cast and expression are of the same type.");
+            ErrorHandling.printWarning(ctx, "Cast is redundant.");
          } else {
             ErrorHandling.printError(ctx, "Cannot convert to another Dimension!");
             return false;

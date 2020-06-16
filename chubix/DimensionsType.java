@@ -9,7 +9,7 @@ public class DimensionsType extends Type {
     private Type dimType;
     private HashMap<Integer, HashMap<String,Integer>> units = new HashMap<>();; // ID : [["m" : 1], ["s" : -1]]  
     private HashMap<Integer, Double> unit_conv = new HashMap<>();                        // ID : 1.0
-    private HashMap<String,Integer> defaultUnit = new HashMap<>();              // [["m" : 1], ["s" : -1]] 
+    private HashMap<String, Integer> defaultUnit = new HashMap<>();              // [["m" : 1], ["s" : -1]] 
 
     public DimensionsType(String name, HashMap<String,Integer> unit, Type dimType) {
         super(name);

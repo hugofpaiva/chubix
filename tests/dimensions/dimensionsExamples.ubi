@@ -6,7 +6,8 @@ dim Estupido(sc:Time/Counter);
 dim Distance(m: Double);
 unit Distance(km : 1000.0*m);
 
-
+dim Temperature(Celsius : Integer);
+unit Temperature(Chico : 15.0 + Celsius);
 
 dim Velocity(Distance/Time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
 unit Velocity(mach: 200.0*m/s);
