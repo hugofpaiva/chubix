@@ -1,17 +1,13 @@
-
-dim Counter(c : Integer);
 dim Time(s: Integer);
 unit Time(h: 3600*s);
-
-dim Estupido(sc:Time/Counter);
 
 dim Distance(m: Double);
 unit Distance(km : 1000*m);
 
-dim Velocity(Distance/Time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
+dim Velocity(Distance/Time);
 unit Velocity(mach: 200*m/s);
 
-dim Acceleration(Distance/Time^2); # ou   velocity^-2  
+dim Acceleration(Distance/Time^2);
 
 dim Mass(kg: Double);
 

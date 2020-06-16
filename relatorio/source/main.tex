@@ -123,7 +123,7 @@ showstringspaces=false}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introdução}
 
-\par Este documento visa descrever e guiar o leitor por todo o processo de desenvolvimento do projeto final da unidade curricular de Compiladores. O trabalho foi desenvolvido pelos estudantes identificados na capa sendo que recorreram maioritariamente á assistência do docente Prof. Dr. Miguel Oliveira e Silva.
+\par Este documento visa descrever e guiar o leitor por todo o processo de desenvolvimento do projeto final da unidade curricular de Compiladores. O trabalho foi desenvolvido pelos estudantes identificados na capa sendo que recorreram maioritariamente à assistência do docente Prof. Dr. Miguel Oliveira e Silva.
 \par Este projeto tem como principal objetivo o desenvolvimento de um compilador assente em duas linguagens, uma para o compilador em si, e outra complementar que auxilia o funcionamento da primeira. Ao longo do desenvolvimento tentou-se ao máximo seguir todas as fases de construção de linguagens de programação.
 \par Foram utilizadas as tarefas e métodos aprendidos nas aulas da unidade curricular, o ANTLR4 e programação em Java.
 \par O grupo decidiu escolher como tema para o projeto, um dos temas sugeridos no guião do trabalho, sendo este o desenvolvimento de uma linguagem de programação para análise Dimensional. Este tema tem por base estender o sistema de tipos de uma linguagem de programação possibilitando a definição de dimensões distintas e interoperáveis, a expressões numéricas. Sendo uma linguagem destas de grande utilidade para problemas de Física ou Química em que existem várias dimensões nas quais é preciso operar, é importante que as operações possíveis façam sentido.
@@ -160,7 +160,7 @@ showstringspaces=false}
 \par Já na sintaxe final, os problemas anteriores foram resolvidos, sendo de notar que achou-se irrelevante a presença do elemento \emph{"new"} antes de cada dimensão e unidade novas, e ainda que optámos por não permitir a declaração de uma dimensão sem que tenha pelo menos a sua unidade base.
 \newline
 \newline
-\par Quanto á sintaxe de definir variáveis de determinadas dimensões e unidades, a evolução foi análoga ao caso anterior, visto que era alterada consoante a sintaxe de criação de dimensões/unidades. Para demonstrar:
+\par Quanto à sintaxe de definir variáveis de determinadas dimensões e unidades, a evolução foi análoga ao caso anterior, visto que era alterada consoante a sintaxe de criação de dimensões/unidades. Para demonstrar:
 \begin{itemize}
     \item \textbf{Primeira Fase:} Meter d = 10;
     \item \textbf{Segunda Fase:} d = 10(m);
@@ -194,7 +194,16 @@ showstringspaces=false}
 \clearpage
 
 \subsection{Funcionamento da Linguagem}
-
+\subsubsection{Unidades de Dimensões}
+\par Para as unidades das dimensões recorremos a dois \emph{HashMaps}, um possui um \emph{ID} como chave e como valor um \emph{HashMap} representativa da unidade, outro que possui o \emph{ID} dessa mesma unidade como chave e que guarda o seu valor de conversão, em relação à unidade default, como valor.
+\par Relativamente ao \emph{HashMap} da unidade, possui como chaves \emph{Strings} correspondentes a cada unidade envolvida, e como valor, o expoente associado a essa unidade. Para comparar se duas unidades pertencem à mesma dimensão verifica-se através da função \emph{equals} entre os \emph{HashMaps} das unidades \emph{default} de cada dimensão.
+\par Um outro exemplo de como os \emph{HashMaps} nos foram úteis, é nas operações de multiplicação, divisão e exponencial.
+\par No caso da multiplicação, faz-se um \emph{merge}, em que se as chaves (unidades) forem iguais, soma-se os valores (expoentes) associados, e se forem diferentes, adiciona-os. Depois são removidas todas as chaves que possuírem expoente a zero. 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{images/unknown_2.png}
+\caption{Parte da multiplicação entre unidades de Dimensões}
+\end{figure}
 \subsubsection{Criação de nova dimensão}
 \par A criação uma nova dimensão pode ser de raiz ou relativa a outras dimensões:
 
@@ -238,7 +247,6 @@ showstringspaces=false}
     \item Na criação de unidades, a relação que define a mesma não pode incluir unidades pertencentes a outra Dimensão.
     \item Não é permitido criar unidades cuja definição corresponda ao valor 0. 
     \item Na criação de unidades, a relação que define a mesma não pode incluir unidades não definidas previamente.
-    \item Dim semantic linha 190 e 202
     \item Na criação de unidades, não é possível elevar uma expressão a uma unidade nem ao valor 0.
 \end{itemize}
 
@@ -252,14 +260,19 @@ showstringspaces=false}
 \subsection{Implementação em ANTLR4}
 
 \par Para o parser foram criadas os contadores \emph{"insideLoop"} e \emph{"insideFunc"}, são efectivamente predicados semânticos relativos a restrições por contexto das instruções iterativas e de funções respectivamente.
-\par Adicionalmente foi criada uma \emph{SymbolTable}, classe que visa guardar e interagir com as variáveis criadas, bem como o alcance (\emph{scope}) delas, assimilando uma estrutura em árvore. Para a mesma árvore de \emph{SymbolTable}s existem duas referências, sendo que a \emph{"global"} serve como referência para a raiz da árvore e trata do alcance global de um programa e a \emph{"current"} para a \emph{SymbolTable} a ser visitada num dado momento. Portanto, vão existir \emph{SymbolTable}s relativas a cada bloco que necessite de variáveis locais (condicionais, iterativos e funções) tendo em conta que a \emph{"current"} será a \emph{SymbolTable} que num dado momento contém as variáveis locais, tendo também acesso ás variáveis de todas as tabelas \emph{"parent"} da mesma.
+\par Adicionalmente foi criada uma \emph{SymbolTable}, classe que visa guardar e interagir com as variáveis criadas, bem como o alcance (\emph{scope}) delas, assimilando uma estrutura em árvore. Para a mesma árvore de \emph{SymbolTables} existem duas referências, sendo que a \emph{"global"} serve como referência para a raiz da árvore e trata do alcance global de um programa e a \emph{"current"} para a \emph{SymbolTable} a ser visitada num dado momento. Portanto, vão existir \emph{SymbolTables} relativas a cada bloco que necessite de variáveis locais (condicionais, iterativos e funções) tendo em conta que a \emph{"current"} tem também acesso às variáveis de todas as tabelas \emph{"parent"} da mesma.
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{images/parserchubix.png}
 \caption{Criação de variáveis auxiliares à gramática e da tabela de símbolos utilizada no processamento da Linguagem Principal}
 \end{figure}
-\par Para exemplificar, sempre que se entra num bloco de código com um scope restrito internamente,
-é efetuado um (\emph{down}), ou seja, 
+\par Para exemplificar, na análise semântica da linguagem principal, sempre que se entra num bloco de código com um \emph{scope} restrito internamente, é criada uma nova \emph{SymbolTable} filha da \emph{current}, e esta, a \emph{current}, é alterada para se referir à filha criada. Na saída da função é feito um \emph{up}, que coloca a \emph{current} de volta para a \emph{SymbolTable} anterior à entrada na função.
+\par No compilador, para respeitar os scopes das variáveis também é feita a mesma estratégia. No entanto, o método que cria uma \emph{SymbolTable} filha é agora substituído por um método que retorna a filha já criada e com os respetivos símbolos guardados. O retorno deste método obedece à ordem de criação das filhas na passagem do \emph{visitor} para a semântica, obtendo assim o resultado pretendido.
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.75\textwidth]{images/unknown.png}
+\caption{Something}
+\end{figure}
 \par A gramática em si baseia-se em três partes do símbolo \emph{main}, primeiramente um cabeçalho opcional de \emph{imports} seguido de um bloco opcional de definição de funções e por fim a lista de instruções que constituem o corpo do programa. Para analisar a gramática completa dirija-se ao ficheiro chubix.g4.
 
 \begin{figure}[h]
@@ -300,14 +313,63 @@ showstringspaces=false}
 \subsubsection{Definição de funções}
 \par Todas as funções têm de ser definidas no inicio do programa, mas após as instruções de import, sendo esta a sintaxe a usar:
 
-\par \textit{function <tipo> <nome>(<argumentos>)\{}
-\par \textit{<corpo da função>}
-\par \textit{\};}
+\begin{lstlisting}[numbers=none]
+function <tipo> <nome>(<argumentos>){
+    <corpo da funcao>
+;}
+\end{lstlisting}
 
 \newline
 \par \textbf{Tipo:} O tipo de retorno da função, pode ser qualquer um dos existentes (Integer, Double, String, Boolean), qualquer dimensão criada previamente, ou ainda do tipo Void.
-\par \textbf{Nome:} O nome atribuído á função, tem de começar por uma letra ou underscore.
-\par \textbf{Argumentos:} lista de argumentos da função sob a forma de decla
+\par \textbf{Nome:} O nome atribuído à função, tem de começar por uma letra ou underscore.
+\par \textbf{Argumentos:} lista de argumentos da função sob a forma de declarações de variáveis sem valor atribuído.
+\par \textbf{Corpo da função:} Lista de instruções que definem a função, tem de incluir uma ou mais instruções de retorno:
+\par \textit{return <expressão>;}
+\par No caso da função ser do tipo Void a instrução de retorno não inclui expressão.
+\newline
+\par \textbf{Como exemplo de utilização:}
+\begin{lstlisting}[numbers=none]
+function Integer Sum(Integer a, Integer b){
+    return a + b;
+;}
+\end{lstlisting}
+
+
+\subsubsection{Declaração de Variáveis}
+\par A declaração de variáveis é feita segundo a sintaxe a seguinte:
+\begin{lstlisting}[numbers=none]
+<tipo> <nome>;
+\end{lstlisting}
+\newline
+\par \textbf{Tipo:} O tipo da variável, pode ser qualquer um dos existentes (Integer, Double, String, Boolean) ou qualquer dimensão criada previamente.
+\par \textbf{Nome:} O nome atribuído à variável, tem de começar por uma letra ou underscore.
+\newline
+\par \textbf{Como exemplos de utilização:}
+\begin{itemize}
+    \item \textit{Integer a;}
+    \item \textit{String s;}
+    \item \textit{Time t;}
+\end{itemize}
+
+\subsubsection{Atribuição de valor a Variáveis}
+\par É possível atribuir valor a uma variável previamente declarada, ou então na declaração de uma, segue-se a sintaxe:
+\begin{lstlisting}[numbers=none]
+<nome> = <expressao>;
+\end{lstlisting}
+\par ou então:
+\begin{lstlisting}[numbers=none]
+<tipo> <nome> = <expressao>;
+\end{lstlisting}
+\newline
+\par É de notar que o tipo da expressão a atribuir tem de se conformar ao tipo da variável, e que no caso da mesma ser dimensional, a expressão deve incluir a unidade a utilizar.
+\par \textbf{Como exemplos de utilização:}
+\begin{itemize}
+    \item \textit{Velocity v = 10.0 [m/s];}
+    \item \textit{Integer a = 10;}
+    \item \textit{t = ;}
+\end{itemize}
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Análise Semântica}
 
@@ -321,7 +383,7 @@ showstringspaces=false}
     \item Não é possível declarar variáveis já existentes no mesmo alcance (\emph{scope}) ou alcances mais abrangentes.
     \item Para atribuir valor a uma variável esta tem de ser previamente declarada.
     \item Ao atribuir valor a uma variável, o valor tem de ser do tipo da variável.
-    \item Ao atribuir valor a uma variável dimensional, a sua unidade passada tem de pertencer á dimensão requerida, e o seu valor tem de ser análogo á mesma, havendo excepção se a dimensão for do tipo \emph{double}, e o valor do tipo \emph{integer}.
+    \item Ao atribuir valor a uma variável dimensional, a sua unidade passada tem de pertencer à dimensão requerida, e o seu valor tem de ser análogo à mesma, havendo excepção se a dimensão for do tipo \emph{double}, e o valor do tipo \emph{integer}.
     \item Numa instrução condicional é necessário passar uma expressão booleana, o mesmo acontece nas condições de instruções iterativas.
     \item Não é permitida a soma de valores pertencentes a dimensões distintas.
     \item É permitida a conversão de expressões numéricas a dimensões, exceptuando se a expressão for do tipo \emph{double} e a dimensão \emph{integer}. 
@@ -368,15 +430,351 @@ Desta forma, é assegurada a compilação de acordo com as verificações feitas
 
 \section{Programas de Exemplo}
 
-\par Nesta secção serão demonstrados alguns exemplos de utilização da linguagem criada. Os programas de exemplo seguintes encontram-se disponíveis dentro da pasta \textit{/tests} na raíz do repositório sendo que os referentes à Linguagem Complementar encontram-se na pasta \textit{/tests/dimensions} e os referentes à Linguagem Principal em \textit{/tests/chubix}
+\par Nesta secção serão demonstrados alguns exemplos de utilização da linguagem criada. Os programas de exemplo seguintes encontram-se disponíveis dentro da pasta \textit{/tests} na raíz do repositório, sendo que os referentes à Linguagem Complementar encontram-se na pasta \textit{/tests/dimensions} e os referentes à Linguagem Principal em \textit{/tests/chubix}.
 
 \subsection{Programas Corretos}
 
+\subsubsection{Linguagem Complementar}
 
+\par Para o bom funcionamento da Linguagem Principal no seu programa de exemplo correto, todas as dimensões e unidades foram definidas no ficheiro \textit{/tests/dimensions/dimensionsExamples.ubi}:
+
+\begin{lstlisting}
+dim Time(s: Integer);
+unit Time(h: 3600*s);
+
+dim Distance(m: Double);
+unit Distance(km : 1000*m);
+
+dim Velocity(Distance/Time);
+unit Velocity(mach: 200*m/s);
+
+dim Acceleration(Distance/Time^2);
+
+dim Mass(kg: Double);
+
+dim Force(N: Mass*Acceleration);
+
+dim Potential(V: Double);
+unit Potential(MV: 10.0^6.0*V);
+
+dim Resistence(O: Double);
+
+dim Current(A: Potential/Resistence);
+
+dim Energy(J: Mass*(Distance^2.5)*Time^-2);
+
+dim Power(W: Energy/Time);
+unit Power(KW: W*10.0^3.0);
+
+dim Price(euro : Double);
+
+dim PricePerPowerTime(Price/(Power*Time));
+
+dim Charge(C: Current*Time);
+
+dim IMC(imc : Mass/Distance^2);
+\end{lstlisting}
+
+\clearpage
+
+\subsubsection{Linguagem Principal}
+
+\par Após a definição do ficheiro da Linguagem Complementar, foram criados os seguintes exemplos corretos para a Linguagem Principal no ficheiro \textit{/tests/chubix/compilerExamples.ubix}:
+
+\par \textbf{Definição de funções e importação das dimensões e unidades:}
+
+\begin{lstlisting}
+import ../tests/dimensions/dimensionsExamples.ubi;
+
+function Void evalIMC(IMC imc){
+    if (imc<16[imc]) {
+        print("You are severely underweight.");
+    } else if (imc<=19.9[imc]) {
+        print("You are underweight.");
+    } else if (imc<=24.9[imc]) {
+        print("You have a healthy weight.");
+    }else if (imc<=29.9[imc]) {
+        print("You are overweight.");
+    }else if (imc<=39.9[imc]) {
+        print("You are obese.");
+    }else if (imc>40[imc]) {
+        print("You are morbidly obese.");
+    };
+    return;
+};
+
+function Energy CalcCinetica(Velocity v, Mass  m) {
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+function IMC getIMC(Mass m, Distance height){
+    IMC imc = m/height^2;
+    return imc;
+};
+\end{lstlisting}
+
+\par \textbf{Exemplo 1:}
+
+\par Determinar distância percorrida por uma massa de 5kg em 5 segundos.
+
+\begin{lstlisting}
+Time t = 5[s];            
+Mass m = 5 [kg];
+Velocity v0 = 5[m/s];     
+Force f = 5 [kg*m*s^-2];
+Acceleration a = f / m;
+
+Distance res = (v0 * t +(a*t^2)/2)[km];
+
+print("Distancia percorrida: ");
+print(res);
+\end{lstlisting}
+
+\clearpage
+
+\par \textbf{Exemplo 2:}
+
+\par Um circuito elétrico tem uma resistência de o Ohms e uma fonte de tensão de v Volts. Diminuindo a intensidade de corrente para 1/2,1/4...1/32 e mantendo a mesma tensão, pretende-se descobrir o valor em Ohms da nova resistência a aplicar em cada caso.
+
+\begin{lstlisting}
+Potential U =  input("Insira a tensão de corrente em volts", Potential) [V];
+Resistence R = input("Insira a intensidade da força, em Newton", Resistence) [O];
+
+Double taxa = 1/2;
+Current I = U/R;  # V / O  {'A' : 1, 'V/O' : 1}
+
+while(taxa>=1.0/32.0){
+    print("Taxa: ");
+    Resistence result = (U/taxa*I^-1) [O];
+    print(taxa);
+    print("Nova Resistência: ");
+    print(result);
+    taxa = taxa / 2;
+};
+\end{lstlisting}
+
+\par \textbf{Exemplo 3:}
+
+\par Determinar a energia consumida mensalmente por um chuveiro elétrico de potência 4000W em uma residência onde vivem quatro pessoas que tomam, diariamente, 2 banhos de 15 min.
+
+\begin{lstlisting}
+Power P = input("Insira a potência: ", Power) [KW];
+Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
+
+# Da equação da energia consumida temos que E = P x Δt
+# Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
+#   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
+
+Energy E = P * 8 * T * 30;
+
+print("Energia consumida: ");
+print(E);
+\end{lstlisting}
+
+\par \textbf{Exemplo 3.1:}
+
+\par Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro. Sabendo que o preço per kWh é de 0.14810 euros, conseguem alcançar este objetivo?
+
+\begin{lstlisting}
+PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euro/(KW*h)];
+
+Price p_mensal = p * E;
+
+if (p_mensal < 30[euro]){
+    print("Não conseguem gastar menos de 30");
+}
+else {
+    print("Conseguem gastar menos de 30");
+};
+\end{lstlisting}
+
+\clearpage
+
+\par \textbf{Exemplo 4:}
+
+\par Calcular o a Energia cinética em intervalos de 10s no primeiro minuto do movimento de queda livre. Considere que a velocidade inicial é 0m/s e que a aceleração gravítica é 10m/s\string^2 e que não existem forças de atrito.
+
+\begin{lstlisting}
+Mass m1 = input("Insira a massa do objeto em kg",Mass) [kg] ;
+Acceleration g = 10 [m*s^-2];
+Velocity v = 0[m/s];
+Energy ec;
+
+for (Integer i = 0; i<=60; i=i+10){
+    v = v+i[s]*g;
+    ec = CalcCinetica(v, m1);
+    print(ec); 
+};
+\end{lstlisting}
+
+\par \textbf{Exemplo 5:}
+
+\par Uma corrente de 5,0 A atravessa um fio durante 4,0 min. Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
+
+\begin{lstlisting}
+#a)
+
+Current cur = 5 [A];
+Time time = 4*60 [s];
+
+#Visto que a Intensidade = carga / intervalo de tempo
+Charge ch = cur*time ;
+
+print(ch);
+
+#b)
+
+#Número de eletrões = carga / |carga por eletrão|
+Double eletroes = ch / (1.602*10^-19)[C];
+
+print(eletroes);
+\end{lstlisting}
+
+\par \textbf{Exemplo 6:}
+
+\par Calcular e avaliar o valor de IMC do utilizador.
+
+\begin{lstlisting}
+Mass weight = input("Insert your weight in kg: ", Mass) [kg];
+Distance height = input("Insert your height in meters: ", Distance) [m];
+
+
+IMC imc = getIMC(m,height);
+evalIMC(weight/height^2);
+\end{lstlisting}
+
+\clearpage
 
 \subsection{Programas com Erros}
 
+\par Foram desenvolvidos alguns programas com erros com o objetivo de verificar se toda a análise semântica da Linguagem funcionava como o esperado. Em cada linha onde é esperado um erro, existe um comentário com o erro.
+
+\subsubsection{Linguagem Complementar}
+
+\begin{lstlisting}
+dim Time(s:Integer);
+
+dim Time2(c:Time);              #[ERROR at line 3] Unit "s" already defined.
+
+unit Time(h: 0 * s);            #[ERROR at line 5] Cannot add a unit with value 0.
+unit Time(s: 12*s);             #[ERROR at line 6] Unit "s" already defined.
+unit Time(h: 1000);             #[ERROR at line 7] Conversion expression must be a unit.
+unit Time(h: s*10);             #[ERROR at line 8 Dimension "Time" and "s^0" are not compatible.
+
+unit Tempo(h : 3600*s);         #[ERROR at line 10] Dimension "Tempo" not defined.
+
+dim Distance(m:Double);
+
+dim Distance(km : Double);      #[ERROR at line 14] Dimension "Distance" already defined.
+
+unit Time(h:3600*m);            #[ERROR at line 16] Dimension "Time" and "3600*m" are not compatible.
+
+unit Distance(cm : 0.01*m);
+unit Distance(in: 2.54*cm);     #No error when refering to a unit which is not the default.
+
+dim Velocity(Distance/Time^0);  #[ERROR at line 21] Power of 0 is not possible when defining a dimension.
+\end{lstlisting}
+
+\subsubsection{Linguagem Principal}
+
+\begin{lstlisting}
+import ../tests/dimensions/dimensionsExamples.ubi;
+
+function Random CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 3] Dimension "Random" does not exist.
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+function Energy CalcCinetica(Velocity v, Mass  m) {
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+function Energy CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 13] Function "CalcCinetica" already exists!
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+
+function Void catch(Double x) {
+    print(x);
+    return;
+};
+
+# main
+
+catch(10.0);
+catch();                                                #[ERROR at line 27] Number of arguments do not match.
+CalcCinetica(1 [m], 1 [kg]);                            #[ERROR at line 28] Incomparable types: m and m / s^1
+
+Distance m = 10;                                        #[ERROR at line 30] Expression type does not conform to variable "m" type! 
+       
+Distance m3 = 10[km];                                   #[ERROR at line 32] There is no dimension with that unit!
+
+Distance m2 = 10[m];
+print(m2);
+
+print(m3[m]);                                               
+print(m3[s]);                                           #[ERROR at line 38] Cannot convert to another Dimension!
+
+Time t = 1.2 [s];                                       #[ERROR at line 40] Cannot convert Double to a Dimension of Integers!
+
+print(catch(10.0) + 1);                                 #[ERROR at line 42] Expression cannot be void
+print("ola"*2);                                         #[ERROR at line 43] Cannot fetch a type between "ola" and 2
+
+String name = input("Insert your name",String);
+Distance r=input("Insert distance in km",Distance)[km];
+
+Distance mm = 1[m];
+if(mm>1){                                               #[ERROR at line 49] Incomparable types: mm and 1
+    print("Maior");
+}else{
+    print("Menor");
+};
+
+Double x = 0;
+for (Integer i = 0;i<=2;i=i+1){
+    x = 10;
+    Integer y = i;
+};
+print(y);                                               #[ERROR at line 60] Variable "y" does not exist!
+
+
+Integer i = 0;
+Integer y = 2;
+for (i = 0;i<=2;i=i+1){
+    i = 10;
+    Integer y = i;                                      #[ERROR at line 67] Variable "y" already declared!    
+};
+
+while(1){                                               #[ERROR at line 70] Condition "1" isn't a Boolean expression!
+    print("Not boolean");
+};
+
+while(true) {
+    Double p;
+    print(-"hello");                                    #[ERROR at line 76] Numeric operator applied to a non-numeric operand!
+};
+Double p;                                               #No error
+
+a = 2;
+
+Boolean qwe = p>mm;                                     #[ERROR at line 82] Variable "p" not defined!
+Boolean qwq = 1>mm;                                     #[ERROR at line 83] Incomparable types: 1 and mm
+\end{lstlisting}
+
 \section{Conclusão}
+
+\par Devido à falta de tempo perante as múltiplas entregas que se acumularam no final do semestre, alguns aspetos do trabalho não foram tão bem explorados. A documentação é um exemplo prático deste problema, onde o grupo, perante outras datas de avaliação e cansaço, não conseguiu dedicar o tempo que pretendia inicialmente.
+
+\par Outro fator que se considera ter influenciado negativamente o desenvolvimento do trabalho incide na situação atual que se vive, uma vez que o grupo teve de se adequar a um método de trabalho à distância, algo que anteriormente nunca tinha feito.
+
+\par No geral, a análise semântica foi a parte do trabalho onde se sentiu mais dificuldades, tendo sido necessário a reescrita do código várias vezes após nova análise da documentação do docente.
+
+\par Todos os elementos do grupo concluíram que o desenvolvimento de trabalho favoreceu a compreensão dos tópicos abordados e que será uma mais valia para para a avaliação prática individual.
+
+\par Por fim, acredita-se que todos os objetivos do trabalho foram cumpridos com sucesso.
 
 \section{Contribuições dos autores}
 \par Segue-se a contribuição de cada elemento do grupo:

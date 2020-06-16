@@ -1,0 +1,177 @@
+########## Linguagem Compilada ##########
+
+###Exemplo 1
+# Determinar distanca percorrida por uma massa de 5kg em t segundos
+# Pedir ao user:
+#     velocidade inicial
+#     Força
+#     Segundo
+#     Massa 
+#   
+# Resultado: distancia percorrida
+
+#Resolução:
+
+
+Mass m = 5 [kg];
+
+Time t =  input("Insira o tempo") [s];
+Force f = input("Insira a intensidade da força, em Newton") [N];
+Velocity v0 = input("Insira a velocidade inicial") [m/s];
+
+Accelaration a = f / m;
+
+Distance res = v0 * t + (a*t^2)/2;
+
+print("Distancia percorrida: ");
+print(res);
+
+
+###Exemplo 2
+# Um circuito elétrico tem uma resistência de o Ohms e uma fonte de tensão de v Volts
+# Diminuindo a intensidade de corrente para 1/2,1/4...1/32 e mantendo a mesma tensão
+# Pretende-se descobrir o valor em Ohms da nova resistência a aplicar em cada caso
+# Pedir ao user:
+#     Tensão (Potential)
+#     Resistencia (Resistence)
+#
+# Resultado: Nova Resistencia
+
+#Resolução:
+
+Potential U =  input("Insira a tensão de corrente em volts") [V];
+Resistence R = input("Insira a intensidade da força, em Newton") [O];
+
+taxa = 1/2;
+Current I = U/R;
+
+while(taxa>=1/32){
+    Resistence res = U/(taxa*I);
+    print("Taxa: ");
+    print(taxa);
+    print("Nova Resistência: ");;;;
+    print(res);
+    taxa = taxa / 2;
+};
+
+
+###Exemplo 3
+#   Determine a energia consumida mensalmente por um chuveiro elétrico
+# de potência 4000W em uma residência onde vivem quatro pessoas que tomam,
+# diariamente, 2 banhos de 15 min.
+# Pedir ao user:
+#     Potência (Power)
+#     Tempo (Time)
+#
+# Resultado: Energia
+
+Power P = input("Insira a potência: ") [kW];
+Time T = input("Insira o tempo da duração de 1 banho: ") [h];
+
+# Da equação da energia consumida temos que E = P x Δt
+# Sabendo que são 8 banhos com duração total de 120 min (2h) e considerando os 30 dias do mês, temos:
+#   E = 4000 . 2 . 30 = 192.000 = 192 Kwh
+
+Energy E = P * 8 * T * 30;
+
+print("Energia consumida: ");
+print(E);
+
+###Exemplo 3.1
+#   Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro.
+# Sabendo que o preço per kWh é de 0.14810 euros, conseguem alcançar este objetivo?
+# Pedir ao user:
+#       Preço per kWh (PricePerKWH)
+# 
+# Resultado: Preço
+
+# Resolução:
+
+PricePerPowerTime p = input("Preço por kWh: ") [euros/(kW*h)];
+
+Price p_mensal = p * E;
+
+if (p_mensal > 30) {
+    print("Não conseguem gastar menos de 30");
+} else {
+    print("Conseguem gastar menos de 30");
+};
+
+
+###Exemplo 4 
+#   Calcular o a Energia cinetica em intervalos de 10s no primeiro minuto do movimento de queda livre. 
+#   Considere que a velocidade inicial é 0m/s e que a aceleração gravitica é 10m/s^2 e que não existem 
+# forças de atrito.
+#   Ec = 0.5*m*v^2
+# Pedir ao user a massa do corpo
+
+#Resolução:
+
+
+Mass m = input("Insira a massa do objeto em kg") [kg] ;
+Accelaration g = 10[m/(s^2)];
+Velocity v = 0[m/s];
+Energy ec;
+
+function Energy CalcCinetica(Mass m, Velocity v) {
+    Energy ec = 0.5*m*v^2;
+    return ec;
+};
+
+
+for (Integer i = 0; i<=60; i=i+10){
+    v = v+i*g;
+    ec = CalcCinetica(m,v);
+    print(ec); 
+};
+
+###Exemplo 5
+#  Uma corrente de 5,0 A atravessa um fio durante 4,0 min. 
+#  Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
+
+#Resolução:
+
+#a)
+
+Current i = 5 [A];
+Time t = 4*60 [s];
+#Visto que a Intensidade = carga / intervalo de tempo
+Charge c = 5*4*60 [C];
+print(c);
+
+#b)
+
+#Número de eletrões = carga / |carga por eletrão|
+Double numero_eletroes = c / +(1.602*10^-19) [C];
+
+
+
+###Exemplo 6
+#  Calcular e avaliar o valor de IMC do utilizador
+
+function IMC getIMC(Mass m, Distance height){
+    IMC imc = m/height^2;
+    return imc;
+};
+
+function void evalIMC(IMC imc){
+    if (imc<16) {
+        print("You are severely underweight.");
+    } else if (imc<=19.9) {
+        print("You are underweight.");
+    } else if (imc<=24.9) {
+        print("You have a healthy weight.");
+    }else if (imc<=29.9) {
+        print("You are overweight.");
+    }else if (imc<=39.9) {
+        print("You are obese.");
+    }else if (imc>40) {
+        print("You are morbidly obese.");
+    };
+};
+
+Mass m = input("Insert your weight in kg: ") [kg];
+Distance height = input("Insert your height in meters: ") [m];
+
+IMC imc = getIMC(m,height);
+evalIMC(imc);

@@ -1,0 +1,30 @@
+dim Distance(m: Double);
+
+dim Time(s: Integer);
+unit Time(h: 3600*s);
+
+dim Velocity(m/s: distancia/time); #Se uma das dimensoes associadas tiver double, obrigatoriamente esta nova dimensão vai ser Double
+unit Velocity(mach: 200*m/s);
+
+dim Acceleration(m/(s^2) : distance/time^2 ); # ou   velocity^-2  
+
+dim Mass(kg: Double);
+dim Force(N: Mass*Acceleration);
+
+dim Potential(V: Double);
+unit Potential(MV: 10^6*V);
+
+dim Resistence(O: Double);
+
+dim Current(A: Double);
+
+dim Energy(J: Mass/(Distance^2)*Time^-2);
+
+dim Power(W: Energy/Time);
+unit Power(KW: W*10^3);
+
+dim Price(euro : Double);
+
+dim PricePerPowerTime(euro/W*s :Price/Power*Time);
+
+dim Charge(C: Double);
