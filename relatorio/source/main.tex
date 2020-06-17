@@ -91,8 +91,8 @@ showstringspaces=false}
 	\vspace{0.5cm}
 	{\small Miguel Oliveira e Silva\par
 	Artur Pereira\par}
-	\vspace{4cm}
-	{\huge \textbf{Linguagem para análise dimensional}} \\
+	\vspace{3cm}
+	{\huge \textbf{Linguagem para análise dimensional: \\ Chubix}}
 	\vspace{1cm}
 	\vspace{4cm}
 	{\normalsize  \par Bruno Bastos, 93302 \par 
@@ -110,7 +110,7 @@ showstringspaces=false}
 	{\normalsize DETI \\ 
 		Universidade de Aveiro \par}
 		
-	{\normalsize 16-06-2020 \par}
+	{\normalsize \today \par}
 	\vspace{2cm}
 		
 	
@@ -133,7 +133,7 @@ showstringspaces=false}
 \newpage
 \section{Concepção e Definição da Linguagem}
 
-\par Desde o inicio soube-se que o maior desafio seria como criar novas dimensões e unidades, e posteriormente utilizá-las e definir variáveis usando então o sistema de dimensões. Tirando isto na linguagem principal tencionava-se incluir todas as funcionalidades básicas necessárias como instruções iterativas e condicionais, bem como funções, declaração de variáveis e todas as operações matemáticas base.
+\par Desde o inicio soube-se que o maior desafio seria como criar novas dimensões e unidades, e posteriormente utilizá-las e definir variáveis usando então o sistema de dimensões. Tirando isto, na linguagem principal tencionava-se incluir todas as funcionalidades básicas necessárias como instruções iterativas e condicionais, bem como funções, declaração de variáveis e todas as operações matemáticas base.
 \par A sintaxe de criação de dimensões e unidades passou por várias fases no momento de idealização, o objetivo era principalmente que fosse fácil de utilizar e de entender para o utilizador. Segue-se então a evolução da mesma:
 \newline
 \par \textbf{1ª Fase:}
@@ -195,9 +195,9 @@ showstringspaces=false}
 
 \subsection{Funcionamento da Linguagem}
 \subsubsection{Unidades de Dimensões}
-\par Para as unidades das dimensões recorremos a dois \emph{HashMaps}, um possui um \emph{ID} como chave e como valor um \emph{HashMap} representativa da unidade, outro que possui o \emph{ID} dessa mesma unidade como chave e que guarda o seu valor de conversão, em relação à unidade default, como valor.
+\par Para as unidades das dimensões recorreu-se a dois \emph{HashMaps}, um que possui um \emph{ID} como chave e como valor um \emph{HashMap} representativo da unidade e outro que possui o \emph{ID} dessa mesma unidade como chave e que guarda o seu valor de conversão, em relação à unidade default, como valor.
 \par Relativamente ao \emph{HashMap} da unidade, possui como chaves \emph{Strings} correspondentes a cada unidade envolvida, e como valor, o expoente associado a essa unidade. Para comparar se duas unidades pertencem à mesma dimensão verifica-se através da função \emph{equals} entre os \emph{HashMaps} das unidades \emph{default} de cada dimensão.
-\par Um outro exemplo de como os \emph{HashMaps} nos foram úteis, é nas operações de multiplicação, divisão e exponencial.
+\par Um outro exemplo de como os \emph{HashMaps} foram úteis, é nas operações de multiplicação, divisão e exponencial.
 \par No caso da multiplicação, faz-se um \emph{merge}, em que se as chaves (unidades) forem iguais, soma-se os valores (expoentes) associados, e se forem diferentes, adiciona-os. Depois são removidas todas as chaves que possuírem expoente a zero. 
 \begin{figure}[h]
 \centering
@@ -240,7 +240,7 @@ showstringspaces=false}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Análise Semântica}
 
-\par A análise semântica é realizada com o \emph{Visitor} denominado \textbf{\emph{DimSemantic.java}}. Este trata de todas as situações que achámos relevantes controlar para que se mantivesse a integridade da nossa linguagem. Segue-se então a lista de regras semânticas que incluímos:
+\par A análise semântica é realizada com o \emph{Visitor} denominado \textbf{\emph{DimSemantic.java}}. Este trata de todas as situações que se achou relevantes controlar para que se mantivesse a integridade da linguagem. Segue-se então a lista de regras semânticas que foram incluídas:
 \begin{itemize}
     \item Não é permitida a criação de dimensões ou unidades que já existam, no caso das unidades isto é verdade mesmo que em dimensões distintas.
     \item Não é permitido criar uma unidade para uma Dimensão não previamente existente.
@@ -259,7 +259,7 @@ showstringspaces=false}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Implementação em ANTLR4}
 
-\par Para o parser foram criadas os contadores \emph{"insideLoop"} e \emph{"insideFunc"}, são efectivamente predicados semânticos relativos a restrições por contexto das instruções iterativas e de funções respectivamente.
+\par Para o funcionamento desta linguagem, foi implementada a gramática \textbf{\textit{chubix.g4}}. Quanto ao parser foram criadas os contadores \emph{"insideLoop"} e \emph{"insideFunc"}, que são efectivamente predicados semânticos relativos a restrições por contexto das instruções iterativas e de funções respectivamente.
 \par Adicionalmente foi criada uma \emph{SymbolTable}, classe que visa guardar e interagir com as variáveis criadas, bem como o alcance (\emph{scope}) delas, assimilando uma estrutura em árvore. Para a mesma árvore de \emph{SymbolTables} existem duas referências, sendo que a \emph{"global"} serve como referência para a raiz da árvore e trata do alcance global de um programa e a \emph{"current"} para a \emph{SymbolTable} a ser visitada num dado momento. Portanto, vão existir \emph{SymbolTables} relativas a cada bloco que necessite de variáveis locais (condicionais, iterativos e funções) tendo em conta que a \emph{"current"} tem também acesso às variáveis de todas as tabelas \emph{"parent"} da mesma.
 \begin{figure}[h]
 \centering
@@ -271,9 +271,11 @@ showstringspaces=false}
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.75\textwidth]{images/unknown.png}
-\caption{Something}
+\caption{Criação de uma nova \textit{SymbolTable} na mudança de \textit{scope}}
 \end{figure}
-\par A gramática em si baseia-se em três partes do símbolo \emph{main}, primeiramente um cabeçalho opcional de \emph{imports} seguido de um bloco opcional de definição de funções e por fim a lista de instruções que constituem o corpo do programa. Para analisar a gramática completa dirija-se ao ficheiro chubix.g4.
+\par A gramática em si baseia-se em três partes do símbolo \emph{main}, primeiramente um cabeçalho opcional de \emph{imports} seguido de um bloco opcional de definição de funções e por fim a lista de instruções que constituem o corpo do programa. Para analisar a gramática completa dirija-se ao ficheiro \textbf{\textit{chubix.g4}}.
+
+\clearpage
 
 \begin{figure}[h]
 \centering
@@ -281,7 +283,7 @@ showstringspaces=false}
 \caption{Parte da gramática correspondente à Linguagem Principal}
 \end{figure}
 
-\par É ainda de mencionar, para futura referência que uma expressão na nossa linguagem pode ser qualquer um dos seguintes:
+\par É ainda de mencionar, para futura referência, que uma expressão na nossa linguagem pode ser qualquer um dos seguintes:
 \begin{itemize}
     \item Uma variável.
 	\item Um valor.
@@ -295,7 +297,7 @@ showstringspaces=false}
 \end{itemize}
 \begin{figure}[h]
 \centering
-\includegraphics[width=0.5\textwidth]{images/expr.png}
+\includegraphics[width=0.565\textwidth]{images/expr.png}
 \caption{Implementação em ANTLR4 da expressão}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,7 +333,7 @@ function <tipo> <nome>(<argumentos>){
 \begin{lstlisting}[numbers=none]
 function Integer Sum(Integer a, Integer b){
     return a + b;
-;}
+};
 \end{lstlisting}
 
 
@@ -362,18 +364,109 @@ function Integer Sum(Integer a, Integer b){
 \end{lstlisting}
 \newline
 \par É de notar que o tipo da expressão a atribuir tem de se conformar ao tipo da variável, e que no caso da mesma ser dimensional, a expressão deve incluir a unidade a utilizar.
+\newline
 \par \textbf{Como exemplos de utilização:}
 \begin{itemize}
     \item \textit{Velocity v = 10.0 [m/s];}
     \item \textit{Integer a = 10;}
-    \item \textit{t = ;}
+    \item \textit{t = 20 [s];}
+    \item \textit{i = a + 5;}
 \end{itemize}
 
+\subsubsection{Instrução de Impressão}
+\par Para imprimir conteúdo utiliza-se a seguinte instrução:
+\begin{lstlisting}[numbers=none]
+print(<expressao>);
+\end{lstlisting}
+\newline
+\par \textbf{Como exemplos de utilização:}
+\begin{itemize}
+    \item \textit{print("Olá!");}
+    \item \textit{print(2 [s] + t);}
+    \item \textit{print(5.55);}
+    \item \textit{print(5 > 2);}
+\end{itemize}
 
+\subsubsection{Expressão Input}
+\par Embora não seja uma instrução em si, é possível obter dados pelo utilizador através do \emph{input}, relembrando que trata-se apenas de um contexto de expressão. Sendo a sintaxe a seguinte:
+\begin{lstlisting}[numbers=none]
+input(<texto>, <tipo>);
+\end{lstlisting}
+\par ou então:
+\begin{lstlisting}[numbers=none]
+input(<tipo>);
+\end{lstlisting}
+\newline
+\par \textbf{Como exemplos de utilização:}
+\begin{itemize}
+    \item \textit{Mass m = input("Insira a sua massa em kg",Mass) [kg] ;}
+    \item \textit{i = 100 - input(Integer);}
+    \item \textit{print(input("Diga o seu nome",String));}
+\end{itemize}
+
+\subsubsection{Instrução Condicional}
+\par Uma das instruções mais importantes para uma típica linguagem de programação, foi utilizada uma estrutura básica de \emph{if/else}:
+\begin{lstlisting}[numbers=none]
+if( <expressao> ){
+    <lista de instrucoes>
+} else if( <expressao> ){
+    <lista de instrucoes>
+} else{
+    <lista de instrucoes>
+};
+\end{lstlisting}
+\newline
+\par É de notar que as expressões a passar têm de ser do tipo booleano.
+\newline
+\par \textbf{Como exemplo de utilização:}
+\begin{lstlisting}[numbers=none]
+if(num > 0){
+    print("Positivo");
+} else if (num == 0){
+    print("Zero");
+} else{
+  print("Negativo");
+};
+\end{lstlisting}
+
+\subsubsection{Instruções Iterativas}
+\par Outro tipo de instrução essencial á maior parte das linguagens, no nosso caso implementámos dois blocos simples, a instrução \emph{for} e \emph{while}. Segue-se a sintaxe do ciclo for e while respectivamente:
+\begin{lstlisting}[numbers=none]
+for( <atribuicao> ; <expressao de termino> ; <incremento> ){
+    <lista de instrucoes>
+};
+\end{lstlisting}
+\newline
+\par \textbf{Atribuição:} Instrução de atribuição de valor a variável que servirá para controlar o ciclo.
+\par \textbf{Expressão de término:} Expressão do tipo booleano que visa definir quando o ciclo deve terminar.
+\par \textbf{Incremento:} Instrução de atribuição de valor que dita o tipo de incremento que a variável de controlo vai ter.
+\newline
+\begin{lstlisting}[numbers=none]
+while( <expressao> ){
+    <lista de instrucoes>
+};
+\end{lstlisting}
+\newline
+\par Quanto ao ciclo while, a expressão passada tem de ser do tipo booleano. Há que mencionar que para ambos os ciclos é possível utilizar as instruções \emph{break;} e \emph{continue;} que terminam o ciclo e ignoram uma iteração respectivamente.
+\newline
+\par \textbf{Como exemplos de utilização:}
+\begin{lstlisting}[numbers=none]
+for(Integer i = 0; i<=100; i=i+10){
+    print(i*2);
+};
+\end{lstlisting}
+\newline
+\begin{lstlisting}[numbers=none]
+while(a<b){
+    a++;
+    b--;
+    print("Dentro do ciclo");
+};
+\end{lstlisting}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Análise Semântica}
 
-\par A análise semântica é realizada com o \emph{Visitor} denominado \emph{SemanticChubix.java}. Este trata de todas as situações que achámos relevantes controlar para que se mantivesse a integridade da nossa linguagem. Segue-se então a lista de regras semânticas que incluímos:
+\par A análise semântica é realizada com o \emph{Visitor} denominado \emph{SemanticChubix.java}. Este trata de todas as situações que se achou relevantes controlar para que se mantivesse a integridade da linguagem. Segue-se então a lista de regras semânticas que foram incluídas:
 \begin{itemize}
     \item Não é permitido criar funções com o mesmo nome.
     \item O valor de retorno de uma função tem de se conformar ao tipo da mesma.
@@ -416,7 +509,7 @@ Desta forma, é assegurada a compilação de acordo com as verificações feitas
     \par Após a criação do ficheiro para a Linguagem Complementar, é, também, necessário a criação de um para a Linguagem Principal. O ficheiro deverá estar no formato \textit{.ubix} e deve seguir as regras explicadas previamente, nomeadamente a importação do ficheiro relativo à Linguagem Complementar.
     \item \textbf{3º - Geração do ficheiro Java}
     \par Com os ficheiros de ambas as linguagens prontos, deve-se executar o \textit{Main} da Linguagem Principal com o nome do ficheiro como argumento:
-    \begin{lstlisting}
+    \begin{lstlisting}[numbers=none]
         java -ea chubixMain [ficheiro da Linguagem Principal]
     \end{lstlisting}
     \par Após esta execução sem erros, é gerado um ficheiro \textit{.java} com o nome do ficheiro da Linguagem Principal utilizado como argumento.
@@ -438,7 +531,7 @@ Desta forma, é assegurada a compilação de acordo com as verificações feitas
 
 \par Para o bom funcionamento da Linguagem Principal no seu programa de exemplo correto, todas as dimensões e unidades foram definidas no ficheiro \textit{/tests/dimensions/dimensionsExamples.ubi}:
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 dim Time(s: Integer);
 unit Time(h: 3600*s);
 
@@ -483,7 +576,7 @@ dim IMC(imc : Mass/Distance^2);
 
 \par \textbf{Definição de funções e importação das dimensões e unidades:}
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 import ../tests/dimensions/dimensionsExamples.ubi;
 
 function Void evalIMC(IMC imc){
@@ -518,7 +611,7 @@ function IMC getIMC(Mass m, Distance height){
 
 \par Determinar distância percorrida por uma massa de 5kg em 5 segundos.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 Time t = 5[s];            
 Mass m = 5 [kg];
 Velocity v0 = 5[m/s];     
@@ -537,7 +630,7 @@ print(res);
 
 \par Um circuito elétrico tem uma resistência de o Ohms e uma fonte de tensão de v Volts. Diminuindo a intensidade de corrente para 1/2,1/4...1/32 e mantendo a mesma tensão, pretende-se descobrir o valor em Ohms da nova resistência a aplicar em cada caso.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 Potential U =  input("Insira a tensão de corrente em volts", Potential) [V];
 Resistence R = input("Insira a intensidade da força, em Newton", Resistence) [O];
 
@@ -558,7 +651,7 @@ while(taxa>=1.0/32.0){
 
 \par Determinar a energia consumida mensalmente por um chuveiro elétrico de potência 4000W em uma residência onde vivem quatro pessoas que tomam, diariamente, 2 banhos de 15 min.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 Power P = input("Insira a potência: ", Power) [KW];
 Time T = input("Insira o tempo da duração de 1 banho: ", Time) [h];
 
@@ -576,7 +669,7 @@ print(E);
 
 \par Na residência pretende-se gastar menos de 30 euros mensalmente com a energia gasta pelo chuveiro. Sabendo que o preço per kWh é de 0.14810 euros, conseguem alcançar este objetivo?
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 PricePerPowerTime p = input("Preço por kWh: ", PricePerPowerTime) [euro/(KW*h)];
 
 Price p_mensal = p * E;
@@ -595,7 +688,7 @@ else {
 
 \par Calcular o a Energia cinética em intervalos de 10s no primeiro minuto do movimento de queda livre. Considere que a velocidade inicial é 0m/s e que a aceleração gravítica é 10m/s\string^2 e que não existem forças de atrito.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 Mass m1 = input("Insira a massa do objeto em kg",Mass) [kg] ;
 Acceleration g = 10 [m*s^-2];
 Velocity v = 0[m/s];
@@ -612,7 +705,7 @@ for (Integer i = 0; i<=60; i=i+10){
 
 \par Uma corrente de 5,0 A atravessa um fio durante 4,0 min. Quanto vale (a) a carga que passa por uma secção desse fio e (b) a quantos eletrões corresponde?
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 #a)
 
 Current cur = 5 [A];
@@ -635,7 +728,7 @@ print(eletroes);
 
 \par Calcular e avaliar o valor de IMC do utilizador.
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 Mass weight = input("Insert your weight in kg: ", Mass) [kg];
 Distance height = input("Insert your height in meters: ", Distance) [m];
 
@@ -652,7 +745,7 @@ evalIMC(weight/height^2);
 
 \subsubsection{Linguagem Complementar}
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 dim Time(s:Integer);
 
 dim Time2(c:Time);              #[ERROR at line 3] Unit "s" already defined.
@@ -678,10 +771,10 @@ dim Velocity(Distance/Time^0);  #[ERROR at line 21] Power of 0 is not possible w
 
 \subsubsection{Linguagem Principal}
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 import ../tests/dimensions/dimensionsExamples.ubi;
 
-function Random CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 3] Dimension "Random" does not exist.
+function Random CalcCinetica(Velocity v, Mass  m) {#[ERROR at line 3] Dimension "Random" does not exist.
     Energy ec = 0.5*m*v^2;
     return ec;
 };
@@ -691,7 +784,7 @@ function Energy CalcCinetica(Velocity v, Mass  m) {
     return ec;
 };
 
-function Energy CalcCinetica(Velocity v, Mass  m) {     #[ERROR at line 13] Function "CalcCinetica" already exists!
+function Energy CalcCinetica(Velocity v, Mass  m) {#[ERROR at line 13] Function "CalcCinetica" already exists!
     Energy ec = 0.5*m*v^2;
     return ec;
 };
@@ -705,29 +798,29 @@ function Void catch(Double x) {
 # main
 
 catch(10.0);
-catch();                                                #[ERROR at line 27] Number of arguments do not match.
-CalcCinetica(1 [m], 1 [kg]);                            #[ERROR at line 28] Incomparable types: m and m / s^1
+catch();                    #[ERROR at line 27] Number of arguments do not match.
+CalcCinetica(1 [m], 1 [kg]);#[ERROR at line 28] Incomparable types: m and m / s^1
 
-Distance m = 10;                                        #[ERROR at line 30] Expression type does not conform to variable "m" type! 
+Distance m = 10;            #[ERROR at line 30] Expression type does not conform to variable "m" type! 
        
-Distance m3 = 10[km];                                   #[ERROR at line 32] There is no dimension with that unit!
+Distance m3 = 10[km];       #[ERROR at line 32] There is no dimension with that unit!
 
 Distance m2 = 10[m];
 print(m2);
 
 print(m3[m]);                                               
-print(m3[s]);                                           #[ERROR at line 38] Cannot convert to another Dimension!
+print(m3[s]);               #[ERROR at line 38] Cannot convert to another Dimension!
 
-Time t = 1.2 [s];                                       #[ERROR at line 40] Cannot convert Double to a Dimension of Integers!
+Time t = 1.2 [s];           #[ERROR at line 40] Cannot convert Double to a Dimension of Integers!
 
-print(catch(10.0) + 1);                                 #[ERROR at line 42] Expression cannot be void
-print("ola"*2);                                         #[ERROR at line 43] Cannot fetch a type between "ola" and 2
+print(catch(10.0) + 1);     #[ERROR at line 42] Expression cannot be void
+print("ola"*2);             #[ERROR at line 43] Cannot fetch a type between "ola" and 2
 
 String name = input("Insert your name",String);
 Distance r=input("Insert distance in km",Distance)[km];
 
 Distance mm = 1[m];
-if(mm>1){                                               #[ERROR at line 49] Incomparable types: mm and 1
+if(mm>1){                   #[ERROR at line 49] Incomparable types: mm and 1
     print("Maior");
 }else{
     print("Menor");
@@ -738,31 +831,33 @@ for (Integer i = 0;i<=2;i=i+1){
     x = 10;
     Integer y = i;
 };
-print(y);                                               #[ERROR at line 60] Variable "y" does not exist!
+print(y);                   #[ERROR at line 60] Variable "y" does not exist!
 
 
 Integer i = 0;
 Integer y = 2;
 for (i = 0;i<=2;i=i+1){
     i = 10;
-    Integer y = i;                                      #[ERROR at line 67] Variable "y" already declared!    
+    Integer y = i;          #[ERROR at line 67] Variable "y" already declared!    
 };
 
-while(1){                                               #[ERROR at line 70] Condition "1" isn't a Boolean expression!
+while(1){                   #[ERROR at line 70] Condition "1" isnt a Boolean expression!
     print("Not boolean");
 };
 
 while(true) {
     Double p;
-    print(-"hello");                                    #[ERROR at line 76] Numeric operator applied to a non-numeric operand!
+    print(-"hello");        #[ERROR at line 76] Numeric operator applied to a non-numeric operand!
 };
-Double p;                                               #No error
+Double p;                   #No error
 
 a = 2;
 
-Boolean qwe = p>mm;                                     #[ERROR at line 82] Variable "p" not defined!
-Boolean qwq = 1>mm;                                     #[ERROR at line 83] Incomparable types: 1 and mm
+Boolean qwe = p>mm;         #[ERROR at line 82] Variable "p" not defined!
+Boolean qwq = 1>mm;         #[ERROR at line 83] Incomparable types: 1 and mm
 \end{lstlisting}
+
+\clearpage
 
 \section{Conclusão}
 
