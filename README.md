@@ -1,4 +1,4 @@
-# Chubix - Programmatic Language
+# Chubix - Programming Language
 
 A project where a main programming language was developed with the basic functionalities of a language like _Java_ or _Python_ with the addition of incorporating dimensional analysis, serving as the basis for building the compiler. A complementary language was also developed, allowing the user to create the dimensions and physical units required by the user.
 
